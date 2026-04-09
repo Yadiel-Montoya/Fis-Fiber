@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard de Indicadores</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1117;
+    --bg2: #161b27;
+    --bg3: #1c2333;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.13);
+    --text: #f0f2f7;
+    --text2: #8b92a5;
+    --text3: #5a6070;
+    --blue:   #3b8ef3;
+    --blue-bg: rgba(59,142,243,0.10);
+    --green:  #34c98a;
+    --green-bg: rgba(52,201,138,0.10);
+    --amber:  #f5a623;
+    --amber-bg: rgba(245,166,35,0.10);
+    --purple: #9b6dff;
+    --purple-bg: rgba(155,109,255,0.10);
+    --coral:  #ff6b6b;
+    --coral-bg: rgba(255,107,107,0.10);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 0;
+  }
+
+  .topbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 2rem; height: 58px;
+    background: rgba(15,17,23,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .logo { font-size: 15px; font-weight: 600; letter-spacing: 0.02em; display: flex; align-items: center; gap: 8px; }
+  .logo-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--blue); box-shadow: 0 0 8px var(--blue);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+  .topbar-right { display: flex; align-items: center; gap: 16px; }
+  .live-badge {
+    font-size: 11px; font-family: 'DM Mono', monospace;
+    color: var(--green); background: var(--green-bg);
+    border: 1px solid rgba(52,201,138,0.2);
+    border-radius: 20px; padding: 3px 10px;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .live-badge::before {
+    content: ''; width: 5px; height: 5px; border-radius: 50%;
+    background: var(--green); animation: pulse 1.5s ease-in-out infinite;
+  }
+  .topbar-date { font-size: 12px; font-family: 'DM Mono', monospace; color: var(--text3); }
+
+  .view { display: none; padding-top: 58px; }
+  .view.active { display: block; }
+
+  .hero { text-align: center; padding: 5rem 2rem 3rem; position: relative; }
+  .hero-glow {
+    position: absolute; top: 30%; left: 50%; transform: translateX(-50%);
+    width: 600px; height: 300px;
+    background: radial-gradient(ellipse, rgba(59,142,243,0.07) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-label {
+    font-size: 11px; font-family: 'DM Mono', monospace;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--blue); margin-bottom: 1rem;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .hero-label::before, .hero-label::after {
+    content: ''; flex: 1; max-width: 40px; height: 1px; background: var(--border2);
+  }
+  .hero h1 { font-size: clamp(28px, 5vw, 42px); font-weight: 300; line-height: 1.2; color: var(--text); margin-bottom: 1rem; }
+  .hero h1 strong { font-weight: 600; }
+  .hero p { font-size: 15px; color: var(--text2); max-width: 420px; margin: 0 auto; }
+
+  .summary-strip {
+    display: flex; justify-content: center;
+    border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    max-width: 700px; margin: 0 auto 3.5rem;
+  }
+  .summary-item { flex: 1; text-align: center; padding: 1rem 1.5rem; border-right: 1px solid var(--border); }
+  .summary-item:last-child { border-right: none; }
+  .summary-item .val { font-size: 22px; font-weight: 600; font-family: 'DM Mono', monospace; color: var(--text); }
+  .summary-item .lbl { font-size: 11px; color: var(--text3); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.08em; }
+
+  .areas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px; padding: 0 2rem;
+    max-width: 1100px; margin: 0 auto 4rem;
+  }
+
+  .area-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 14px; padding: 1.75rem;
+    cursor: pointer; position: relative; overflow: hidden;
+    transition: border-color 0.2s, transform 0.15s;
+    animation: fadeUp 0.5s ease both;
+  }
+  .area-card:nth-child(1) { animation-delay: 0.05s; }
+  .area-card:nth-child(2) { animation-delay: 0.10s; }
+  .area-card:nth-child(3) { animation-delay: 0.15s; }
+  .area-card:nth-child(4) { animation-delay: 0.20s; }
+  .area-card:nth-child(5) { animation-delay: 0.25s; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  .area-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: var(--accent); opacity: 0; transition: opacity 0.2s;
+  }
+  .area-card:hover { border-color: var(--border2); transform: translateY(-3px); }
+  .area-card:hover::before { opacity: 1; }
+  .area-card:active { transform: scale(0.98); }
+
+  .card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1.5rem; }
+  .card-icon {
+    width: 42px; height: 42px; border-radius: 10px;
+    background: var(--accent-bg); display: flex; align-items: center; justify-content: center;
+  }
+  .card-icon svg { width: 20px; height: 20px; }
+  .card-arrow { color: var(--text3); transition: color 0.2s, transform 0.2s; font-size: 18px; }
+  .area-card:hover .card-arrow { color: var(--text2); transform: translate(2px, -2px); }
+  .card-name { font-size: 17px; font-weight: 600; color: var(--text); margin-bottom: 5px; }
+  .card-desc { font-size: 13px; color: var(--text2); line-height: 1.5; margin-bottom: 1.5rem; }
+  .card-footer { display: flex; align-items: center; justify-content: space-between; }
+  .card-kpi-count {
+    font-size: 11px; font-family: 'DM Mono', monospace;
+    color: var(--accent); background: var(--accent-bg);
+    border: 1px solid var(--accent-border); border-radius: 20px; padding: 3px 10px;
+  }
+  .card-status { font-size: 11px; color: var(--text3); display: flex; align-items: center; gap: 5px; }
+  .status-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); }
+
+  .detail-header { display: flex; align-items: center; gap: 1rem; padding: 2rem 2rem 0; max-width: 1100px; margin: 0 auto; }
+  .back-btn {
+    background: var(--bg2); border: 1px solid var(--border); border-radius: 8px;
+    padding: 8px 14px; font-size: 13px; color: var(--text2); cursor: pointer;
+    display: flex; align-items: center; gap: 6px; font-family: 'DM Sans', sans-serif;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .back-btn:hover { border-color: var(--border2); color: var(--text); }
+  .detail-area-name { font-size: 22px; font-weight: 600; }
+  .detail-area-sub { font-size: 13px; color: var(--text2); margin-top: 2px; }
+
+  .detail-body { padding: 2rem; max-width: 1100px; margin: 0 auto; }
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 2rem; }
+  .kpi-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.25rem;
+    animation: fadeUp 0.3s ease both;
+  }
+  .kpi-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); margin-bottom: 8px; }
+  .kpi-value { font-size: 26px; font-weight: 600; font-family: 'DM Mono', monospace; color: var(--text); }
+  .kpi-unit { font-size: 13px; font-weight: 400; color: var(--text2); }
+  .kpi-change { font-size: 12px; margin-top: 6px; display: flex; align-items: center; gap: 4px; }
+  .kpi-change.up { color: var(--green); }
+  .kpi-change.down { color: var(--coral); }
+
+  .chart-placeholder {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 2.5rem; text-align: center;
+    color: var(--text3); font-size: 13px; line-height: 1.7;
+  }
+  .chart-placeholder .ph-icon { font-size: 32px; margin-bottom: 1rem; opacity: 0.4; }
+  .chart-placeholder strong { color: var(--text2); display: block; margin-bottom: 4px; }
+
+  .footer { text-align: center; padding: 2rem; font-size: 11px; font-family: 'DM Mono', monospace; color: var(--text3); border-top: 1px solid var(--border); }
+
+  @media (max-width: 600px) {
+    .summary-strip { flex-wrap: wrap; }
+    .summary-item { min-width: 50%; }
+    .areas-grid { grid-template-columns: 1fr; }
+    .topbar { padding: 0 1rem; }
+    .topbar-date { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="logo">
+    <div class="logo-dot"></div>
+    ControlHub
+  </div>
+  <div class="topbar-right">
+    <span class="live-badge">En vivo</span>
+    <span class="topbar-date" id="clock"></span>
+  </div>
+</header>
+
+<!-- MENÚ PRINCIPAL -->
+<div class="view active" id="view-menu">
+  <div class="hero">
+    <div class="hero-glow"></div>
+    <div class="hero-label">Sistema de indicadores</div>
+    <h1>Panel de <strong>Control General</strong></h1>
+    <p>Selecciona un área para revisar sus indicadores en tiempo real</p>
+  </div>
+
+  <div class="summary-strip">
+    <div class="summary-item"><div class="val">5</div><div class="lbl">Áreas activas</div></div>
+    <div class="summary-item"><div class="val">22</div><div class="lbl">Indicadores</div></div>
+    <div class="summary-item"><div class="val">100%</div><div class="lbl">Disponibilidad</div></div>
+  </div>
+
+  <div class="areas-grid">
+
+    <div class="area-card" style="--accent:var(--blue);--accent-bg:var(--blue-bg);--accent-border:rgba(59,142,243,0.2);" onclick="openArea('maquilas')">
+      <div class="card-top">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+        </div>
+        <span class="card-arrow">↗</span>
+      </div>
+      <div class="card-name">Maquilas</div>
+      <div class="card-desc">Producción, eficiencia de línea, paros y scrap de planta</div>
+      <div class="card-footer">
+        <span class="card-kpi-count">5 indicadores</span>
+        <span class="card-status"><span class="status-dot"></span>Activo</span>
+      </div>
+    </div>
+
+    <div class="area-card" style="--accent:var(--green);--accent-bg:var(--green-bg);--accent-border:rgba(52,201,138,0.2);" onclick="openArea('ventas')">
+      <div class="card-top">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+        </div>
+        <span class="card-arrow">↗</span>
+      </div>
+      <div class="card-name">Ventas</div>
+      <div class="card-desc">Ingresos, cumplimiento de metas y seguimiento comercial</div>
+      <div class="card-footer">
+        <span class="card-kpi-count">6 indicadores</span>
+        <span class="card-status"><span class="status-dot"></span>Activo</span>
+      </div>
+    </div>
+
+    <div class="area-card" style="--accent:var(--amber);--accent-bg:var(--amber-bg);--accent-border:rgba(245,166,35,0.2);" onclick="openArea('logistica')">
+      <div class="card-top">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+        </div>
+        <span class="card-arrow">↗</span>
+      </div>
+      <div class="card-name">Logística</div>
+      <div class="card-desc">Entregas, rutas activas, tiempos y costos de distribución</div>
+      <div class="card-footer">
+        <span class="card-kpi-count">4 indicadores</span>
+        <span class="card-status"><span class="status-dot"></span>Activo</span>
+      </div>
+    </div>
+
+    <div class="area-card" style="--accent:var(--purple);--accent-bg:var(--purple-bg);--accent-border:rgba(155,109,255,0.2);" onclick="openArea('operaciones')">
+      <div class="card-top">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07M8.46 8.46a5 5 0 0 0 0 7.07"/></svg>
+        </div>
+        <span class="card-arrow">↗</span>
+      </div>
+      <div class="card-name">Operaciones especiales</div>
+      <div class="card-desc">Proyectos, contratos, servicios especiales e incidencias</div>
+      <div class="card-footer">
+        <span class="card-kpi-count">4 indicadores</span>
+        <span class="card-status"><span class="status-dot"></span>Activo</span>
+      </div>
+    </div>
+
+    <div class="area-card" style="--accent:var(--coral);--accent-bg:var(--coral-bg);--accent-border:rgba(255,107,107,0.2);" onclick="openArea('vigilancia')">
+      <div class="card-top">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--coral)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <span class="card-arrow">↗</span>
+      </div>
+      <div class="card-name">Vigilancia</div>
+      <div class="card-desc">Seguridad, accesos, alertas y monitoreo de instalaciones</div>
+      <div class="card-footer">
+        <span class="card-kpi-count">3 indicadores</span>
+        <span class="card-status"><span class="status-dot"></span>Activo</span>
+      </div>
+    </div>
+
+  </div>
+  <footer class="footer">ControlHub · Sistema de indicadores operativos</footer>
+</div>
+
+<!-- DETALLE DE ÁREA -->
+<div class="view" id="view-detail">
+  <div class="detail-header">
+    <button class="back-btn" onclick="goBack()">← Menú</button>
+    <div class="detail-title-wrap">
+      <div class="detail-area-name" id="detail-name"></div>
+      <div class="detail-area-sub">Indicadores del período actual · Actualización en tiempo real</div>
+    </div>
+  </div>
+  <div class="detail-body">
+    <div class="kpi-grid" id="kpi-grid"></div>
+    <div class="chart-placeholder">
+      <div class="ph-icon">📊</div>
+      <strong>Gráficas e historial próximamente</strong>
+      Aquí irán las gráficas de tendencia, tablas comparativas<br>y conexión con Google Sheets en tiempo real.
+    </div>
+  </div>
+</div>
+
+<script>
+  function updateClock() {
+    const now = new Date();
+    document.getElementById('clock').textContent =
+      now.toLocaleDateString('es-MX', { weekday:'short', day:'numeric', month:'short' }) +
+      ' · ' + now.toLocaleTimeString('es-MX', { hour:'2-digit', minute:'2-digit' });
+  }
+  updateClock();
+  setInterval(updateClock, 1000);
+
+  const areas = {
+    maquilas: {
+      name: 'Maquilas',
+      kpis: [
+        { label: 'Producción diaria',    value: '1,240', unit: 'pzas',    change: '+3.2%', up: true },
+        { label: 'Eficiencia de línea',  value: '87',    unit: '%',       change: '+1.5%', up: true },
+        { label: 'Paros no planeados',   value: '2',     unit: 'eventos', change: '-1',    up: true },
+        { label: 'Scrap del día',        value: '0.8',   unit: '%',       change: '+0.2%', up: false },
+        { label: 'OEE',                  value: '82',    unit: '%',       change: '+0.8%', up: true },
+      ]
+    },
+    ventas: {
+      name: 'Ventas',
+      kpis: [
+        { label: 'Ventas del mes',        value: '$2.4M',  unit: '',   change: '+8.1%', up: true },
+        { label: 'Cumplimiento de meta',  value: '94',     unit: '%',  change: '+4%',   up: true },
+        { label: 'Nuevos clientes',       value: '12',     unit: '',   change: '+3',    up: true },
+        { label: 'Ticket promedio',       value: '$18.5K', unit: '',   change: '-2.3%', up: false },
+        { label: 'Cotizaciones abiertas', value: '37',     unit: '',   change: '+5',    up: true },
+        { label: 'Tasa de cierre',        value: '68',     unit: '%',  change: '+2%',   up: true },
+      ]
+    },
+    logistica: {
+      name: 'Logística',
+      kpis: [
+        { label: 'Entregas a tiempo',    value: '96', unit: '%', change: '+1.2%', up: true },
+        { label: 'Rutas activas',        value: '18', unit: '',  change: '0',     up: true },
+        { label: 'Costo por entrega',    value: '$320', unit: '', change: '+5%', up: false },
+        { label: 'Unidades en tránsito', value: '47', unit: '',  change: '+7',    up: true },
+      ]
+    },
+    operaciones: {
+      name: 'Operaciones especiales',
+      kpis: [
+        { label: 'Proyectos activos',    value: '8',  unit: '', change: '+1',  up: true },
+        { label: 'Avance promedio',      value: '72', unit: '%', change: '+5%', up: true },
+        { label: 'Incidencias abiertas', value: '1',  unit: '', change: '-2',  up: true },
+        { label: 'Contratos vigentes',   value: '23', unit: '', change: '+3',  up: true },
+      ]
+    },
+    vigilancia: {
+      name: 'Vigilancia',
+      kpis: [
+        { label: 'Accesos registrados', value: '342',   unit: 'hoy', change: '+12', up: true },
+        { label: 'Alertas activas',     value: '0',     unit: '',    change: '-1',  up: true },
+        { label: 'Cámaras en línea',    value: '28/30', unit: '',    change: '',    up: true },
+      ]
+    }
+  };
+
+  function openArea(key) {
+    const area = areas[key];
+    document.getElementById('detail-name').textContent = area.name;
+    document.getElementById('kpi-grid').innerHTML = area.kpis.map((k, i) => `
+      <div class="kpi-card" style="animation-delay:${i * 0.06}s">
+        <div class="kpi-label">${k.label}</div>
+        <div class="kpi-value">${k.value} <span class="kpi-unit">${k.unit}</span></div>
+        ${k.change ? `<div class="kpi-change ${k.up ? 'up' : 'down'}">${k.up ? '▲' : '▼'} ${k.change} vs ayer</div>` : ''}
+      </div>
+    `).join('');
+    document.getElementById('view-menu').classList.remove('active');
+    document.getElementById('view-detail').classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function goBack() {
+    document.getElementById('view-detail').classList.remove('active');
+    document.getElementById('view-menu').classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>
