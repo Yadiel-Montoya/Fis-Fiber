@@ -254,7 +254,7 @@ updateClock(); setInterval(updateClock,1000);
 // 4. Pega la URL aquí abajo
 // Columnas requeridas: Fecha, Anticipadas, Nocturnas
 // ══════════════════════════════════════════════════════
-const SHEETS_URL = 'TU_URL_AQUI';
+const SHEETS_URL = 'https://docs.google.com/spreadsheets/d/1o2VzGS6CznSp_v3iBPfPhZa3Ch4qddAQ/edit?usp=sharing&ouid=104206528081402406903&rtpof=true&sd=true';
 
 function parseCSV(txt){
   const lines=txt.trim().split('\n').filter(l=>l.trim());
@@ -318,7 +318,7 @@ function getDemoData(){
     {Fecha:'2026-02-11',Anticipadas:7, Nocturnas:2},
     {Fecha:'2026-02-12',Anticipadas:4, Nocturnas:3},
     {Fecha:'2026-02-13',Anticipadas:6, Nocturnas:4},
-    {Fecha:'2026-03-02',Anticip adas:11,Nocturnas:0},
+    {Fecha:'2026-03-02',Anticipadas:11,Nocturnas:0},
     {Fecha:'2026-03-03',Anticipadas:4, Nocturnas:6},
     {Fecha:'2026-03-04',Anticipadas:3, Nocturnas:3},
     {Fecha:'2026-03-05',Anticipadas:3, Nocturnas:6},
