@@ -5,148 +5,150 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard de Indicadores</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
   :root {
-    --bg: #0f1117; --bg2: #161b27; --bg3: #1c2333;
-    --border: rgba(255,255,255,0.07); --border2: rgba(255,255,255,0.13);
-    --text: #f0f2f7; --text2: #8b92a5; --text3: #5a6070;
-    --blue: #3b8ef3; --blue-bg: rgba(59,142,243,0.10);
-    --green: #34c98a; --green-bg: rgba(52,201,138,0.10);
-    --amber: #f5a623; --amber-bg: rgba(245,166,35,0.10);
-    --purple: #9b6dff; --purple-bg: rgba(155,109,255,0.10);
-    --coral: #ff6b6b; --coral-bg: rgba(255,107,107,0.10);
+    --bg:#0f1117;--bg2:#161b27;--bg3:#1c2333;
+    --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
+    --text:#f0f2f7;--text2:#8b92a5;--text3:#5a6070;
+    --blue:#3b8ef3;--blue-bg:rgba(59,142,243,0.10);
+    --green:#34c98a;--green-bg:rgba(52,201,138,0.10);
+    --amber:#f5a623;--amber-bg:rgba(245,166,35,0.10);
+    --purple:#9b6dff;--purple-bg:rgba(155,109,255,0.10);
+    --coral:#ff6b6b;--coral-bg:rgba(255,107,107,0.10);
   }
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
 
-  .topbar {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0 2rem; height: 58px;
-    background: rgba(15,17,23,0.85); backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
+  .topbar{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:58px;background:rgba(15,17,23,0.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+  .logo{font-size:15px;font-weight:600;display:flex;align-items:center;gap:8px}
+  .logo-dot{width:8px;height:8px;border-radius:50%;background:var(--blue);box-shadow:0 0 8px var(--blue);animation:pulse 2s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+  .topbar-right{display:flex;align-items:center;gap:16px}
+  .live-badge{font-size:11px;font-family:'DM Mono',monospace;color:var(--green);background:var(--green-bg);border:1px solid rgba(52,201,138,.2);border-radius:20px;padding:3px 10px;display:flex;align-items:center;gap:5px}
+  .live-badge::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 1.5s ease-in-out infinite}
+  .topbar-date{font-size:12px;font-family:'DM Mono',monospace;color:var(--text3)}
+
+  .view{display:none;padding-top:58px}
+  .view.active{display:block}
+
+  .hero{text-align:center;padding:5rem 2rem 3rem;position:relative}
+  .hero-glow{position:absolute;top:30%;left:50%;transform:translateX(-50%);width:600px;height:300px;background:radial-gradient(ellipse,rgba(59,142,243,.07) 0%,transparent 70%);pointer-events:none}
+  .hero-label{font-size:11px;font-family:'DM Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--blue);margin-bottom:1rem;display:flex;align-items:center;justify-content:center;gap:8px}
+  .hero-label::before,.hero-label::after{content:'';flex:1;max-width:40px;height:1px;background:var(--border2)}
+  .hero h1{font-size:clamp(28px,5vw,42px);font-weight:300;line-height:1.2;margin-bottom:1rem}
+  .hero h1 strong{font-weight:600}
+  .hero p{font-size:15px;color:var(--text2);max-width:420px;margin:0 auto}
+
+  .summary-strip{display:flex;justify-content:center;border-top:1px solid var(--border);border-bottom:1px solid var(--border);max-width:700px;margin:0 auto 3.5rem}
+  .summary-item{flex:1;text-align:center;padding:1rem 1.5rem;border-right:1px solid var(--border)}
+  .summary-item:last-child{border-right:none}
+  .summary-item .val{font-size:22px;font-weight:600;font-family:'DM Mono',monospace}
+  .summary-item .lbl{font-size:11px;color:var(--text3);margin-top:2px;text-transform:uppercase;letter-spacing:.08em}
+
+  .areas-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;padding:0 2rem;max-width:1100px;margin:0 auto 4rem}
+  .area-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:1.75rem;cursor:pointer;position:relative;overflow:hidden;transition:border-color .2s,transform .15s;animation:fadeUp .5s ease both}
+  .area-card:nth-child(1){animation-delay:.05s}.area-card:nth-child(2){animation-delay:.1s}.area-card:nth-child(3){animation-delay:.15s}.area-card:nth-child(4){animation-delay:.2s}.area-card:nth-child(5){animation-delay:.25s}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+  .area-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent);opacity:0;transition:opacity .2s}
+  .area-card:hover{border-color:var(--border2);transform:translateY(-3px)}
+  .area-card:hover::before{opacity:1}
+  .area-card:active{transform:scale(.98)}
+  .card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.5rem}
+  .card-icon{width:42px;height:42px;border-radius:10px;background:var(--accent-bg);display:flex;align-items:center;justify-content:center}
+  .card-icon svg{width:20px;height:20px}
+  .card-arrow{color:var(--text3);transition:color .2s,transform .2s;font-size:18px}
+  .area-card:hover .card-arrow{color:var(--text2);transform:translate(2px,-2px)}
+  .card-name{font-size:17px;font-weight:600;margin-bottom:5px}
+  .card-desc{font-size:13px;color:var(--text2);line-height:1.5;margin-bottom:1.5rem}
+  .card-footer{display:flex;align-items:center;justify-content:space-between}
+  .card-kpi-count{font-size:11px;font-family:'DM Mono',monospace;color:var(--accent);background:var(--accent-bg);border:1px solid var(--accent-border);border-radius:20px;padding:3px 10px}
+  .card-status{font-size:11px;color:var(--text3);display:flex;align-items:center;gap:5px}
+  .status-dot{width:5px;height:5px;border-radius:50%;background:var(--green)}
+
+  .detail-header{display:flex;align-items:center;gap:1rem;padding:2rem 2rem 0;max-width:1200px;margin:0 auto}
+  .back-btn{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:8px 14px;font-size:13px;color:var(--text2);cursor:pointer;display:flex;align-items:center;gap:6px;font-family:'DM Sans',sans-serif;transition:border-color .2s,color .2s;white-space:nowrap}
+  .back-btn:hover{border-color:var(--border2);color:var(--text)}
+  .detail-area-name{font-size:22px;font-weight:600}
+  .detail-area-sub{font-size:13px;color:var(--text2);margin-top:2px}
+  .detail-body{padding:2rem;max-width:1200px;margin:0 auto}
+
+  .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:2rem}
+  .kpi-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.25rem;animation:fadeUp .3s ease both}
+  .kpi-label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:8px}
+  .kpi-value{font-size:26px;font-weight:600;font-family:'DM Mono',monospace}
+  .kpi-unit{font-size:13px;font-weight:400;color:var(--text2)}
+  .kpi-change{font-size:12px;margin-top:6px;display:flex;align-items:center;gap:4px}
+  .kpi-change.up{color:var(--green)}.kpi-change.down{color:var(--coral)}
+
+  .submod-tabs{display:flex;gap:8px;margin-bottom:1.5rem;flex-wrap:wrap}
+  .submod-tab{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:8px 16px;font-size:13px;color:var(--text2);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
+  .submod-tab:hover{border-color:var(--border2);color:var(--text)}
+  .submod-tab.active{background:var(--amber-bg);border-color:rgba(245,166,35,.3);color:var(--amber)}
+  .submod-panel{display:none}.submod-panel.active{display:block}
+
+  .filters-bar{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.25rem 1.5rem;margin-bottom:1.5rem;display:flex;align-items:flex-end;gap:1rem;flex-wrap:wrap}
+  .filter-group{display:flex;flex-direction:column;gap:6px}
+  .filter-label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--text3)}
+  .filter-select,.filter-input{background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:7px 12px;font-size:13px;color:var(--text);font-family:'DM Sans',sans-serif;outline:none;cursor:pointer;min-width:130px;transition:border-color .2s}
+  .filter-select:hover,.filter-input:hover,.filter-select:focus,.filter-input:focus{border-color:var(--amber)}
+  .filter-input{min-width:140px}
+  .filter-btn{background:var(--amber-bg);border:1px solid rgba(245,166,35,.3);border-radius:8px;padding:7px 16px;font-size:13px;color:var(--amber);font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .2s;white-space:nowrap}
+  .filter-btn:hover{background:rgba(245,166,35,.2)}
+  .filter-clear{background:transparent;border:1px solid var(--border);border-radius:8px;padding:7px 14px;font-size:13px;color:var(--text3);font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .2s}
+  .filter-clear:hover{color:var(--text);border-color:var(--border2)}
+  .filter-period-tag{font-size:11px;font-family:'DM Mono',monospace;color:var(--green);background:var(--green-bg);border:1px solid rgba(52,201,138,.2);border-radius:20px;padding:3px 10px;align-self:center;white-space:nowrap}
+
+  .cargas-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:1.5rem}
+  .ckpi{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.25rem}
+  .ckpi .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:6px}
+  .ckpi .val{font-size:24px;font-weight:600;font-family:'DM Mono',monospace;transition:all .3s}
+  .ckpi .sub{font-size:11px;color:var(--text2);margin-top:3px}
+
+  .charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:1.5rem}
+  .chart-box{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.5rem}
+  .chart-box.full{grid-column:1/-1}
+  .chart-box-title{font-size:13px;font-weight:500;color:var(--text2);margin-bottom:1.25rem;display:flex;align-items:center;justify-content:space-between}
+  .chart-box-title span{font-size:11px;font-family:'DM Mono',monospace;color:var(--text3)}
+
+  .table-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:1.5rem}
+  .table-header{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;border-bottom:1px solid var(--border)}
+  .table-title{font-size:14px;font-weight:500}
+  .table-meta{font-size:11px;font-family:'DM Mono',monospace;color:var(--text3)}
+  table{width:100%;border-collapse:collapse}
+  thead th{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);padding:10px 1.25rem;text-align:left;border-bottom:1px solid var(--border);font-weight:500}
+  thead th.num{text-align:right}
+  tbody tr{border-bottom:1px solid var(--border);transition:background .15s}
+  tbody tr:last-child{border-bottom:none}
+  tbody tr:hover{background:var(--bg3)}
+  tbody td{font-size:13px;padding:10px 1.25rem;color:var(--text2)}
+  tbody td:first-child{color:var(--text);font-family:'DM Sans',sans-serif}
+  tbody td.num{text-align:right;font-family:'DM Mono',monospace}
+  .pill{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px}
+  .pill-blue{background:var(--blue-bg);color:var(--blue);border:1px solid rgba(59,142,243,.2)}
+  .pill-amber{background:var(--amber-bg);color:var(--amber);border:1px solid rgba(245,166,35,.2)}
+  .pill-green{background:var(--green-bg);color:var(--green);border:1px solid rgba(52,201,138,.2)}
+  tfoot td{font-size:12px;padding:10px 1.25rem;font-weight:600;border-top:1px solid var(--border2);font-family:'DM Mono',monospace;color:var(--text)}
+  tfoot td.num{text-align:right}
+
+  .loading-state{text-align:center;padding:3rem;color:var(--text3);font-size:13px}
+  .spinner{width:24px;height:24px;border:2px solid var(--border2);border-top-color:var(--amber);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 1rem}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .info-banner{border-radius:10px;padding:10px 14px;font-size:12px;line-height:1.6;margin-bottom:1.25rem;display:flex;align-items:flex-start;gap:8px}
+  .info-banner.warn{background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.2);color:var(--amber)}
+  .info-banner.ok{background:var(--green-bg);border:1px solid rgba(52,201,138,.2);color:var(--green)}
+
+  .footer{text-align:center;padding:2rem;font-size:11px;font-family:'DM Mono',monospace;color:var(--text3);border-top:1px solid var(--border)}
+
+  @media(max-width:768px){
+    .charts-grid{grid-template-columns:1fr}
+    .chart-box.full{grid-column:1}
+    .filters-bar{flex-direction:column;align-items:stretch}
+    .filter-select,.filter-input{min-width:unset;width:100%}
   }
-  .logo { font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
-  .logo-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--blue); box-shadow: 0 0 8px var(--blue); animation: pulse 2s ease-in-out infinite; }
-  @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.4} }
-  .topbar-right { display: flex; align-items: center; gap: 16px; }
-  .live-badge { font-size: 11px; font-family: 'DM Mono', monospace; color: var(--green); background: var(--green-bg); border: 1px solid rgba(52,201,138,0.2); border-radius: 20px; padding: 3px 10px; display: flex; align-items: center; gap: 5px; }
-  .live-badge::before { content:''; width:5px; height:5px; border-radius:50%; background:var(--green); animation: pulse 1.5s ease-in-out infinite; }
-  .topbar-date { font-size: 12px; font-family: 'DM Mono', monospace; color: var(--text3); }
-
-  .view { display: none; padding-top: 58px; }
-  .view.active { display: block; }
-
-  /* HERO */
-  .hero { text-align: center; padding: 5rem 2rem 3rem; position: relative; }
-  .hero-glow { position: absolute; top: 30%; left: 50%; transform: translateX(-50%); width: 600px; height: 300px; background: radial-gradient(ellipse, rgba(59,142,243,0.07) 0%, transparent 70%); pointer-events: none; }
-  .hero-label { font-size: 11px; font-family: 'DM Mono', monospace; letter-spacing: 0.12em; text-transform: uppercase; color: var(--blue); margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; gap: 8px; }
-  .hero-label::before, .hero-label::after { content:''; flex:1; max-width:40px; height:1px; background:var(--border2); }
-  .hero h1 { font-size: clamp(28px,5vw,42px); font-weight: 300; line-height: 1.2; margin-bottom: 1rem; }
-  .hero h1 strong { font-weight: 600; }
-  .hero p { font-size: 15px; color: var(--text2); max-width: 420px; margin: 0 auto; }
-
-  .summary-strip { display: flex; justify-content: center; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); max-width: 700px; margin: 0 auto 3.5rem; }
-  .summary-item { flex:1; text-align:center; padding:1rem 1.5rem; border-right:1px solid var(--border); }
-  .summary-item:last-child { border-right: none; }
-  .summary-item .val { font-size: 22px; font-weight: 600; font-family: 'DM Mono', monospace; }
-  .summary-item .lbl { font-size: 11px; color: var(--text3); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.08em; }
-
-  /* AREAS GRID */
-  .areas-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap: 16px; padding: 0 2rem; max-width: 1100px; margin: 0 auto 4rem; }
-  .area-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; padding: 1.75rem; cursor: pointer; position: relative; overflow: hidden; transition: border-color 0.2s, transform 0.15s; animation: fadeUp 0.5s ease both; }
-  .area-card:nth-child(1){animation-delay:0.05s} .area-card:nth-child(2){animation-delay:0.1s} .area-card:nth-child(3){animation-delay:0.15s} .area-card:nth-child(4){animation-delay:0.2s} .area-card:nth-child(5){animation-delay:0.25s}
-  @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
-  .area-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:var(--accent); opacity:0; transition:opacity 0.2s; }
-  .area-card:hover { border-color: var(--border2); transform: translateY(-3px); }
-  .area-card:hover::before { opacity: 1; }
-  .area-card:active { transform: scale(0.98); }
-  .card-top { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:1.5rem; }
-  .card-icon { width:42px; height:42px; border-radius:10px; background:var(--accent-bg); display:flex; align-items:center; justify-content:center; }
-  .card-icon svg { width:20px; height:20px; }
-  .card-arrow { color:var(--text3); transition:color 0.2s,transform 0.2s; font-size:18px; }
-  .area-card:hover .card-arrow { color:var(--text2); transform:translate(2px,-2px); }
-  .card-name { font-size:17px; font-weight:600; margin-bottom:5px; }
-  .card-desc { font-size:13px; color:var(--text2); line-height:1.5; margin-bottom:1.5rem; }
-  .card-footer { display:flex; align-items:center; justify-content:space-between; }
-  .card-kpi-count { font-size:11px; font-family:'DM Mono',monospace; color:var(--accent); background:var(--accent-bg); border:1px solid var(--accent-border); border-radius:20px; padding:3px 10px; }
-  .card-status { font-size:11px; color:var(--text3); display:flex; align-items:center; gap:5px; }
-  .status-dot { width:5px; height:5px; border-radius:50%; background:var(--green); }
-
-  /* DETALLE ÁREA */
-  .detail-header { display:flex; align-items:center; gap:1rem; padding:2rem 2rem 0; max-width:1100px; margin:0 auto; }
-  .back-btn { background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:8px 14px; font-size:13px; color:var(--text2); cursor:pointer; display:flex; align-items:center; gap:6px; font-family:'DM Sans',sans-serif; transition:border-color 0.2s,color 0.2s; }
-  .back-btn:hover { border-color:var(--border2); color:var(--text); }
-  .detail-area-name { font-size:22px; font-weight:600; }
-  .detail-area-sub { font-size:13px; color:var(--text2); margin-top:2px; }
-  .detail-body { padding:2rem; max-width:1100px; margin:0 auto; }
-
-  /* KPI CARDS */
-  .kpi-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; margin-bottom:2rem; }
-  .kpi-card { background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:1.25rem; animation:fadeUp 0.3s ease both; }
-  .kpi-label { font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--text3); margin-bottom:8px; }
-  .kpi-value { font-size:26px; font-weight:600; font-family:'DM Mono',monospace; }
-  .kpi-unit { font-size:13px; font-weight:400; color:var(--text2); }
-  .kpi-change { font-size:12px; margin-top:6px; display:flex; align-items:center; gap:4px; }
-  .kpi-change.up { color:var(--green); } .kpi-change.down { color:var(--coral); }
-
-  /* SUBMÓDULOS */
-  .submod-tabs { display:flex; gap:8px; margin-bottom:1.5rem; flex-wrap:wrap; }
-  .submod-tab { background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:8px 16px; font-size:13px; color:var(--text2); cursor:pointer; font-family:'DM Sans',sans-serif; transition:all 0.2s; }
-  .submod-tab:hover { border-color:var(--border2); color:var(--text); }
-  .submod-tab.active { background:var(--amber-bg); border-color:rgba(245,166,35,0.3); color:var(--amber); }
-  .submod-panel { display:none; } .submod-panel.active { display:block; }
-
-  /* CARGAS - resumen */
-  .cargas-summary { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin-bottom:2rem; }
-  .cargas-kpi { background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:1.25rem; }
-  .cargas-kpi .lbl { font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--text3); margin-bottom:6px; }
-  .cargas-kpi .val { font-size:24px; font-weight:600; font-family:'DM Mono',monospace; }
-  .cargas-kpi .sub { font-size:11px; color:var(--text2); margin-top:3px; }
-
-  /* TABLA CARGAS */
-  .table-wrap { background:var(--bg2); border:1px solid var(--border); border-radius:12px; overflow:hidden; margin-bottom:2rem; }
-  .table-header { display:flex; align-items:center; justify-content:space-between; padding:1rem 1.25rem; border-bottom:1px solid var(--border); }
-  .table-title { font-size:14px; font-weight:500; }
-  .table-meta { font-size:11px; font-family:'DM Mono',monospace; color:var(--text3); }
-  table { width:100%; border-collapse:collapse; }
-  thead th { font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--text3); padding:10px 1.25rem; text-align:left; border-bottom:1px solid var(--border); font-weight:500; }
-  tbody tr { border-bottom:1px solid var(--border); transition:background 0.15s; }
-  tbody tr:last-child { border-bottom:none; }
-  tbody tr:hover { background:var(--bg3); }
-  tbody td { font-size:13px; padding:10px 1.25rem; font-family:'DM Mono',monospace; color:var(--text2); }
-  tbody td:first-child { color:var(--text); font-family:'DM Sans',sans-serif; }
-  .pill { display:inline-block; padding:2px 8px; border-radius:20px; font-size:11px; font-family:'DM Sans',monospace; }
-  .pill-blue { background:var(--blue-bg); color:var(--blue); border:1px solid rgba(59,142,243,0.2); }
-  .pill-amber { background:var(--amber-bg); color:var(--amber); border:1px solid rgba(245,166,35,0.2); }
-  .pill-green { background:var(--green-bg); color:var(--green); border:1px solid rgba(52,201,138,0.2); }
-
-  /* CHART BARS */
-  .chart-wrap { background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:1.5rem; margin-bottom:2rem; }
-  .chart-title { font-size:13px; font-weight:500; color:var(--text2); margin-bottom:1.25rem; }
-  .bar-row { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
-  .bar-date { font-size:11px; font-family:'DM Mono',monospace; color:var(--text3); width:50px; text-align:right; flex-shrink:0; }
-  .bar-track { flex:1; height:22px; background:var(--bg3); border-radius:4px; overflow:hidden; display:flex; }
-  .bar-ant { background:var(--blue); border-radius:4px 0 0 4px; height:100%; transition:width 0.6s ease; display:flex; align-items:center; justify-content:flex-end; padding-right:4px; }
-  .bar-noc { background:var(--amber); height:100%; transition:width 0.6s ease; display:flex; align-items:center; justify-content:flex-end; padding-right:4px; }
-  .bar-label { font-size:10px; color:rgba(255,255,255,0.7); font-family:'DM Mono',monospace; }
-  .chart-legend { display:flex; gap:16px; margin-top:12px; }
-  .legend-item { display:flex; align-items:center; gap:6px; font-size:11px; color:var(--text3); }
-  .legend-dot { width:10px; height:10px; border-radius:2px; }
-
-  /* LOADING / ERROR */
-  .loading-state { text-align:center; padding:3rem; color:var(--text3); font-size:13px; }
-  .spinner { width:24px; height:24px; border:2px solid var(--border2); border-top-color:var(--amber); border-radius:50%; animation:spin 0.8s linear infinite; margin:0 auto 1rem; }
-  @keyframes spin { to{transform:rotate(360deg)} }
-  .error-state { background:rgba(255,107,107,0.08); border:1px solid rgba(255,107,107,0.2); border-radius:12px; padding:1.25rem; font-size:13px; color:var(--coral); line-height:1.6; }
-
-  .chart-placeholder { background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:2.5rem; text-align:center; color:var(--text3); font-size:13px; line-height:1.7; }
-  .footer { text-align:center; padding:2rem; font-size:11px; font-family:'DM Mono',monospace; color:var(--text3); border-top:1px solid var(--border); }
-
   @media(max-width:600px){
-    .summary-strip{flex-wrap:wrap} .summary-item{min-width:50%}
-    .areas-grid{grid-template-columns:1fr} .topbar{padding:0 1rem} .topbar-date{display:none}
-    .bar-date{width:36px}
+    .summary-strip{flex-wrap:wrap}.summary-item{min-width:50%}
+    .areas-grid{grid-template-columns:1fr}.topbar{padding:0 1rem}.topbar-date{display:none}
   }
 </style>
 </head>
@@ -160,7 +162,7 @@
   </div>
 </header>
 
-<!-- ═══════════ MENÚ PRINCIPAL ═══════════ -->
+<!-- MENÚ PRINCIPAL -->
 <div class="view active" id="view-menu">
   <div class="hero">
     <div class="hero-glow"></div>
@@ -174,8 +176,7 @@
     <div class="summary-item"><div class="val">100%</div><div class="lbl">Disponibilidad</div></div>
   </div>
   <div class="areas-grid">
-
-    <div class="area-card" style="--accent:var(--blue);--accent-bg:var(--blue-bg);--accent-border:rgba(59,142,243,0.2);" onclick="openArea('maquilas')">
+    <div class="area-card" style="--accent:var(--blue);--accent-bg:var(--blue-bg);--accent-border:rgba(59,142,243,.2)" onclick="openArea('maquilas')">
       <div class="card-top">
         <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg></div>
         <span class="card-arrow">↗</span>
@@ -184,8 +185,7 @@
       <div class="card-desc">Producción, eficiencia de línea, paros y scrap de planta</div>
       <div class="card-footer"><span class="card-kpi-count">5 indicadores</span><span class="card-status"><span class="status-dot"></span>Activo</span></div>
     </div>
-
-    <div class="area-card" style="--accent:var(--green);--accent-bg:var(--green-bg);--accent-border:rgba(52,201,138,0.2);" onclick="openArea('ventas')">
+    <div class="area-card" style="--accent:var(--green);--accent-bg:var(--green-bg);--accent-border:rgba(52,201,138,.2)" onclick="openArea('ventas')">
       <div class="card-top">
         <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div>
         <span class="card-arrow">↗</span>
@@ -194,8 +194,7 @@
       <div class="card-desc">Ingresos, cumplimiento de metas y seguimiento comercial</div>
       <div class="card-footer"><span class="card-kpi-count">6 indicadores</span><span class="card-status"><span class="status-dot"></span>Activo</span></div>
     </div>
-
-    <div class="area-card" style="--accent:var(--amber);--accent-bg:var(--amber-bg);--accent-border:rgba(245,166,35,0.2);" onclick="openArea('logistica')">
+    <div class="area-card" style="--accent:var(--amber);--accent-bg:var(--amber-bg);--accent-border:rgba(245,166,35,.2)" onclick="openArea('logistica')">
       <div class="card-top">
         <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>
         <span class="card-arrow">↗</span>
@@ -204,8 +203,7 @@
       <div class="card-desc">Entregas, rutas activas, tiempos y costos de distribución</div>
       <div class="card-footer"><span class="card-kpi-count">5 indicadores</span><span class="card-status"><span class="status-dot"></span>Activo</span></div>
     </div>
-
-    <div class="area-card" style="--accent:var(--purple);--accent-bg:var(--purple-bg);--accent-border:rgba(155,109,255,0.2);" onclick="openArea('operaciones')">
+    <div class="area-card" style="--accent:var(--purple);--accent-bg:var(--purple-bg);--accent-border:rgba(155,109,255,.2)" onclick="openArea('operaciones')">
       <div class="card-top">
         <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07M8.46 8.46a5 5 0 0 0 0 7.07"/></svg></div>
         <span class="card-arrow">↗</span>
@@ -214,8 +212,7 @@
       <div class="card-desc">Proyectos, contratos, servicios especiales e incidencias</div>
       <div class="card-footer"><span class="card-kpi-count">4 indicadores</span><span class="card-status"><span class="status-dot"></span>Activo</span></div>
     </div>
-
-    <div class="area-card" style="--accent:var(--coral);--accent-bg:var(--coral-bg);--accent-border:rgba(255,107,107,0.2);" onclick="openArea('vigilancia')">
+    <div class="area-card" style="--accent:var(--coral);--accent-bg:var(--coral-bg);--accent-border:rgba(255,107,107,.2)" onclick="openArea('vigilancia')">
       <div class="card-top">
         <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--coral)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
         <span class="card-arrow">↗</span>
@@ -224,291 +221,441 @@
       <div class="card-desc">Seguridad, accesos, alertas y monitoreo de instalaciones</div>
       <div class="card-footer"><span class="card-kpi-count">3 indicadores</span><span class="card-status"><span class="status-dot"></span>Activo</span></div>
     </div>
-
   </div>
   <footer class="footer">ControlHub · Sistema de indicadores operativos</footer>
 </div>
 
-
-<!-- ═══════════ DETALLE DE ÁREA ═══════════ -->
+<!-- DETALLE DE ÁREA -->
 <div class="view" id="view-detail">
   <div class="detail-header">
     <button class="back-btn" onclick="goBack()">← Menú</button>
     <div>
       <div class="detail-area-name" id="detail-name"></div>
-      <div class="detail-area-sub">Indicadores del período actual · Actualización en tiempo real</div>
+      <div class="detail-area-sub">Indicadores del período · Actualización en tiempo real</div>
     </div>
   </div>
   <div class="detail-body" id="detail-body"></div>
 </div>
 
-
 <script>
-// ── Reloj ──────────────────────────────────────────────────
-function updateClock() {
-  const now = new Date();
-  document.getElementById('clock').textContent =
-    now.toLocaleDateString('es-MX',{weekday:'short',day:'numeric',month:'short'}) +
-    ' · ' + now.toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});
+function updateClock(){
+  const n=new Date();
+  document.getElementById('clock').textContent=
+    n.toLocaleDateString('es-MX',{weekday:'short',day:'numeric',month:'short'})+
+    ' · '+n.toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});
 }
-updateClock(); setInterval(updateClock, 1000);
+updateClock(); setInterval(updateClock,1000);
 
-// ══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 // 🔗 CONEXIÓN GOOGLE SHEETS
-// INSTRUCCIONES:
-//   1. Abre tu Google Sheet
-//   2. Archivo → Compartir → Publicar en la web
-//   3. Selecciona hoja "Marzo 2026" → formato CSV → Publicar
-//   4. Reemplaza la URL de abajo con la URL que te dé Google
-// ══════════════════════════════════════════════════════════════
-const SHEETS_URL = 'https://docs.google.com/spreadsheets/d/1o2VzGS6CznSp_v3iBPfPhZa3Ch4qddAQ/edit?usp=drive_link&ouid=104206528081402406903&rtpof=true&sd=true';
-// Ejemplo real:
-// const SHEETS_URL = 'https://docs.google.com/spreadsheets/d/e/XXXXXXXX/pub?gid=0&single=true&output=csv';
+// 1. Sube tu Excel a Google Drive → Abrir con Google Sheets
+// 2. Archivo → Compartir → Publicar en la web
+// 3. Elige la hoja → CSV → Publicar
+// 4. Pega la URL aquí abajo
+// Columnas requeridas: Fecha, Anticipadas, Nocturnas
+// ══════════════════════════════════════════════════════
+const SHEETS_URL = 'TU_URL_AQUI';
 
-// ── Parsear CSV ────────────────────────────────────────────
-function parseCSV(text) {
-  const lines = text.trim().split('\n').filter(l => l.trim());
-  const headers = lines[0].split(',').map(h => h.trim().replace(/"/g,''));
-  return lines.slice(1).map(line => {
-    const vals = line.split(',').map(v => v.trim().replace(/"/g,''));
-    const obj = {};
-    headers.forEach((h, i) => obj[h] = vals[i] || '');
-    return obj;
+function parseCSV(txt){
+  const lines=txt.trim().split('\n').filter(l=>l.trim());
+  const headers=lines[0].split(',').map(h=>h.trim().replace(/"/g,''));
+  return lines.slice(1).map(line=>{
+    const vals=line.split(',').map(v=>v.trim().replace(/"/g,''));
+    const o={};
+    headers.forEach((h,i)=>o[h]=vals[i]||'');
+    return o;
   });
 }
 
-// ── Cargar datos de Cargas desde Google Sheets ────────────
-async function loadCargasData() {
-  // Si no hay URL configurada, usar datos de demo
-  if (SHEETS_URL === 'TU_URL_AQUI') {
-    return getDemoData();
+function normDate(str){
+  if(!str) return null;
+  const s=str.toString().trim().split(' ')[0];
+  if(s.includes('-')&&s.length>=10) return s.substring(0,10);
+  if(s.includes('/')){
+    const [a,b,c]=s.split('/');
+    if(c&&c.length===4) return `${c}-${b.padStart(2,'0')}-${a.padStart(2,'0')}`;
+    if(a&&a.length===4) return `${a}-${b.padStart(2,'0')}-${c.padStart(2,'0')}`;
   }
-  try {
-    const res = await fetch(SHEETS_URL + '&t=' + Date.now()); // cache-bust
-    if (!res.ok) throw new Error('Error al cargar');
-    const text = await res.text();
-    return parseCSV(text);
-  } catch (e) {
-    console.warn('No se pudo conectar a Google Sheets, usando datos demo:', e);
-    return getDemoData();
+  return s;
+}
+
+async function loadData(){
+  if(SHEETS_URL==='TU_URL_AQUI') return {rows:getDemoData(),demo:true};
+  try{
+    const res=await fetch(SHEETS_URL+'&t='+Date.now());
+    if(!res.ok) throw new Error();
+    const txt=await res.text();
+    const rows=parseCSV(txt).map(r=>({
+      Fecha:normDate(r.Fecha||r.fecha||r.FECHA),
+      Anticipadas:parseInt(r.Anticipadas||r.anticipadas||r.ANTICIPADAS)||0,
+      Nocturnas:parseInt(r.Nocturnas||r.nocturnas||r.NOCTURNAS)||0
+    })).filter(r=>r.Fecha);
+    return {rows,demo:false};
+  }catch(e){
+    return {rows:getDemoData(),demo:true};
   }
 }
 
-// ── Datos de demo (tu Excel actual) ──────────────────────
-function getDemoData() {
+function getDemoData(){
   return [
-    {Fecha:'02/03',Anticipadas:'11',Nocturnas:'0'},
-    {Fecha:'03/03',Anticipadas:'4', Nocturnas:'6'},
-    {Fecha:'04/03',Anticipadas:'3', Nocturnas:'3'},
-    {Fecha:'05/03',Anticipadas:'3', Nocturnas:'6'},
-    {Fecha:'06/03',Anticipadas:'8', Nocturnas:'4'},
-    {Fecha:'07/03',Anticipadas:'8', Nocturnas:'3'},
-    {Fecha:'09/03',Anticipadas:'7', Nocturnas:'0'},
-    {Fecha:'10/03',Anticipadas:'7', Nocturnas:'3'},
-    {Fecha:'11/03',Anticipadas:'6', Nocturnas:'3'},
-    {Fecha:'12/03',Anticipadas:'1', Nocturnas:'5'},
-    {Fecha:'13/03',Anticipadas:'7', Nocturnas:'2'},
-    {Fecha:'14/03',Anticipadas:'2', Nocturnas:'2'},
+    {Fecha:'2026-01-05',Anticipadas:9, Nocturnas:2},
+    {Fecha:'2026-01-06',Anticipadas:6, Nocturnas:4},
+    {Fecha:'2026-01-07',Anticipadas:5, Nocturnas:3},
+    {Fecha:'2026-01-08',Anticipadas:8, Nocturnas:1},
+    {Fecha:'2026-01-09',Anticipadas:4, Nocturnas:5},
+    {Fecha:'2026-01-12',Anticipadas:7, Nocturnas:2},
+    {Fecha:'2026-01-13',Anticipadas:3, Nocturnas:6},
+    {Fecha:'2026-01-14',Anticipadas:9, Nocturnas:0},
+    {Fecha:'2026-01-15',Anticipadas:5, Nocturnas:4},
+    {Fecha:'2026-01-16',Anticipadas:6, Nocturnas:3},
+    {Fecha:'2026-02-02',Anticipadas:7, Nocturnas:3},
+    {Fecha:'2026-02-03',Anticipadas:5, Nocturnas:4},
+    {Fecha:'2026-02-04',Anticipadas:4, Nocturnas:4},
+    {Fecha:'2026-02-05',Anticipadas:8, Nocturnas:2},
+    {Fecha:'2026-02-06',Anticipadas:6, Nocturnas:5},
+    {Fecha:'2026-02-09',Anticipadas:9, Nocturnas:1},
+    {Fecha:'2026-02-10',Anticipadas:3, Nocturnas:6},
+    {Fecha:'2026-02-11',Anticipadas:7, Nocturnas:2},
+    {Fecha:'2026-02-12',Anticipadas:4, Nocturnas:3},
+    {Fecha:'2026-02-13',Anticipadas:6, Nocturnas:4},
+    {Fecha:'2026-03-02',Anticip adas:11,Nocturnas:0},
+    {Fecha:'2026-03-03',Anticipadas:4, Nocturnas:6},
+    {Fecha:'2026-03-04',Anticipadas:3, Nocturnas:3},
+    {Fecha:'2026-03-05',Anticipadas:3, Nocturnas:6},
+    {Fecha:'2026-03-06',Anticipadas:8, Nocturnas:4},
+    {Fecha:'2026-03-07',Anticipadas:8, Nocturnas:3},
+    {Fecha:'2026-03-09',Anticipadas:7, Nocturnas:0},
+    {Fecha:'2026-03-10',Anticipadas:7, Nocturnas:3},
+    {Fecha:'2026-03-11',Anticipadas:6, Nocturnas:3},
+    {Fecha:'2026-03-12',Anticipadas:1, Nocturnas:5},
+    {Fecha:'2026-03-13',Anticipadas:7, Nocturnas:2},
+    {Fecha:'2026-03-14',Anticipadas:2, Nocturnas:2},
   ];
 }
 
-// ── Renderizar submódulo Cargas ────────────────────────────
-async function renderCargas(container) {
-  container.innerHTML = `<div class="loading-state"><div class="spinner"></div>Cargando datos desde Google Sheets...</div>`;
+const MESES=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const DIAS_SHORT=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+function mesNombre(yyyy,mm){return `${MESES[parseInt(mm)-1]} ${yyyy}`;}
 
-  const rows = await loadCargasData();
-  const usingDemo = SHEETS_URL === 'TU_URL_AQUI';
+const chartInstances={};
+function destroyChart(id){if(chartInstances[id]){chartInstances[id].destroy();delete chartInstances[id];}}
 
-  const totalAnt = rows.reduce((s,r) => s + (parseInt(r.Anticipadas)||0), 0);
-  const totalNoc = rows.reduce((s,r) => s + (parseInt(r.Nocturnas)||0), 0);
-  const totalCar = totalAnt + totalNoc;
-  const pctAnt   = totalCar ? Math.round((totalAnt/totalCar)*100) : 0;
-  const promedio = rows.length ? (totalCar/rows.length).toFixed(1) : 0;
-  const maxTotal = Math.max(...rows.map(r => (parseInt(r.Anticipadas)||0)+(parseInt(r.Nocturnas)||0)));
+async function renderCargas(container){
+  container.innerHTML=`<div class="loading-state"><div class="spinner"></div>Cargando datos...</div>`;
+  const {rows,demo}=await loadData();
 
-  const tableRows = rows.map(r => {
-    const ant = parseInt(r.Anticipadas)||0;
-    const noc = parseInt(r.Nocturnas)||0;
-    const tot = ant + noc;
-    const pct = tot ? Math.round((ant/tot)*100) : 0;
-    return `<tr>
-      <td>${r.Fecha}</td>
-      <td><span class="pill pill-blue">${ant}</span></td>
-      <td><span class="pill pill-amber">${noc}</span></td>
-      <td><span class="pill pill-green">${tot}</span></td>
-      <td style="color:var(--text)">${pct}%</td>
-    </tr>`;
-  }).join('');
+  const mesesSet=new Set();
+  rows.forEach(r=>{if(r.Fecha){const[y,m]=r.Fecha.split('-');mesesSet.add(`${y}-${m}`);}});
+  const mesesList=[...mesesSet].sort();
 
-  const barRows = rows.map(r => {
-    const ant = parseInt(r.Anticipadas)||0;
-    const noc = parseInt(r.Nocturnas)||0;
-    const tot = ant + noc;
-    const wAnt = maxTotal ? Math.round((ant/maxTotal)*100) : 0;
-    const wNoc = maxTotal ? Math.round((noc/maxTotal)*100) : 0;
-    return `<div class="bar-row">
-      <span class="bar-date">${r.Fecha}</span>
-      <div class="bar-track">
-        <div class="bar-ant" style="width:${wAnt}%">${ant > 0 ? `<span class="bar-label">${ant}</span>` : ''}</div>
-        <div class="bar-noc" style="width:${wNoc}%">${noc > 0 ? `<span class="bar-label">${noc}</span>` : ''}</div>
+  let filtroMes='todos';
+  let filtroDesde='';
+  let filtroHasta='';
+
+  function filtrar(){
+    let data=[...rows];
+    if(filtroMes!=='todos') data=data.filter(r=>r.Fecha&&r.Fecha.startsWith(filtroMes));
+    if(filtroDesde) data=data.filter(r=>r.Fecha>=filtroDesde);
+    if(filtroHasta) data=data.filter(r=>r.Fecha<=filtroHasta);
+    return data.sort((a,b)=>a.Fecha.localeCompare(b.Fecha));
+  }
+
+  function getPeriodLabel(){
+    if(filtroMes!=='todos'){const[y,m]=filtroMes.split('-');return mesNombre(y,m);}
+    if(filtroDesde||filtroHasta) return `${filtroDesde||'inicio'} → ${filtroHasta||'hoy'}`;
+    return 'Todos los períodos';
+  }
+
+  function calcKPIs(data){
+    const ant=data.reduce((s,r)=>s+r.Anticipadas,0);
+    const noc=data.reduce((s,r)=>s+r.Nocturnas,0);
+    const tot=ant+noc;
+    const pctAnt=tot?Math.round(ant/tot*100):0;
+    const prom=data.length?(tot/data.length).toFixed(1):0;
+    return {ant,noc,tot,pctAnt,prom,dias:data.length};
+  }
+
+  function render(){
+    const data=filtrar();
+    const kpi=calcKPIs(data);
+
+    const byDow=[0,0,0,0,0,0,0];
+    const byDowN=[0,0,0,0,0,0,0];
+    const byDowC=[0,0,0,0,0,0,0];
+    data.forEach(r=>{
+      const d=new Date(r.Fecha+'T12:00:00');
+      const dow=d.getDay();
+      byDow[dow]+=r.Anticipadas;
+      byDowN[dow]+=r.Nocturnas;
+      byDowC[dow]++;
+    });
+
+    let acum=0;
+    const acumLabels=data.map(r=>{const d=new Date(r.Fecha+'T12:00:00');return `${d.getDate()}/${d.getMonth()+1}`;});
+    const acumData=data.map(r=>{acum+=r.Anticipadas+r.Nocturnas;return acum;});
+
+    container.innerHTML=`
+      ${demo
+        ?`<div class="info-banner warn">⚠ Datos de demo. Reemplaza <strong>SHEETS_URL</strong> con tu URL de Google Sheets para ver datos reales.</div>`
+        :`<div class="info-banner ok">● Datos conectados desde Google Sheets</div>`}
+
+      <div class="filters-bar">
+        <div class="filter-group">
+          <span class="filter-label">Mes</span>
+          <select class="filter-select" id="f-mes">
+            <option value="todos">Todos los meses</option>
+            ${mesesList.map(m=>{const[y,mm]=m.split('-');return`<option value="${m}" ${filtroMes===m?'selected':''}>${mesNombre(y,mm)}</option>`;}).join('')}
+          </select>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label">Desde</span>
+          <input type="date" class="filter-input" id="f-desde" value="${filtroDesde}">
+        </div>
+        <div class="filter-group">
+          <span class="filter-label">Hasta</span>
+          <input type="date" class="filter-input" id="f-hasta" value="${filtroHasta}">
+        </div>
+        <button class="filter-btn" onclick="applyFilters()">Aplicar</button>
+        <button class="filter-clear" onclick="clearFilters()">Limpiar</button>
+        <span class="filter-period-tag">${getPeriodLabel()}</span>
       </div>
-    </div>`;
-  }).join('');
 
-  container.innerHTML = `
-    ${usingDemo ? `<div class="error-state" style="margin-bottom:1.5rem;">
-      ⚠️ Mostrando datos de demo. Para conectar tu Google Sheets real, edita la variable <strong>SHEETS_URL</strong> en el código con la URL de publicación de tu hoja.
-    </div>` : `<div style="font-size:11px;color:var(--green);margin-bottom:1.5rem;display:flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;">
-      ● Datos cargados desde Google Sheets · Período: Marzo 2026
-    </div>`}
-
-    <div class="cargas-summary">
-      <div class="cargas-kpi"><div class="lbl">Total cargas</div><div class="val">${totalCar}</div><div class="sub">período completo</div></div>
-      <div class="cargas-kpi"><div class="lbl">Anticipadas</div><div class="val" style="color:var(--blue)">${totalAnt}</div><div class="sub">${pctAnt}% del total</div></div>
-      <div class="cargas-kpi"><div class="lbl">Nocturnas</div><div class="val" style="color:var(--amber)">${totalNoc}</div><div class="sub">${100-pctAnt}% del total</div></div>
-      <div class="cargas-kpi"><div class="lbl">Promedio diario</div><div class="val">${promedio}</div><div class="sub">cargas por día</div></div>
-    </div>
-
-    <div class="chart-wrap">
-      <div class="chart-title">Tendencia diaria · Anticipadas vs Nocturnas</div>
-      ${barRows}
-      <div class="chart-legend">
-        <div class="legend-item"><div class="legend-dot" style="background:var(--blue)"></div>Anticipadas</div>
-        <div class="legend-item"><div class="legend-dot" style="background:var(--amber)"></div>Nocturnas</div>
+      <div class="cargas-kpis">
+        <div class="ckpi"><div class="lbl">Total cargas</div><div class="val">${kpi.tot}</div><div class="sub">${kpi.dias} días</div></div>
+        <div class="ckpi"><div class="lbl">Anticipadas</div><div class="val" style="color:var(--blue)">${kpi.ant}</div><div class="sub">${kpi.pctAnt}% del total</div></div>
+        <div class="ckpi"><div class="lbl">Nocturnas</div><div class="val" style="color:var(--amber)">${kpi.noc}</div><div class="sub">${100-kpi.pctAnt}% del total</div></div>
+        <div class="ckpi"><div class="lbl">Promedio diario</div><div class="val">${kpi.prom}</div><div class="sub">cargas/día</div></div>
       </div>
-    </div>
 
-    <div class="table-wrap">
-      <div class="table-header">
-        <span class="table-title">Detalle por día</span>
-        <span class="table-meta">${rows.length} registros</span>
+      <div class="charts-grid">
+        <div class="chart-box full">
+          <div class="chart-box-title">Barras diarias — Anticipadas vs Nocturnas <span>${data.length} días</span></div>
+          <div style="position:relative;width:100%;height:${Math.max(220,data.length*22)}px">
+            <canvas id="g-barras" role="img" aria-label="Barras diarias anticipadas vs nocturnas"></canvas>
+          </div>
+        </div>
+        <div class="chart-box">
+          <div class="chart-box-title">Proporción total <span>${kpi.tot} cargas</span></div>
+          <div style="position:relative;width:100%;height:220px">
+            <canvas id="g-dona" role="img" aria-label="Proporción anticipadas vs nocturnas"></canvas>
+          </div>
+        </div>
+        <div class="chart-box">
+          <div class="chart-box-title">Por día de la semana <span>promedio</span></div>
+          <div style="position:relative;width:100%;height:220px">
+            <canvas id="g-dow" role="img" aria-label="Cargas por día de la semana"></canvas>
+          </div>
+        </div>
+        <div class="chart-box full">
+          <div class="chart-box-title">Tendencia acumulada <span>cargas totales</span></div>
+          <div style="position:relative;width:100%;height:200px">
+            <canvas id="g-acum" role="img" aria-label="Tendencia acumulada de cargas"></canvas>
+          </div>
+        </div>
       </div>
-      <table>
-        <thead><tr><th>Fecha</th><th>Anticipadas</th><th>Nocturnas</th><th>Total</th><th>% Antic.</th></tr></thead>
-        <tbody>${tableRows}</tbody>
-      </table>
-    </div>
-  `;
+
+      <div class="table-wrap">
+        <div class="table-header">
+          <span class="table-title">Detalle por día</span>
+          <span class="table-meta">${data.length} registros · ${getPeriodLabel()}</span>
+        </div>
+        <table>
+          <thead><tr><th>Fecha</th><th>Día</th><th class="num">Anticipadas</th><th class="num">Nocturnas</th><th class="num">Total</th><th class="num">% Antic.</th></tr></thead>
+          <tbody>
+            ${data.map(r=>{
+              const ant=r.Anticipadas,noc=r.Nocturnas,tot=ant+noc;
+              const pct=tot?Math.round(ant/tot*100):0;
+              const d=new Date(r.Fecha+'T12:00:00');
+              const label=`${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')}/${d.getFullYear()}`;
+              const dow=DIAS_SHORT[d.getDay()];
+              return`<tr>
+                <td>${label}</td>
+                <td style="color:var(--text3);font-size:12px">${dow}</td>
+                <td class="num"><span class="pill pill-blue">${ant}</span></td>
+                <td class="num"><span class="pill pill-amber">${noc}</span></td>
+                <td class="num"><span class="pill pill-green">${tot}</span></td>
+                <td class="num" style="color:var(--text)">${pct}%</td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+          <tfoot><tr>
+            <td colspan="2">Total</td>
+            <td class="num">${kpi.ant}</td>
+            <td class="num">${kpi.noc}</td>
+            <td class="num">${kpi.tot}</td>
+            <td class="num">${kpi.pctAnt}%</td>
+          </tr></tfoot>
+        </table>
+      </div>
+    `;
+
+    window.applyFilters=function(){
+      filtroMes=document.getElementById('f-mes').value;
+      filtroDesde=document.getElementById('f-desde').value;
+      filtroHasta=document.getElementById('f-hasta').value;
+      if(filtroMes!=='todos'){filtroDesde='';filtroHasta='';}
+      ['g-barras','g-dona','g-dow','g-acum'].forEach(destroyChart);
+      render();
+    };
+    window.clearFilters=function(){
+      filtroMes='todos';filtroDesde='';filtroHasta='';
+      ['g-barras','g-dona','g-dow','g-acum'].forEach(destroyChart);
+      render();
+    };
+
+    setTimeout(()=>{
+      destroyChart('g-barras');
+      const labels=data.map(r=>{const d=new Date(r.Fecha+'T12:00:00');return`${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')}`;});
+      chartInstances['g-barras']=new Chart(document.getElementById('g-barras'),{
+        type:'bar',
+        data:{labels,datasets:[
+          {label:'Anticipadas',data:data.map(r=>r.Anticipadas),backgroundColor:'rgba(59,142,243,0.75)',borderRadius:3,borderSkipped:false},
+          {label:'Nocturnas',  data:data.map(r=>r.Nocturnas),  backgroundColor:'rgba(245,166,35,0.75)', borderRadius:3,borderSkipped:false},
+        ]},
+        options:{
+          indexAxis:'y',responsive:true,maintainAspectRatio:false,
+          plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: ${ctx.parsed.x}`}}},
+          scales:{
+            x:{stacked:false,grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#5a6070',font:{size:11}},border:{color:'transparent'}},
+            y:{stacked:false,grid:{display:false},ticks:{color:'#8b92a5',font:{size:11,family:'DM Mono'}},border:{color:'transparent'}}
+          }
+        }
+      });
+
+      destroyChart('g-dona');
+      chartInstances['g-dona']=new Chart(document.getElementById('g-dona'),{
+        type:'doughnut',
+        data:{labels:['Anticipadas','Nocturnas'],datasets:[{
+          data:[kpi.ant,kpi.noc],
+          backgroundColor:['rgba(59,142,243,0.8)','rgba(245,166,35,0.8)'],
+          borderColor:['#3b8ef3','#f5a623'],borderWidth:1,hoverOffset:6
+        }]},
+        options:{
+          responsive:true,maintainAspectRatio:false,cutout:'68%',
+          plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${ctx.parsed} (${Math.round(ctx.parsed/(kpi.ant+kpi.noc)*100)}%)`}}}
+        }
+      });
+
+      destroyChart('g-dow');
+      const dowLabels=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+      const dowAntProm=byDow.map((v,i)=>byDowC[i]?+(v/byDowC[i]).toFixed(1):0);
+      const dowNocProm=byDowN.map((v,i)=>byDowC[i]?+(v/byDowC[i]).toFixed(1):0);
+      chartInstances['g-dow']=new Chart(document.getElementById('g-dow'),{
+        type:'bar',
+        data:{labels:dowLabels,datasets:[
+          {label:'Anticipadas',data:dowAntProm,backgroundColor:'rgba(59,142,243,0.75)',borderRadius:4,borderSkipped:false},
+          {label:'Nocturnas',  data:dowNocProm,backgroundColor:'rgba(245,166,35,0.75)', borderRadius:4,borderSkipped:false},
+        ]},
+        options:{
+          responsive:true,maintainAspectRatio:false,
+          plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label} prom: ${ctx.parsed.y}`}}},
+          scales:{
+            x:{grid:{display:false},ticks:{color:'#8b92a5',font:{size:11}},border:{color:'transparent'}},
+            y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#5a6070',font:{size:11}},border:{color:'transparent'}}
+          }
+        }
+      });
+
+      destroyChart('g-acum');
+      chartInstances['g-acum']=new Chart(document.getElementById('g-acum'),{
+        type:'line',
+        data:{labels:acumLabels,datasets:[{
+          label:'Acumulado',data:acumData,
+          borderColor:'#34c98a',backgroundColor:'rgba(52,201,138,0.08)',
+          borderWidth:2,pointRadius:3,pointBackgroundColor:'#34c98a',
+          fill:true,tension:0.3
+        }]},
+        options:{
+          responsive:true,maintainAspectRatio:false,
+          plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`Acumulado: ${ctx.parsed.y} cargas`}}},
+          scales:{
+            x:{grid:{display:false},ticks:{color:'#5a6070',font:{size:10},maxTicksLimit:12,autoSkip:true},border:{color:'transparent'}},
+            y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#5a6070',font:{size:11}},border:{color:'transparent'}}
+          }
+        }
+      });
+    },50);
+  }
+
+  render();
 }
 
-// ── Datos por área ─────────────────────────────────────────
-const areas = {
-  maquilas: {
-    name: 'Maquilas',
-    kpis: [
-      {label:'Producción diaria',  value:'1,240',unit:'pzas',change:'+3.2%',up:true},
-      {label:'Eficiencia de línea',value:'87',   unit:'%',  change:'+1.5%',up:true},
-      {label:'Paros no planeados', value:'2',    unit:'ev', change:'-1',   up:true},
-      {label:'Scrap del día',      value:'0.8',  unit:'%',  change:'+0.2%',up:false},
-      {label:'OEE',                value:'82',   unit:'%',  change:'+0.8%',up:true},
-    ],
-    submods: []
-  },
-  ventas: {
-    name: 'Ventas',
-    kpis: [
-      {label:'Ventas del mes',        value:'$2.4M', unit:'',  change:'+8.1%',up:true},
-      {label:'Cumplimiento de meta',  value:'94',    unit:'%', change:'+4%',  up:true},
-      {label:'Nuevos clientes',       value:'12',    unit:'',  change:'+3',   up:true},
-      {label:'Ticket promedio',       value:'$18.5K',unit:'',  change:'-2.3%',up:false},
-      {label:'Cotizaciones abiertas', value:'37',    unit:'',  change:'+5',   up:true},
-      {label:'Tasa de cierre',        value:'68',    unit:'%', change:'+2%',  up:true},
-    ],
-    submods: []
-  },
-  logistica: {
-    name: 'Logística',
-    kpis: [
-      {label:'Entregas a tiempo',    value:'96', unit:'%',change:'+1.2%',up:true},
-      {label:'Rutas activas',        value:'18', unit:'', change:'0',    up:true},
-      {label:'Costo por entrega',    value:'$320',unit:'',change:'+5%', up:false},
-      {label:'Unidades en tránsito', value:'47', unit:'', change:'+7',   up:true},
-    ],
-    submods: [
-      { id:'cargas', label:'Cargas anticipadas', render: renderCargas }
-    ]
-  },
-  operaciones: {
-    name: 'Operaciones especiales',
-    kpis: [
-      {label:'Proyectos activos',   value:'8', unit:'',change:'+1', up:true},
-      {label:'Avance promedio',     value:'72',unit:'%',change:'+5%',up:true},
-      {label:'Incidencias abiertas',value:'1', unit:'',change:'-2', up:true},
-      {label:'Contratos vigentes',  value:'23',unit:'',change:'+3', up:true},
-    ],
-    submods: []
-  },
-  vigilancia: {
-    name: 'Vigilancia',
-    kpis: [
-      {label:'Accesos registrados',value:'342',  unit:'hoy',change:'+12',up:true},
-      {label:'Alertas activas',    value:'0',    unit:'',   change:'-1', up:true},
-      {label:'Cámaras en línea',   value:'28/30',unit:'',   change:'',   up:true},
-    ],
-    submods: []
-  }
+const areas={
+  maquilas:{name:'Maquilas',kpis:[
+    {label:'Producción diaria', value:'1,240',unit:'pzas',change:'+3.2%',up:true},
+    {label:'Eficiencia de línea',value:'87',  unit:'%',  change:'+1.5%',up:true},
+    {label:'Paros no planeados',value:'2',    unit:'ev', change:'-1',   up:true},
+    {label:'Scrap del día',     value:'0.8',  unit:'%',  change:'+0.2%',up:false},
+    {label:'OEE',               value:'82',   unit:'%',  change:'+0.8%',up:true},
+  ],submods:[]},
+  ventas:{name:'Ventas',kpis:[
+    {label:'Ventas del mes',       value:'$2.4M', unit:'',  change:'+8.1%',up:true},
+    {label:'Cumplimiento de meta', value:'94',    unit:'%', change:'+4%',  up:true},
+    {label:'Nuevos clientes',      value:'12',    unit:'',  change:'+3',   up:true},
+    {label:'Ticket promedio',      value:'$18.5K',unit:'',  change:'-2.3%',up:false},
+    {label:'Cotizaciones abiertas',value:'37',    unit:'',  change:'+5',   up:true},
+    {label:'Tasa de cierre',       value:'68',    unit:'%', change:'+2%',  up:true},
+  ],submods:[]},
+  logistica:{name:'Logística',kpis:[
+    {label:'Entregas a tiempo',   value:'96', unit:'%',change:'+1.2%',up:true},
+    {label:'Rutas activas',       value:'18', unit:'', change:'0',    up:true},
+    {label:'Costo por entrega',   value:'$320',unit:'',change:'+5%', up:false},
+    {label:'Unidades en tránsito',value:'47', unit:'', change:'+7',   up:true},
+  ],submods:[{id:'cargas',label:'📦 Cargas anticipadas',render:renderCargas}]},
+  operaciones:{name:'Operaciones especiales',kpis:[
+    {label:'Proyectos activos',   value:'8', unit:'',change:'+1', up:true},
+    {label:'Avance promedio',     value:'72',unit:'%',change:'+5%',up:true},
+    {label:'Incidencias abiertas',value:'1', unit:'',change:'-2', up:true},
+    {label:'Contratos vigentes',  value:'23',unit:'',change:'+3', up:true},
+  ],submods:[]},
+  vigilancia:{name:'Vigilancia',kpis:[
+    {label:'Accesos registrados',value:'342',  unit:'hoy',change:'+12',up:true},
+    {label:'Alertas activas',    value:'0',    unit:'',   change:'-1', up:true},
+    {label:'Cámaras en línea',   value:'28/30',unit:'',   change:'',   up:true},
+  ],submods:[]}
 };
 
-// ── Renderizar detalle ─────────────────────────────────────
-function openArea(key) {
-  const area = areas[key];
-  document.getElementById('detail-name').textContent = area.name;
-
-  const kpiHtml = area.kpis.map((k,i) => `
-    <div class="kpi-card" style="animation-delay:${i*0.06}s">
+let currentArea='';
+function openArea(key){
+  currentArea=key;
+  const area=areas[key];
+  document.getElementById('detail-name').textContent=area.name;
+  const kpiHtml=area.kpis.map((k,i)=>`
+    <div class="kpi-card" style="animation-delay:${i*.06}s">
       <div class="kpi-label">${k.label}</div>
       <div class="kpi-value">${k.value} <span class="kpi-unit">${k.unit}</span></div>
-      ${k.change ? `<div class="kpi-change ${k.up?'up':'down'}">${k.up?'▲':'▼'} ${k.change} vs ayer</div>` : ''}
+      ${k.change?`<div class="kpi-change ${k.up?'up':'down'}">${k.up?'▲':'▼'} ${k.change} vs ayer</div>`:''}
     </div>`).join('');
-
-  let submodsHtml = '';
-  if (area.submods.length > 0) {
-    const tabs = area.submods.map((s,i) =>
-      `<button class="submod-tab ${i===0?'active':''}" onclick="switchTab('${s.id}',this)">${s.label}</button>`
-    ).join('');
-    const panels = area.submods.map((s,i) =>
-      `<div class="submod-panel ${i===0?'active':''}" id="panel-${s.id}"></div>`
-    ).join('');
-    submodsHtml = `
-      <div style="margin-top:2rem;">
-        <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:12px;">Submódulos</div>
-        <div class="submod-tabs">${tabs}</div>
-        ${panels}
-      </div>`;
+  let submodsHtml='';
+  if(area.submods.length){
+    const tabs=area.submods.map((s,i)=>`<button class="submod-tab ${i===0?'active':''}" onclick="switchTab('${key}','${s.id}',this)">${s.label}</button>`).join('');
+    const panels=area.submods.map((s,i)=>`<div class="submod-panel ${i===0?'active':''}" id="panel-${s.id}"></div>`).join('');
+    submodsHtml=`<div style="margin-top:2rem">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:12px">Submódulos</div>
+      <div class="submod-tabs">${tabs}</div>${panels}
+    </div>`;
   }
-
-  document.getElementById('detail-body').innerHTML = `
-    <div class="kpi-grid">${kpiHtml}</div>
-    ${area.kpis.length === 0 && area.submods.length === 0 ? `<div class="chart-placeholder"><div style="font-size:32px;margin-bottom:1rem;opacity:.4">📊</div><strong>Próximamente</strong>Indicadores en construcción</div>` : ''}
-    ${submodsHtml}
-  `;
-
-  // Cargar primer submódulo automáticamente
-  if (area.submods.length > 0) {
-    area.submods[0].render(document.getElementById(`panel-${area.submods[0].id}`));
-  }
-
+  document.getElementById('detail-body').innerHTML=`<div class="kpi-grid">${kpiHtml}</div>${submodsHtml}`;
+  if(area.submods.length) area.submods[0].render(document.getElementById(`panel-${area.submods[0].id}`));
   document.getElementById('view-menu').classList.remove('active');
   document.getElementById('view-detail').classList.add('active');
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
-function switchTab(id, btn) {
-  document.querySelectorAll('.submod-tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.submod-panel').forEach(p => p.classList.remove('active'));
+function switchTab(areaKey,subId,btn){
+  document.querySelectorAll('.submod-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.submod-panel').forEach(p=>p.classList.remove('active'));
   btn.classList.add('active');
-  const panel = document.getElementById(`panel-${id}`);
+  const panel=document.getElementById(`panel-${subId}`);
   panel.classList.add('active');
-  const area = areas[currentArea];
-  const sub = area.submods.find(s => s.id === id);
-  if (sub && panel.innerHTML === '') sub.render(panel);
+  if(panel.innerHTML===''){
+    const sub=areas[areaKey].submods.find(s=>s.id===subId);
+    if(sub) sub.render(panel);
+  }
 }
 
-let currentArea = '';
-const _openArea = openArea;
-window.openArea = function(key) { currentArea = key; _openArea(key); };
-
-function goBack() {
+function goBack(){
+  ['g-barras','g-dona','g-dow','g-acum'].forEach(destroyChart);
   document.getElementById('view-detail').classList.remove('active');
   document.getElementById('view-menu').classList.add('active');
   window.scrollTo({top:0,behavior:'smooth'});
