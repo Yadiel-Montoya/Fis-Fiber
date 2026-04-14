@@ -16,6 +16,7 @@
     --amber:#f5a623;--amber-bg:rgba(245,166,35,0.10);
     --purple:#9b6dff;--purple-bg:rgba(155,109,255,0.10);
     --coral:#ff6b6b;--coral-bg:rgba(255,107,107,0.10);
+    --wine:#8B1A1A;--wine-light:#A52020;--wine-bg:rgba(139,26,26,0.15);--wine-border:rgba(139,26,26,0.35);
   }
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
   body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
@@ -84,17 +85,16 @@
   .submod-tabs{display:flex;gap:8px;margin-bottom:1.5rem;flex-wrap:wrap}
   .submod-tab{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:8px 16px;font-size:13px;color:var(--text2);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
   .submod-tab:hover{border-color:var(--border2);color:var(--text)}
-  .submod-tab.active{background:var(--amber-bg);border-color:rgba(245,166,35,.3);color:var(--amber)}
-  .submod-panel{display:none}.submod-panel.active{display:block}
+  .logistica-tabs .submod-tab.active{background:var(--wine-bg);border-color:var(--wine-border);color:var(--wine-light)}
 
   .filters-bar{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.25rem 1.5rem;margin-bottom:1.5rem;display:flex;align-items:flex-end;gap:1rem;flex-wrap:wrap}
   .filter-group{display:flex;flex-direction:column;gap:6px}
   .filter-label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--text3)}
   .filter-select,.filter-input{background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:7px 12px;font-size:13px;color:var(--text);font-family:'DM Sans',sans-serif;outline:none;cursor:pointer;min-width:130px;transition:border-color .2s}
-  .filter-select:hover,.filter-input:hover,.filter-select:focus,.filter-input:focus{border-color:var(--amber)}
+  .filter-select:hover,.filter-input:hover,.filter-select:focus,.filter-input:focus{border-color:var(--wine)}
   .filter-input{min-width:140px}
-  .filter-btn{background:var(--amber-bg);border:1px solid rgba(245,166,35,.3);border-radius:8px;padding:7px 16px;font-size:13px;color:var(--amber);font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .2s;white-space:nowrap}
-  .filter-btn:hover{background:rgba(245,166,35,.2)}
+  .filter-btn{background:var(--wine-bg);border:1px solid var(--wine-border);border-radius:8px;padding:7px 16px;font-size:13px;color:var(--wine-light);font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .2s;white-space:nowrap}
+  .filter-btn:hover{background:rgba(139,26,26,0.28)}
   .filter-clear{background:transparent;border:1px solid var(--border);border-radius:8px;padding:7px 14px;font-size:13px;color:var(--text3);font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .2s}
   .filter-clear:hover{color:var(--text);border-color:var(--border2)}
   .filter-period-tag{font-size:11px;font-family:'DM Mono',monospace;color:var(--green);background:var(--green-bg);border:1px solid rgba(52,201,138,.2);border-radius:20px;padding:3px 10px;align-self:center;white-space:nowrap}
@@ -126,16 +126,21 @@
   tbody td.num{text-align:right;font-family:'DM Mono',monospace}
   .pill{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px}
   .pill-blue{background:var(--blue-bg);color:var(--blue);border:1px solid rgba(59,142,243,.2)}
-  .pill-amber{background:var(--amber-bg);color:var(--amber);border:1px solid rgba(245,166,35,.2)}
+  .pill-wine{background:var(--wine-bg);color:var(--wine-light);border:1px solid var(--wine-border)}
   .pill-green{background:var(--green-bg);color:var(--green);border:1px solid rgba(52,201,138,.2)}
   tfoot td{font-size:12px;padding:10px 1.25rem;font-weight:600;border-top:1px solid var(--border2);font-family:'DM Mono',monospace;color:var(--text)}
   tfoot td.num{text-align:right}
 
+  .empty-state{text-align:center;padding:4rem 2rem;color:var(--text3)}
+  .empty-icon{font-size:32px;margin-bottom:1rem;opacity:.4}
+  .empty-title{font-size:15px;font-weight:500;color:var(--text2);margin-bottom:6px}
+  .empty-desc{font-size:13px;line-height:1.6;max-width:340px;margin:0 auto}
+  .empty-url{font-size:11px;font-family:'DM Mono',monospace;color:var(--wine-light);background:var(--wine-bg);border:1px solid var(--wine-border);border-radius:8px;padding:8px 14px;margin-top:1rem;display:inline-block;word-break:break-all;text-align:left}
+
   .loading-state{text-align:center;padding:3rem;color:var(--text3);font-size:13px}
-  .spinner{width:24px;height:24px;border:2px solid var(--border2);border-top-color:var(--amber);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 1rem}
+  .spinner{width:24px;height:24px;border:2px solid var(--border2);border-top-color:var(--wine);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 1rem}
   @keyframes spin{to{transform:rotate(360deg)}}
   .info-banner{border-radius:10px;padding:10px 14px;font-size:12px;line-height:1.6;margin-bottom:1.25rem;display:flex;align-items:flex-start;gap:8px}
-  .info-banner.warn{background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.2);color:var(--amber)}
   .info-banner.ok{background:var(--green-bg);border:1px solid rgba(52,201,138,.2);color:var(--green)}
 
   .footer{text-align:center;padding:2rem;font-size:11px;font-family:'DM Mono',monospace;color:var(--text3);border-top:1px solid var(--border)}
@@ -162,7 +167,6 @@
   </div>
 </header>
 
-<!-- MENÚ PRINCIPAL -->
 <div class="view active" id="view-menu">
   <div class="hero">
     <div class="hero-glow"></div>
@@ -194,14 +198,14 @@
       <div class="card-desc">Ingresos, cumplimiento de metas y seguimiento comercial</div>
       <div class="card-footer"><span class="card-kpi-count">6 indicadores</span><span class="card-status"><span class="status-dot"></span>Activo</span></div>
     </div>
-    <div class="area-card" style="--accent:var(--amber);--accent-bg:var(--amber-bg);--accent-border:rgba(245,166,35,.2)" onclick="openArea('logistica')">
+    <div class="area-card" style="--accent:var(--wine);--accent-bg:var(--wine-bg);--accent-border:var(--wine-border)" onclick="openArea('logistica')">
       <div class="card-top">
-        <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>
+        <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--wine-light)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>
         <span class="card-arrow">↗</span>
       </div>
       <div class="card-name">Logística</div>
       <div class="card-desc">Entregas, rutas activas, tiempos y costos de distribución</div>
-      <div class="card-footer"><span class="card-kpi-count">5 indicadores</span><span class="card-status"><span class="status-dot"></span>Activo</span></div>
+      <div class="card-footer"><span class="card-kpi-count" style="color:var(--wine-light);background:var(--wine-bg);border-color:var(--wine-border)">5 indicadores</span><span class="card-status"><span class="status-dot"></span>Activo</span></div>
     </div>
     <div class="area-card" style="--accent:var(--purple);--accent-bg:var(--purple-bg);--accent-border:rgba(155,109,255,.2)" onclick="openArea('operaciones')">
       <div class="card-top">
@@ -225,7 +229,6 @@
   <footer class="footer">ControlHub · Sistema de indicadores operativos</footer>
 </div>
 
-<!-- DETALLE DE ÁREA -->
 <div class="view" id="view-detail">
   <div class="detail-header">
     <button class="back-btn" onclick="goBack()">← Menú</button>
@@ -246,21 +249,22 @@ function updateClock(){
 }
 updateClock(); setInterval(updateClock,1000);
 
-// ══════════════════════════════════════════════════════
-// 🔗 CONEXIÓN GOOGLE SHEETS
-// 1. Sube tu Excel a Google Drive → Abrir con Google Sheets
-// 2. Archivo → Compartir → Publicar en la web
-// 3. Elige la hoja → CSV → Publicar
-// 4. Pega la URL aquí abajo
-// Columnas requeridas: Fecha, Anticipadas, Nocturnas
-// ══════════════════════════════════════════════════════
 const SHEETS_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSoLF8K76RuGVjuJsZPOVfAsQn698ryqhVPrjd-vGtCoLKUg3ts2MqzMXnEy490zw/pub?gid=241439534&single=true&output=csv';
 
 function parseCSV(txt){
   const lines=txt.trim().split('\n').filter(l=>l.trim());
-  const headers=lines[0].split(',').map(h=>h.trim().replace(/"/g,''));
+  if(lines.length<2) return [];
+  const headers=lines[0].split(',').map(h=>h.trim().replace(/^"|"$/g,''));
   return lines.slice(1).map(line=>{
-    const vals=line.split(',').map(v=>v.trim().replace(/"/g,''));
+    const vals=[];
+    let cur='', inQ=false;
+    for(let i=0;i<line.length;i++){
+      const c=line[i];
+      if(c==='"'){inQ=!inQ;}
+      else if(c===','&&!inQ){vals.push(cur.trim().replace(/^"|"$/g,''));cur='';}
+      else{cur+=c;}
+    }
+    vals.push(cur.trim().replace(/^"|"$/g,''));
     const o={};
     headers.forEach((h,i)=>o[h]=vals[i]||'');
     return o;
@@ -269,68 +273,50 @@ function parseCSV(txt){
 
 function normDate(str){
   if(!str) return null;
-  const s=str.toString().trim().split(' ')[0];
-  if(s.includes('-')&&s.length>=10) return s.substring(0,10);
-  if(s.includes('/')){
-    const [a,b,c]=s.split('/');
-    if(c&&c.length===4) return `${c}-${b.padStart(2,'0')}-${a.padStart(2,'0')}`;
-    if(a&&a.length===4) return `${a}-${b.padStart(2,'0')}-${c.padStart(2,'0')}`;
+  const s=str.toString().trim().replace(/["']/g,'');
+  if(!s) return null;
+  if(/^\d{4,5}$/.test(s)){
+    const d=new Date((parseInt(s)-25569)*86400000);
+    if(!isNaN(d)){
+      const y=d.getUTCFullYear(),m=d.getUTCMonth()+1,dd=d.getUTCDate();
+      return `${y}-${String(m).padStart(2,'0')}-${String(dd).padStart(2,'0')}`;
+    }
   }
-  return s;
+  if(/^\d{4}-\d{2}-\d{2}/.test(s)) return s.substring(0,10);
+  const sep=s.includes('/')?'/':s.includes('-')?'-':null;
+  if(sep){
+    const parts=s.split(sep);
+    if(parts.length>=3){
+      const [a,b,c]=parts;
+      if(a.length===4) return `${a}-${b.padStart(2,'0')}-${c.substring(0,2).padStart(2,'0')}`;
+      if(c.length===4) return `${c}-${b.padStart(2,'0')}-${a.padStart(2,'0')}`;
+    }
+  }
+  const d=new Date(s);
+  if(!isNaN(d)) return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  return null;
 }
 
 async function loadData(){
-  if(SHEETS_URL==='TU_URL_AQUI') return {rows:getDemoData(),demo:true};
   try{
-    const res=await fetch(SHEETS_URL+'&t='+Date.now());
-    if(!res.ok) throw new Error();
+    const url=SHEETS_URL+(SHEETS_URL.includes('?')?'&':'?')+'cachebust='+Date.now();
+    const res=await fetch(url,{cache:'no-store'});
+    if(!res.ok) throw new Error('HTTP '+res.status);
     const txt=await res.text();
-    const rows=parseCSV(txt).map(r=>({
-      Fecha:normDate(r.Fecha||r.fecha||r.FECHA),
-      Anticipadas:parseInt(r.Anticipadas||r.anticipadas||r.ANTICIPADAS)||0,
-      Nocturnas:parseInt(r.Nocturnas||r.nocturnas||r.NOCTURNAS)||0
-    })).filter(r=>r.Fecha);
-    return {rows,demo:false};
+    if(txt.trim().startsWith('<')) throw new Error('Recibió HTML en lugar de CSV');
+    const raw=parseCSV(txt);
+    if(raw.length===0) throw new Error('CSV vacío');
+    const rows=raw.map(r=>({
+      Fecha:normDate(r.Fecha||r.fecha||r.FECHA||''),
+      Anticipadas:parseInt((r.Anticipadas||r.anticipadas||r.ANTICIPADAS||'0').replace(/[^0-9-]/g,''))||0,
+      Nocturnas:parseInt((r.Nocturnas||r.nocturnas||r.NOCTURNAS||'0').replace(/[^0-9-]/g,''))||0,
+    })).filter(r=>r.Fecha&&r.Fecha.length>=8);
+    if(rows.length===0) throw new Error('Sin filas válidas tras parsear fechas');
+    return {rows,demo:false,error:null};
   }catch(e){
-    return {rows:getDemoData(),demo:true};
+    console.warn('Sheets error:',e.message);
+    return {rows:[],demo:false,error:e.message};
   }
-}
-
-function getDemoData(){
-  return [
-    {Fecha:'2026-01-05',Anticipadas:9, Nocturnas:2},
-    {Fecha:'2026-01-06',Anticipadas:6, Nocturnas:4},
-    {Fecha:'2026-01-07',Anticipadas:5, Nocturnas:3},
-    {Fecha:'2026-01-08',Anticipadas:8, Nocturnas:1},
-    {Fecha:'2026-01-09',Anticipadas:4, Nocturnas:5},
-    {Fecha:'2026-01-12',Anticipadas:7, Nocturnas:2},
-    {Fecha:'2026-01-13',Anticipadas:3, Nocturnas:6},
-    {Fecha:'2026-01-14',Anticipadas:9, Nocturnas:0},
-    {Fecha:'2026-01-15',Anticipadas:5, Nocturnas:4},
-    {Fecha:'2026-01-16',Anticipadas:6, Nocturnas:3},
-    {Fecha:'2026-02-02',Anticipadas:7, Nocturnas:3},
-    {Fecha:'2026-02-03',Anticipadas:5, Nocturnas:4},
-    {Fecha:'2026-02-04',Anticipadas:4, Nocturnas:4},
-    {Fecha:'2026-02-05',Anticipadas:8, Nocturnas:2},
-    {Fecha:'2026-02-06',Anticipadas:6, Nocturnas:5},
-    {Fecha:'2026-02-09',Anticipadas:9, Nocturnas:1},
-    {Fecha:'2026-02-10',Anticipadas:3, Nocturnas:6},
-    {Fecha:'2026-02-11',Anticipadas:7, Nocturnas:2},
-    {Fecha:'2026-02-12',Anticipadas:4, Nocturnas:3},
-    {Fecha:'2026-02-13',Anticipadas:6, Nocturnas:4},
-    {Fecha:'2026-03-02',Anticipadas:11,Nocturnas:0},
-    {Fecha:'2026-03-03',Anticipadas:4, Nocturnas:6},
-    {Fecha:'2026-03-04',Anticipadas:3, Nocturnas:3},
-    {Fecha:'2026-03-05',Anticipadas:3, Nocturnas:6},
-    {Fecha:'2026-03-06',Anticipadas:8, Nocturnas:4},
-    {Fecha:'2026-03-07',Anticipadas:8, Nocturnas:3},
-    {Fecha:'2026-03-09',Anticipadas:7, Nocturnas:0},
-    {Fecha:'2026-03-10',Anticipadas:7, Nocturnas:3},
-    {Fecha:'2026-03-11',Anticipadas:6, Nocturnas:3},
-    {Fecha:'2026-03-12',Anticipadas:1, Nocturnas:5},
-    {Fecha:'2026-03-13',Anticipadas:7, Nocturnas:2},
-    {Fecha:'2026-03-14',Anticipadas:2, Nocturnas:2},
-  ];
 }
 
 const MESES=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
@@ -341,8 +327,22 @@ const chartInstances={};
 function destroyChart(id){if(chartInstances[id]){chartInstances[id].destroy();delete chartInstances[id];}}
 
 async function renderCargas(container){
-  container.innerHTML=`<div class="loading-state"><div class="spinner"></div>Cargando datos...</div>`;
-  const {rows,demo}=await loadData();
+  container.innerHTML=`<div class="loading-state"><div class="spinner"></div>Cargando datos de Google Sheets…</div>`;
+  const {rows,error}=await loadData();
+
+  if(rows.length===0){
+    container.innerHTML=`
+      <div class="empty-state">
+        <div class="empty-icon">📦</div>
+        <div class="empty-title">Sin datos conectados</div>
+        <div class="empty-desc">
+          Verifica que tu Google Sheets tenga las columnas <strong>Fecha</strong>, <strong>Anticipadas</strong> y <strong>Nocturnas</strong>, y que esté publicada como CSV.
+          ${error?`<br><br><em style="color:var(--coral);font-size:11px">Error: ${error}</em>`:''}
+        </div>
+        <div class="empty-url">${SHEETS_URL}</div>
+      </div>`;
+    return;
+  }
 
   const mesesSet=new Set();
   rows.forEach(r=>{if(r.Fecha){const[y,m]=r.Fecha.split('-');mesesSet.add(`${y}-${m}`);}});
@@ -379,15 +379,11 @@ async function renderCargas(container){
     const data=filtrar();
     const kpi=calcKPIs(data);
 
-    const byDow=[0,0,0,0,0,0,0];
-    const byDowN=[0,0,0,0,0,0,0];
-    const byDowC=[0,0,0,0,0,0,0];
+    const byDow=[0,0,0,0,0,0,0],byDowN=[0,0,0,0,0,0,0],byDowC=[0,0,0,0,0,0,0];
     data.forEach(r=>{
       const d=new Date(r.Fecha+'T12:00:00');
       const dow=d.getDay();
-      byDow[dow]+=r.Anticipadas;
-      byDowN[dow]+=r.Nocturnas;
-      byDowC[dow]++;
+      byDow[dow]+=r.Anticipadas;byDowN[dow]+=r.Nocturnas;byDowC[dow]++;
     });
 
     let acum=0;
@@ -395,10 +391,7 @@ async function renderCargas(container){
     const acumData=data.map(r=>{acum+=r.Anticipadas+r.Nocturnas;return acum;});
 
     container.innerHTML=`
-      ${demo
-        ?`<div class="info-banner warn">⚠ Datos de demo. Reemplaza <strong>SHEETS_URL</strong> con tu URL de Google Sheets para ver datos reales.</div>`
-        :`<div class="info-banner ok">● Datos conectados desde Google Sheets</div>`}
-
+      <div class="info-banner ok">● Datos conectados desde Google Sheets · ${rows.length} registros cargados</div>
       <div class="filters-bar">
         <div class="filter-group">
           <span class="filter-label">Mes</span>
@@ -419,41 +412,32 @@ async function renderCargas(container){
         <button class="filter-clear" onclick="clearFilters()">Limpiar</button>
         <span class="filter-period-tag">${getPeriodLabel()}</span>
       </div>
-
       <div class="cargas-kpis">
         <div class="ckpi"><div class="lbl">Total cargas</div><div class="val">${kpi.tot}</div><div class="sub">${kpi.dias} días</div></div>
         <div class="ckpi"><div class="lbl">Anticipadas</div><div class="val" style="color:var(--blue)">${kpi.ant}</div><div class="sub">${kpi.pctAnt}% del total</div></div>
-        <div class="ckpi"><div class="lbl">Nocturnas</div><div class="val" style="color:var(--amber)">${kpi.noc}</div><div class="sub">${100-kpi.pctAnt}% del total</div></div>
+        <div class="ckpi"><div class="lbl">Nocturnas</div><div class="val" style="color:var(--wine-light)">${kpi.noc}</div><div class="sub">${100-kpi.pctAnt}% del total</div></div>
         <div class="ckpi"><div class="lbl">Promedio diario</div><div class="val">${kpi.prom}</div><div class="sub">cargas/día</div></div>
       </div>
-
       <div class="charts-grid">
         <div class="chart-box full">
           <div class="chart-box-title">Barras diarias — Anticipadas vs Nocturnas <span>${data.length} días</span></div>
           <div style="position:relative;width:100%;height:${Math.max(220,data.length*22)}px">
-            <canvas id="g-barras" role="img" aria-label="Barras diarias anticipadas vs nocturnas"></canvas>
+            <canvas id="g-barras"></canvas>
           </div>
         </div>
         <div class="chart-box">
           <div class="chart-box-title">Proporción total <span>${kpi.tot} cargas</span></div>
-          <div style="position:relative;width:100%;height:220px">
-            <canvas id="g-dona" role="img" aria-label="Proporción anticipadas vs nocturnas"></canvas>
-          </div>
+          <div style="position:relative;width:100%;height:220px"><canvas id="g-dona"></canvas></div>
         </div>
         <div class="chart-box">
           <div class="chart-box-title">Por día de la semana <span>promedio</span></div>
-          <div style="position:relative;width:100%;height:220px">
-            <canvas id="g-dow" role="img" aria-label="Cargas por día de la semana"></canvas>
-          </div>
+          <div style="position:relative;width:100%;height:220px"><canvas id="g-dow"></canvas></div>
         </div>
         <div class="chart-box full">
           <div class="chart-box-title">Tendencia acumulada <span>cargas totales</span></div>
-          <div style="position:relative;width:100%;height:200px">
-            <canvas id="g-acum" role="img" aria-label="Tendencia acumulada de cargas"></canvas>
-          </div>
+          <div style="position:relative;width:100%;height:200px"><canvas id="g-acum"></canvas></div>
         </div>
       </div>
-
       <div class="table-wrap">
         <div class="table-header">
           <span class="table-title">Detalle por día</span>
@@ -472,7 +456,7 @@ async function renderCargas(container){
                 <td>${label}</td>
                 <td style="color:var(--text3);font-size:12px">${dow}</td>
                 <td class="num"><span class="pill pill-blue">${ant}</span></td>
-                <td class="num"><span class="pill pill-amber">${noc}</span></td>
+                <td class="num"><span class="pill pill-wine">${noc}</span></td>
                 <td class="num"><span class="pill pill-green">${tot}</span></td>
                 <td class="num" style="color:var(--text)">${pct}%</td>
               </tr>`;
@@ -510,14 +494,14 @@ async function renderCargas(container){
         type:'bar',
         data:{labels,datasets:[
           {label:'Anticipadas',data:data.map(r=>r.Anticipadas),backgroundColor:'rgba(59,142,243,0.75)',borderRadius:3,borderSkipped:false},
-          {label:'Nocturnas',  data:data.map(r=>r.Nocturnas),  backgroundColor:'rgba(245,166,35,0.75)', borderRadius:3,borderSkipped:false},
+          {label:'Nocturnas',data:data.map(r=>r.Nocturnas),backgroundColor:'rgba(139,26,26,0.75)',borderRadius:3,borderSkipped:false},
         ]},
         options:{
           indexAxis:'y',responsive:true,maintainAspectRatio:false,
           plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: ${ctx.parsed.x}`}}},
           scales:{
-            x:{stacked:false,grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#5a6070',font:{size:11}},border:{color:'transparent'}},
-            y:{stacked:false,grid:{display:false},ticks:{color:'#8b92a5',font:{size:11,family:'DM Mono'}},border:{color:'transparent'}}
+            x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#5a6070',font:{size:11}},border:{color:'transparent'}},
+            y:{grid:{display:false},ticks:{color:'#8b92a5',font:{size:11,family:'DM Mono'}},border:{color:'transparent'}}
           }
         }
       });
@@ -527,8 +511,8 @@ async function renderCargas(container){
         type:'doughnut',
         data:{labels:['Anticipadas','Nocturnas'],datasets:[{
           data:[kpi.ant,kpi.noc],
-          backgroundColor:['rgba(59,142,243,0.8)','rgba(245,166,35,0.8)'],
-          borderColor:['#3b8ef3','#f5a623'],borderWidth:1,hoverOffset:6
+          backgroundColor:['rgba(59,142,243,0.8)','rgba(139,26,26,0.8)'],
+          borderColor:['#3b8ef3','#8B1A1A'],borderWidth:1,hoverOffset:6
         }]},
         options:{
           responsive:true,maintainAspectRatio:false,cutout:'68%',
@@ -544,7 +528,7 @@ async function renderCargas(container){
         type:'bar',
         data:{labels:dowLabels,datasets:[
           {label:'Anticipadas',data:dowAntProm,backgroundColor:'rgba(59,142,243,0.75)',borderRadius:4,borderSkipped:false},
-          {label:'Nocturnas',  data:dowNocProm,backgroundColor:'rgba(245,166,35,0.75)', borderRadius:4,borderSkipped:false},
+          {label:'Nocturnas',data:dowNocProm,backgroundColor:'rgba(139,26,26,0.75)',borderRadius:4,borderSkipped:false},
         ]},
         options:{
           responsive:true,maintainAspectRatio:false,
@@ -578,41 +562,37 @@ async function renderCargas(container){
   }
 
   render();
+
+  if(window._cargasTimer) clearInterval(window._cargasTimer);
+  window._cargasTimer=setInterval(async()=>{
+    const {rows:newRows}=await loadData();
+    if(newRows.length>0){
+      rows.splice(0,rows.length,...newRows);
+      ['g-barras','g-dona','g-dow','g-acum'].forEach(destroyChart);
+      render();
+    }
+  },5*60*1000);
+}
+
+function renderEmpty(label){
+  return function(container){
+    container.innerHTML=`
+      <div class="empty-state">
+        <div class="empty-icon">🔗</div>
+        <div class="empty-title">Módulo pendiente de conexión</div>
+        <div class="empty-desc">Conecta una fuente de datos para activar <strong>${label}</strong>.</div>
+      </div>`;
+  };
 }
 
 const areas={
-  maquilas:{name:'Maquilas',kpis:[
-    {label:'Producción diaria', value:'1,240',unit:'pzas',change:'+3.2%',up:true},
-    {label:'Eficiencia de línea',value:'87',  unit:'%',  change:'+1.5%',up:true},
-    {label:'Paros no planeados',value:'2',    unit:'ev', change:'-1',   up:true},
-    {label:'Scrap del día',     value:'0.8',  unit:'%',  change:'+0.2%',up:false},
-    {label:'OEE',               value:'82',   unit:'%',  change:'+0.8%',up:true},
-  ],submods:[]},
-  ventas:{name:'Ventas',kpis:[
-    {label:'Ventas del mes',       value:'$2.4M', unit:'',  change:'+8.1%',up:true},
-    {label:'Cumplimiento de meta', value:'94',    unit:'%', change:'+4%',  up:true},
-    {label:'Nuevos clientes',      value:'12',    unit:'',  change:'+3',   up:true},
-    {label:'Ticket promedio',      value:'$18.5K',unit:'',  change:'-2.3%',up:false},
-    {label:'Cotizaciones abiertas',value:'37',    unit:'',  change:'+5',   up:true},
-    {label:'Tasa de cierre',       value:'68',    unit:'%', change:'+2%',  up:true},
-  ],submods:[]},
-  logistica:{name:'Logística',kpis:[
-    {label:'Entregas a tiempo',   value:'96', unit:'%',change:'+1.2%',up:true},
-    {label:'Rutas activas',       value:'18', unit:'', change:'0',    up:true},
-    {label:'Costo por entrega',   value:'$320',unit:'',change:'+5%', up:false},
-    {label:'Unidades en tránsito',value:'47', unit:'', change:'+7',   up:true},
-  ],submods:[{id:'cargas',label:'📦 Cargas anticipadas',render:renderCargas}]},
-  operaciones:{name:'Operaciones especiales',kpis:[
-    {label:'Proyectos activos',   value:'8', unit:'',change:'+1', up:true},
-    {label:'Avance promedio',     value:'72',unit:'%',change:'+5%',up:true},
-    {label:'Incidencias abiertas',value:'1', unit:'',change:'-2', up:true},
-    {label:'Contratos vigentes',  value:'23',unit:'',change:'+3', up:true},
-  ],submods:[]},
-  vigilancia:{name:'Vigilancia',kpis:[
-    {label:'Accesos registrados',value:'342',  unit:'hoy',change:'+12',up:true},
-    {label:'Alertas activas',    value:'0',    unit:'',   change:'-1', up:true},
-    {label:'Cámaras en línea',   value:'28/30',unit:'',   change:'',   up:true},
-  ],submods:[]}
+  maquilas:{name:'Maquilas',kpis:[],submods:[]},
+  ventas:{name:'Ventas',kpis:[],submods:[]},
+  logistica:{name:'Logística',kpis:[],submods:[
+    {id:'cargas',label:'📦 Cargas anticipadas',render:renderCargas}
+  ]},
+  operaciones:{name:'Operaciones especiales',kpis:[],submods:[]},
+  vigilancia:{name:'Vigilancia',kpis:[],submods:[]}
 };
 
 let currentArea='';
@@ -620,22 +600,30 @@ function openArea(key){
   currentArea=key;
   const area=areas[key];
   document.getElementById('detail-name').textContent=area.name;
-  const kpiHtml=area.kpis.map((k,i)=>`
-    <div class="kpi-card" style="animation-delay:${i*.06}s">
-      <div class="kpi-label">${k.label}</div>
-      <div class="kpi-value">${k.value} <span class="kpi-unit">${k.unit}</span></div>
-      ${k.change?`<div class="kpi-change ${k.up?'up':'down'}">${k.up?'▲':'▼'} ${k.change} vs ayer</div>`:''}
-    </div>`).join('');
+  const isLogistica=(key==='logistica');
+  const kpiHtml=area.kpis.length
+    ?area.kpis.map((k,i)=>`
+        <div class="kpi-card" style="animation-delay:${i*.06}s">
+          <div class="kpi-label">${k.label}</div>
+          <div class="kpi-value">${k.value} <span class="kpi-unit">${k.unit}</span></div>
+          ${k.change?`<div class="kpi-change ${k.up?'up':'down'}">${k.up?'▲':'▼'} ${k.change} vs ayer</div>`:''}
+        </div>`).join('')
+    :'';
   let submodsHtml='';
   if(area.submods.length){
-    const tabs=area.submods.map((s,i)=>`<button class="submod-tab ${i===0?'active':''}" onclick="switchTab('${key}','${s.id}',this)">${s.label}</button>`).join('');
+    const tabsClass=isLogistica?'submod-tabs logistica-tabs':'submod-tabs';
+    const tabs=area.submods.map((s,i)=>`<button class="${i===0?'submod-tab active':'submod-tab'}" onclick="switchTab('${key}','${s.id}',this)">${s.label}</button>`).join('');
     const panels=area.submods.map((s,i)=>`<div class="submod-panel ${i===0?'active':''}" id="panel-${s.id}"></div>`).join('');
-    submodsHtml=`<div style="margin-top:2rem">
-      <div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:12px">Submódulos</div>
-      <div class="submod-tabs">${tabs}</div>${panels}
-    </div>`;
+    submodsHtml=`<div style="margin-top:${area.kpis.length?'2rem':'0'}"><div class="${tabsClass}">${tabs}</div>${panels}</div>`;
+  } else if(!area.kpis.length){
+    submodsHtml=`
+      <div class="empty-state">
+        <div class="empty-icon">📊</div>
+        <div class="empty-title">Área sin datos conectados</div>
+        <div class="empty-desc">Conecta una fuente de datos de Google Sheets para activar los indicadores de <strong>${area.name}</strong>.</div>
+      </div>`;
   }
-  document.getElementById('detail-body').innerHTML=`<div class="kpi-grid">${kpiHtml}</div>${submodsHtml}`;
+  document.getElementById('detail-body').innerHTML=(kpiHtml?`<div class="kpi-grid">${kpiHtml}</div>`:'')+submodsHtml;
   if(area.submods.length) area.submods[0].render(document.getElementById(`panel-${area.submods[0].id}`));
   document.getElementById('view-menu').classList.remove('active');
   document.getElementById('view-detail').classList.add('active');
@@ -655,6 +643,7 @@ function switchTab(areaKey,subId,btn){
 }
 
 function goBack(){
+  if(window._cargasTimer){clearInterval(window._cargasTimer);window._cargasTimer=null;}
   ['g-barras','g-dona','g-dow','g-acum'].forEach(destroyChart);
   document.getElementById('view-detail').classList.remove('active');
   document.getElementById('view-menu').classList.add('active');
