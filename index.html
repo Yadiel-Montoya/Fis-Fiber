@@ -545,46 +545,60 @@ async function renderCargas(container){
 
 /* ════════════════════════════════════════
    MÓDULO 2: PARTICIPACIÓN DE COLABORADORES
-   Datos embebidos desde Viajes.xlsx
-   ─ Para actualizar: reemplaza VIAJES_DATA
-   con el JSON exportado de tu Excel.
 ════════════════════════════════════════ */
-/* ══════════════════════════════════════════════════════
-   ▼▼▼  PEGA AQUÍ TU URL DE GOOGLE SHEETS (CSV)  ▼▼▼
-   Archivo → Compartir → Publicar en la web → CSV
-══════════════════════════════════════════════════════ */
 const VIAJES_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQXHv7eviqTWjlZLJLhnvKtACyFtBMYT2LbnahX5qzju4y_5rB0crQB1LC6QfpCWw/pub?gid=1801163127&single=true&output=csv';
+
+/* Convierte cualquier formato de fecha/mes a "YYYY-MM" */
+function parseMes(raw){
+  const s=(raw||'').toString().trim().replace(/["']/g,'');
+  if(!s)return'';
+  if(/^\d{5}$/.test(s)){const d=new Date((parseInt(s)-25569)*86400000);if(!isNaN(d))return`${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,'0')}`;}
+  if(/^\d{4}-\d{2}$/.test(s))return s;
+  if(/^\d{4}[-/]\d{1,2}[-/]\d{1,2}$/.test(s)){const p=s.split(/[-/]/);return`${p[0]}-${p[1].padStart(2,'0')}`;}
+  if(/^\d{1,2}[-/]\d{1,2}[-/]\d{4}$/.test(s)){const p=s.split(/[-/]/);return`${p[2]}-${p[1].padStart(2,'0')}`;}
+  const mMap={ene:'01',feb:'02',mar:'03',abr:'04',may:'05',jun:'06',jul:'07',ago:'08',sep:'09',oct:'10',nov:'11',dic:'12'};
+  const m=s.toLowerCase().match(/([a-záéíóú]{3})[a-záéíóú.]*\s*(\d{4})/);
+  if(m&&mMap[m[1]])return`${m[2]}-${mMap[m[1]]}`;
+  const d=new Date(s);
+  if(!isNaN(d))return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+  return'';
+}
 
 async function renderColaboradores(container){
   container.innerHTML=`<div class="loading-state"><div class="spinner"></div>Conectando con Google Sheets…</div>`;
 
   let VIAJES_DATA=[];
   try{
-    const url=VIAJES_URL+(VIAJES_URL.includes('?')?'&':'?')+'cb='+Date.now();
+    const url=VIAJES_URL+'&cb='+Date.now();
     const res=await fetch(url,{cache:'no-store'});
     if(!res.ok)throw new Error('HTTP '+res.status);
     const txt=await res.text();
     if(txt.trim().startsWith('<'))throw new Error('HTML recibido — verifica que la URL sea de publicación CSV');
     const raw=parseCSV(txt);
     if(!raw.length)throw new Error('CSV vacío');
+    console.log('Encabezados Viajes CSV:',Object.keys(raw[0]||{}));
+    console.log('Fila 1:',raw[0]);
     VIAJES_DATA=raw.map(r=>({
-      Mes:        normDate(r.Mes||r.mes||'')?.substring(0,7)||'',
-      NoEmpleado: (r['No Empleado']||r.NoEmpleado||'').toString().trim(),
-      Colaborador:(r.Colaborador||r.colaborador||'').toString().trim().toUpperCase(),
-      Puesto:     (r.Puesto||r.puesto||'CHOFER').toString().trim().toUpperCase(),
-      Unidad:     (r.Unidad||r.unidad||'').toString().trim().toUpperCase(),
-      Local:      parseInt((r.Local||'0').toString().replace(/[^\d]/g,''))||0,
-      Foraneo:    parseInt((r.Foraneo||r['Foráneo']||'0').toString().replace(/[^\d]/g,''))||0,
-      Total:      parseInt((r['Total de viajes']||r.Total||'0').toString().replace(/[^\d]/g,''))||0,
-      NoViajMin:  parseInt((r['No viajes minimos']||r['No viajes mínimos']||r.NoViajMin||'50').toString().replace(/[^\d]/g,''))||50,
-      Meta:       parseInt((r['Meta 100%']||r.Meta||'60').toString().replace(/[^\d]/g,''))||60,
+      Mes:        parseMes(r.Mes||r.mes||r.MES||r['Mes ']||''),
+      NoEmpleado: (r['No Empleado']||r['No. Empleado']||r.NoEmpleado||'').toString().trim(),
+      Colaborador:(r.Colaborador||r.colaborador||r.COLABORADOR||r.Nombre||'').toString().trim().toUpperCase(),
+      Puesto:     (r.Puesto||r.puesto||r.PUESTO||'CHOFER').toString().trim().toUpperCase(),
+      Unidad:     (r.Unidad||r.unidad||r.UNIDAD||'').toString().trim().toUpperCase(),
+      Local:      parseInt((r.Local||r.local||r.LOCAL||'0').toString().replace(/[^\d]/g,''))||0,
+      Foraneo:    parseInt((r.Foraneo||r.Foraneo||r.foraneo||r.FORANEO||'0').toString().replace(/[^\d]/g,''))||0,
+      Total:      parseInt((r['Total de viajes']||r['Total De Viajes']||r.Total||r.total||'0').toString().replace(/[^\d]/g,''))||0,
+      NoViajMin:  parseInt((r['No viajes minimos']||r['No viajes m\u00ednimos']||r['No Viajes Minimos']||r.NoViajMin||'50').toString().replace(/[^\d]/g,''))||50,
+      Meta:       parseInt((r['Meta 100%']||r['Meta 100 %']||r.Meta||r.meta||'60').toString().replace(/[^\d]/g,''))||60,
       PctViajes:  (()=>{
-        const v=(r['% DE VIAJES']||r['% de viajes']||r.PctViajes||'0').toString().replace(/[^0-9.]/g,'');
+        const v=(r['% DE VIAJES']||r['% de viajes']||r['% De Viajes']||r.PctViajes||'0').toString().replace(/[^0-9.]/g,'');
         const n=parseFloat(v)||0;
-        return n>1?n/100:n; // acepta tanto 0.1666 como 16.66
+        return n>1?n/100:n;
       })(),
     })).filter(r=>r.Colaborador&&r.Mes.length>=7);
-    if(!VIAJES_DATA.length)throw new Error('Sin registros válidos. Verifica los encabezados de tu hoja.');
+    if(!VIAJES_DATA.length){
+      const keys=Object.keys(raw[0]||{}).join(', ');
+      throw new Error(`Sin registros válidos. Encabezados detectados: [${keys}]`);
+    }
   }catch(e){
     container.innerHTML=`<div class="empty-state">
       <div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="1.8" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
