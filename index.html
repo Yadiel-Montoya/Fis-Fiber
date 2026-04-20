@@ -16,6 +16,7 @@
   --green:#1A9E5C;--green-bg:rgba(26,158,92,0.09);
   --blue:#1A5FA0;--blue-bg:rgba(26,95,160,0.09);
   --amber:#B87A10;--amber-bg:rgba(184,122,16,0.09);
+  --teal:#1A9E82;--teal-bg:rgba(26,158,130,0.09);
   --sidebar:240px;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -123,16 +124,20 @@ body{font-family:'Outfit',sans-serif;background:var(--off);color:var(--ink);min-
 table{width:100%;border-collapse:collapse}
 thead th{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);padding:10px 1.25rem;text-align:left;border-bottom:1px solid var(--border);font-weight:700;background:var(--off)}
 thead th.num{text-align:right}
+thead th.center{text-align:center}
 tbody tr{border-bottom:1px solid var(--border);transition:background .12s}
 tbody tr:last-child{border-bottom:none}
 tbody tr:hover{background:var(--off)}
 tbody td{font-size:13px;padding:10px 1.25rem;color:var(--ink2)}
 tbody td:first-child{color:var(--ink);font-weight:500}
 tbody td.num{text-align:right;font-family:'JetBrains Mono',monospace}
+tbody td.center{text-align:center}
 .pill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:500;font-family:'JetBrains Mono',monospace}
 .pill-red{background:rgba(192,21,42,0.09);color:var(--red);border:1px solid rgba(192,21,42,0.2)}
 .pill-blue{background:var(--blue-bg);color:var(--blue);border:1px solid rgba(26,95,160,0.2)}
 .pill-green{background:var(--green-bg);color:var(--green);border:1px solid rgba(26,158,92,0.2)}
+.pill-teal{background:var(--teal-bg);color:var(--teal);border:1px solid rgba(26,158,130,0.2)}
+.pill-amber{background:var(--amber-bg);color:var(--amber);border:1px solid rgba(184,122,16,0.2)}
 tfoot td{font-size:12px;padding:10px 1.25rem;font-weight:700;border-top:2px solid var(--border2);font-family:'JetBrains Mono',monospace;color:var(--ink);background:var(--off)}
 tfoot td.num{text-align:right}
 .banner{border-radius:10px;padding:10px 14px;font-size:12px;font-weight:500;margin-bottom:1.25rem;display:flex;align-items:center;gap:8px}
@@ -146,6 +151,40 @@ tfoot td.num{text-align:right}
 .loading-state{text-align:center;padding:3rem;color:var(--ink3);font-size:13px;background:var(--white);border:1px solid var(--border);border-radius:12px}
 .spinner{width:26px;height:26px;border:2px solid var(--border2);border-top-color:var(--red);border-radius:50%;animation:spin .75s linear infinite;margin:0 auto 1rem}
 @keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── MINI BAR CHARTS EN TABLA ── */
+.minibar-wrap{display:flex;align-items:center;gap:6px;min-width:120px}
+.minibar-track{flex:1;height:8px;background:var(--off2);border-radius:4px;overflow:hidden;position:relative}
+.minibar-fill{height:100%;border-radius:4px;transition:width .6s ease}
+.minibar-fill.local{background:rgba(26,95,160,0.75)}
+.minibar-fill.foraneo{background:rgba(26,158,130,0.75)}
+.minibar-fill.total{background:rgba(26,158,92,0.75)}
+.minibar-val{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--ink2);min-width:22px;text-align:right}
+
+/* ── PROGRESS BAR % VIAJES ── */
+.pctbar-wrap{display:flex;align-items:center;gap:8px;min-width:140px}
+.pctbar-track{flex:1;height:10px;background:var(--off2);border-radius:5px;overflow:hidden}
+.pctbar-fill{height:100%;border-radius:5px;transition:width .7s ease;position:relative}
+.pctbar-lbl{font-size:11px;font-family:'JetBrains Mono',monospace;font-weight:600;min-width:38px;text-align:right}
+
+/* ── UNIDAD BADGE ── */
+.unidad-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-family:'JetBrains Mono',monospace;font-weight:600;padding:2px 8px;border-radius:4px;text-transform:uppercase}
+.unidad-camion{background:rgba(26,95,160,0.1);color:#1A3A70;border:1px solid rgba(26,95,160,0.2)}
+.unidad-camioneta{background:rgba(26,158,130,0.1);color:#0f6a5a;border:1px solid rgba(26,158,130,0.2)}
+.unidad-quinta{background:rgba(184,122,16,0.1);color:#7A5010;border:1px solid rgba(184,122,16,0.2)}
+
+/* ── RANK ── */
+.rank-num{width:24px;height:24px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;font-family:'JetBrains Mono',monospace}
+.rank-1{background:#FFD700;color:#7A5800}
+.rank-2{background:#C0C0C0;color:#3A3A3A}
+.rank-3{background:#CD7F32;color:#5A2A00}
+.rank-n{background:var(--off2);color:var(--ink3)}
+
+/* ── COLORES STATUS ── */
+.status-ok{color:var(--green);font-weight:600}
+.status-warn{color:var(--amber);font-weight:600}
+.status-low{color:var(--red);font-weight:600}
+
 .mob-toggle{display:none;position:fixed;top:12px;left:12px;z-index:300;background:var(--red);border:none;border-radius:8px;width:38px;height:38px;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(192,21,42,0.3)}
 .mob-toggle svg{width:18px;height:18px;stroke:#fff}
 .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:150}
@@ -157,6 +196,7 @@ tfoot td.num{text-align:right}
 @media(max-width:600px){
   .page{padding:1rem}.filters-bar{flex-direction:column;align-items:stretch}
   .filter-select,.filter-input{min-width:unset;width:100%}.overview-grid{grid-template-columns:1fr}
+  .minibar-wrap{min-width:80px}.pctbar-wrap{min-width:100px}
 }
 </style>
 </head>
@@ -224,7 +264,7 @@ tfoot td.num{text-align:right}
       </div>
       <div class="stat-box">
         <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
-        <div><div class="stat-val">1</div><div class="stat-lbl">Fuentes conectadas</div></div>
+        <div><div class="stat-val">2</div><div class="stat-lbl">Fuentes conectadas</div></div>
       </div>
       <div class="stat-box">
         <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
@@ -245,7 +285,7 @@ tfoot td.num{text-align:right}
       </div>
       <div class="area-card" style="--ac:var(--red);--ac-bg:var(--red-soft);--ac-border:rgba(192,21,42,0.2)" onclick="openArea('logistica')">
         <div class="ac-top"><div class="ac-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="1.8" stroke-linecap="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div><div class="ac-arr">↗</div></div>
-        <div class="ac-name">Logística</div><div class="ac-desc">Cargas anticipadas y nocturnas · conectado a Google Sheets</div>
+        <div class="ac-name">Logística</div><div class="ac-desc">Cargas anticipadas y nocturnas · Participación de colaboradores</div>
         <div class="ac-footer"><span class="ac-badge" style="color:var(--red);background:var(--red-soft);border-color:rgba(192,21,42,0.2)">CSV activo</span><span class="ac-status"><span class="st-dot"></span>Conectado</span></div>
       </div>
       <div class="area-card" style="--ac:var(--amber);--ac-bg:var(--amber-bg);--ac-border:rgba(184,122,16,0.2)" onclick="openArea('operaciones')">
@@ -274,19 +314,28 @@ tfoot td.num{text-align:right}
     <div id="detail-body"></div>
   </div>
 </div>
+
 <script>
 Chart.register(ChartDataLabels);
 
+/* ════════════════════════════════════════
+   RELOJ Y UTILIDADES GENERALES
+════════════════════════════════════════ */
 function updateClock(){
   const n=new Date();
   document.getElementById('clock').textContent=n.toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
   document.getElementById('topbar-date').textContent=n.toLocaleDateString('es-MX',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
 }
 updateClock();setInterval(updateClock,1000);
+
 function toggleSidebar(){
   document.getElementById('sidebar').classList.toggle('open');
   document.getElementById('overlay').classList.toggle('show');
 }
+
+/* ════════════════════════════════════════
+   MÓDULO 1: CARGAS (Google Sheets CSV)
+════════════════════════════════════════ */
 const SHEETS_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vSoLF8K76RuGVjuJsZPOVfAsQn698ryqhVPrjd-vGtCoLKUg3ts2MqzMXnEy490zw/pub?gid=241439534&single=true&output=csv';
 function parseCSV(txt){
   const lines=txt.trim().split('\n').filter(l=>l.trim());
@@ -312,9 +361,7 @@ function normDate(raw){
     if(!isNaN(d)&&d.getFullYear()>2000)
       return`${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,'0')}-${String(d.getUTCDate()).padStart(2,'0')}`;
   }
-  if(/^\d{4}-\d{1,2}-\d{1,2}$/.test(s)){
-    const[y,m,d]=s.split('-');return`${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`;
-  }
+  if(/^\d{4}-\d{1,2}-\d{1,2}$/.test(s)){const[y,m,d]=s.split('-');return`${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`;}
   const sep=s.includes('/')?'/':s.includes('-')?'-':null;
   if(sep){
     const p=s.split(sep);
@@ -324,12 +371,7 @@ function normDate(raw){
       if(c.length===4)return`${c}-${b.padStart(2,'0')}-${a.padStart(2,'0')}`;
       if(c.length===2)return`20${c}-${b.padStart(2,'0')}-${a.padStart(2,'0')}`;
     }
-    if(p.length===2){
-      const[a,b]=p;
-      const day=a.padStart(2,'0'),month=b.padStart(2,'0');
-      if(+month>=1&&+month<=12&&+day>=1&&+day<=31)
-        return`${CY}-${month}-${day}`;
-    }
+    if(p.length===2){const[a,b]=p;const day=a.padStart(2,'0'),month=b.padStart(2,'0');if(+month>=1&&+month<=12&&+day>=1&&+day<=31)return`${CY}-${month}-${day}`;}
   }
   const d=new Date(s);
   if(!isNaN(d))return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
@@ -349,12 +391,9 @@ async function loadData(){
       Anticipadas:parseInt((r.Anticipadas||r.anticipadas||r.ANTICIPADAS||'0').replace(/[^\d]/g,''))||0,
       Nocturnas:parseInt((r.Nocturnas||r.nocturnas||r.NOCTURNAS||'0').replace(/[^\d]/g,''))||0,
     })).filter(r=>r.Fecha&&r.Fecha.length>=8&&!isNaN(new Date(r.Fecha)));
-    if(!rows.length)throw new Error('Sin fechas válidas. Formatos aceptados: DD/MM/YYYY, YYYY-MM-DD, DD/MM/YY, DD/MM');
+    if(!rows.length)throw new Error('Sin fechas válidas.');
     return{rows,error:null};
-  }catch(e){
-    console.warn('Sheets:',e.message);
-    return{rows:[],error:e.message};
-  }
+  }catch(e){console.warn('Sheets:',e.message);return{rows:[],error:e.message};}
 }
 const MESES=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 const DIAS=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
@@ -411,8 +450,8 @@ async function renderCargas(container){
         </div>
         <div class="filter-group"><span class="filter-label">Desde</span><input type="date" class="filter-input" id="f-desde" value="${filtroDesde}"></div>
         <div class="filter-group"><span class="filter-label">Hasta</span><input type="date" class="filter-input" id="f-hasta" value="${filtroHasta}"></div>
-        <button class="filter-btn" onclick="applyFilters()">Aplicar</button>
-        <button class="filter-clear" onclick="clearFilters()">Limpiar</button>
+        <button class="filter-btn" onclick="applyFiltersCargas()">Aplicar</button>
+        <button class="filter-clear" onclick="clearFiltersCargas()">Limpiar</button>
         <span class="filter-period-tag">${periodLabel()}</span>
       </div>
       <div class="kpi-row">
@@ -452,116 +491,410 @@ async function renderCargas(container){
           <tfoot><tr><td colspan="2">TOTAL</td><td class="num">${k.ant}</td><td class="num">${k.noc}</td><td class="num">${k.tot}</td><td class="num">${k.pct}%</td></tr></tfoot>
         </table>
       </div>`;
-    window.applyFilters=()=>{
+    window.applyFiltersCargas=()=>{
       filtroMes=document.getElementById('f-mes').value;
       filtroDesde=document.getElementById('f-desde').value;
       filtroHasta=document.getElementById('f-hasta').value;
       if(filtroMes!=='todos'){filtroDesde='';filtroHasta='';}
       ['g-bar','g-dona','g-dow','g-acum'].forEach(DC);render();
     };
-    window.clearFilters=()=>{filtroMes='todos';filtroDesde='';filtroHasta='';['g-bar','g-dona','g-dow','g-acum'].forEach(DC);render();};
+    window.clearFiltersCargas=()=>{filtroMes='todos';filtroDesde='';filtroHasta='';['g-bar','g-dona','g-dow','g-acum'].forEach(DC);render();};
     setTimeout(()=>{
       const gc='rgba(0,0,0,0.05)',tc='#9A7078',mf='JetBrains Mono';
-
-      // ── GRÁFICA PRINCIPAL: barras verticales + línea Total ──
       DC('g-bar');
-      const barLabels=data.map(r=>{
-        const d=new Date(r.Fecha+'T12:00:00');
-        return`${String(d.getDate()).padStart(2,'0')}-${['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'][d.getMonth()]}`;
-      });
+      const barLabels=data.map(r=>{const d=new Date(r.Fecha+'T12:00:00');return`${String(d.getDate()).padStart(2,'0')}-${['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'][d.getMonth()]}`;});
       const totalesData=data.map(r=>r.Anticipadas+r.Nocturnas);
       const canvasWidth=Math.max(600,data.length*56+80);
       const barCanvas=document.getElementById('g-bar');
-      barCanvas.width=canvasWidth;
-      barCanvas.style.width=canvasWidth+'px';
-      barCanvas.style.height=barChartHeight+'px';
+      barCanvas.width=canvasWidth;barCanvas.style.width=canvasWidth+'px';barCanvas.style.height=barChartHeight+'px';
       CI['g-bar']=new Chart(barCanvas,{
-        data:{
-          labels:barLabels,
-          datasets:[
-            {
-              type:'bar',label:'Anticipadas',
-              data:data.map(r=>r.Anticipadas),
-              backgroundColor:'rgba(26,58,112,0.85)',
-              borderRadius:3,borderSkipped:false,order:2,
-              datalabels:{anchor:'end',align:'end',offset:1,color:'#1A3A70',font:{size:10,family:mf,weight:'600'},formatter:v=>v===0?'0':v}
-            },
-            {
-              type:'bar',label:'Nocturnas',
-              data:data.map(r=>r.Nocturnas),
-              backgroundColor:'rgba(26,158,130,0.85)',
-              borderRadius:3,borderSkipped:false,order:2,
-              datalabels:{anchor:'end',align:'end',offset:1,color:'#0f7a62',font:{size:10,family:mf,weight:'600'},formatter:v=>v===0?'0':v}
-            },
-            {
-              type:'line',label:'Total',
-              data:totalesData,
-              borderColor:'#E8892F',backgroundColor:'rgba(232,137,47,0.08)',
-              borderWidth:2.5,pointRadius:4,pointBackgroundColor:'#E8892F',
-              pointBorderColor:'#fff',pointBorderWidth:1.5,
-              fill:false,tension:0.35,order:1,yAxisID:'y',
-              datalabels:{anchor:'end',align:'top',offset:4,color:'#C06010',font:{size:10,family:mf,weight:'700'},formatter:v=>v}
-            },
-          ]
-        },
-        options:{
-          responsive:false,maintainAspectRatio:false,
-          interaction:{mode:'index',intersect:false},
-          plugins:{
-            legend:{display:true,position:'bottom',labels:{color:'#5C3038',font:{size:12,family:'Outfit'},usePointStyle:true,pointStyleWidth:14,padding:20}},
-            tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.parsed.y}`}},
-            datalabels:{}
-          },
-          scales:{
-            x:{grid:{display:false},ticks:{color:tc,font:{size:10,family:mf},maxRotation:45,minRotation:45},border:{color:'transparent'}},
-            y:{grid:{color:gc},ticks:{color:tc,font:{size:11,family:mf}},border:{color:'transparent'},beginAtZero:true,grace:'15%'}
-          }
-        }
+        data:{labels:barLabels,datasets:[
+          {type:'bar',label:'Anticipadas',data:data.map(r=>r.Anticipadas),backgroundColor:'rgba(26,58,112,0.85)',borderRadius:3,borderSkipped:false,order:2,datalabels:{anchor:'end',align:'end',offset:1,color:'#1A3A70',font:{size:10,family:mf,weight:'600'},formatter:v=>v===0?'0':v}},
+          {type:'bar',label:'Nocturnas',data:data.map(r=>r.Nocturnas),backgroundColor:'rgba(26,158,130,0.85)',borderRadius:3,borderSkipped:false,order:2,datalabels:{anchor:'end',align:'end',offset:1,color:'#0f7a62',font:{size:10,family:mf,weight:'600'},formatter:v=>v===0?'0':v}},
+          {type:'line',label:'Total',data:totalesData,borderColor:'#E8892F',backgroundColor:'rgba(232,137,47,0.08)',borderWidth:2.5,pointRadius:4,pointBackgroundColor:'#E8892F',pointBorderColor:'#fff',pointBorderWidth:1.5,fill:false,tension:0.35,order:1,yAxisID:'y',datalabels:{anchor:'end',align:'top',offset:4,color:'#C06010',font:{size:10,family:mf,weight:'700'},formatter:v=>v}},
+        ]},
+        options:{responsive:false,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+          plugins:{legend:{display:true,position:'bottom',labels:{color:'#5C3038',font:{size:12,family:'Outfit'},usePointStyle:true,pointStyleWidth:14,padding:20}},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.parsed.y}`}},datalabels:{}},
+          scales:{x:{grid:{display:false},ticks:{color:tc,font:{size:10,family:mf},maxRotation:45,minRotation:45},border:{color:'transparent'}},y:{grid:{color:gc},ticks:{color:tc,font:{size:11,family:mf}},border:{color:'transparent'},beginAtZero:true,grace:'15%'}}}
       });
-
-      // ── DONA ──
       DC('g-dona');
       CI['g-dona']=new Chart(document.getElementById('g-dona'),{type:'doughnut',
-        data:{labels:['Anticipadas','Nocturnas'],datasets:[{data:[k.ant,k.noc],
-          backgroundColor:['rgba(26,58,112,0.85)','rgba(26,158,130,0.85)'],
-          borderColor:['#1A3A70','#1A9E82'],borderWidth:1,hoverOffset:6}]},
-        options:{responsive:true,maintainAspectRatio:false,cutout:'68%',
-          plugins:{
-            legend:{position:'bottom',labels:{color:'#5C3038',font:{size:12,family:'Outfit'}}},
-            tooltip:{callbacks:{label:c=>`${c.label}: ${c.parsed} (${Math.round(c.parsed/(k.ant+k.noc)*100)}%)`}},
-            datalabels:{display:false}
-          }}});
-
-      // ── PROMEDIO POR DÍA ──
+        data:{labels:['Anticipadas','Nocturnas'],datasets:[{data:[k.ant,k.noc],backgroundColor:['rgba(26,58,112,0.85)','rgba(26,158,130,0.85)'],borderColor:['#1A3A70','#1A9E82'],borderWidth:1,hoverOffset:6}]},
+        options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{position:'bottom',labels:{color:'#5C3038',font:{size:12,family:'Outfit'}}},tooltip:{callbacks:{label:c=>`${c.label}: ${c.parsed} (${Math.round(c.parsed/(k.ant+k.noc)*100)}%)`}},datalabels:{display:false}}}});
       DC('g-dow');
       CI['g-dow']=new Chart(document.getElementById('g-dow'),{type:'bar',
         data:{labels:DIAS,datasets:[
           {label:'Anticipadas',data:bD.map((v,i)=>bC[i]?+(v/bC[i]).toFixed(1):0),backgroundColor:'rgba(26,58,112,0.75)',borderRadius:4,borderSkipped:false},
           {label:'Nocturnas',data:bN.map((v,i)=>bC[i]?+(v/bC[i]).toFixed(1):0),backgroundColor:'rgba(26,158,130,0.75)',borderRadius:4,borderSkipped:false},
-        ]},options:{responsive:true,maintainAspectRatio:false,
-          plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.dataset.label} prom: ${c.parsed.y}`}},datalabels:{display:false}},
-          scales:{x:{grid:{display:false},ticks:{color:tc,font:{size:11,family:mf}},border:{color:'transparent'}},
-            y:{grid:{color:gc},ticks:{color:tc,font:{size:11}},border:{color:'transparent'}}}}});
-
-      // ── ACUMULADA ──
+        ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.dataset.label} prom: ${c.parsed.y}`}},datalabels:{display:false}},
+          scales:{x:{grid:{display:false},ticks:{color:tc,font:{size:11,family:mf}},border:{color:'transparent'}},y:{grid:{color:gc},ticks:{color:tc,font:{size:11}},border:{color:'transparent'}}}}});
       DC('g-acum');
       CI['g-acum']=new Chart(document.getElementById('g-acum'),{type:'line',
-        data:{labels:acL,datasets:[{label:'Acumulado',data:acD,
-          borderColor:'#C0152A',backgroundColor:'rgba(192,21,42,0.07)',
-          borderWidth:2,pointRadius:2,pointBackgroundColor:'#C0152A',fill:true,tension:0.35}]},
-        options:{responsive:true,maintainAspectRatio:false,
-          plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`Acumulado: ${c.parsed.y}`}},datalabels:{display:false}},
-          scales:{x:{grid:{display:false},ticks:{color:tc,font:{size:10,family:mf},maxTicksLimit:14,autoSkip:true},border:{color:'transparent'}},
-            y:{grid:{color:gc},ticks:{color:tc,font:{size:11}},border:{color:'transparent'}}}}});
+        data:{labels:acL,datasets:[{label:'Acumulado',data:acD,borderColor:'#C0152A',backgroundColor:'rgba(192,21,42,0.07)',borderWidth:2,pointRadius:2,pointBackgroundColor:'#C0152A',fill:true,tension:0.35}]},
+        options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`Acumulado: ${c.parsed.y}`}},datalabels:{display:false}},
+          scales:{x:{grid:{display:false},ticks:{color:tc,font:{size:10,family:mf},maxTicksLimit:14,autoSkip:true},border:{color:'transparent'}},y:{grid:{color:gc},ticks:{color:tc,font:{size:11}},border:{color:'transparent'}}}}});
     },60);
   }
   render();
-  if(window._timer)clearInterval(window._timer);
-  window._timer=setInterval(async()=>{
+  if(window._timerCargas)clearInterval(window._timerCargas);
+  window._timerCargas=setInterval(async()=>{
     const{rows:nr}=await loadData();
     if(nr.length){rows.splice(0,rows.length,...nr);['g-bar','g-dona','g-dow','g-acum'].forEach(DC);render();}
   },5*60*1000);
 }
+
+/* ════════════════════════════════════════
+   MÓDULO 2: PARTICIPACIÓN DE COLABORADORES
+   Datos embebidos desde Viajes.xlsx
+   ─ Para actualizar: reemplaza VIAJES_DATA
+   con el JSON exportado de tu Excel.
+════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════════
+   ▼▼▼  PEGA AQUÍ TU URL DE GOOGLE SHEETS (CSV)  ▼▼▼
+   Archivo → Compartir → Publicar en la web → CSV
+══════════════════════════════════════════════════════ */
+const VIAJES_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQXHv7eviqTWjlZLJLhnvKtACyFtBMYT2LbnahX5qzju4y_5rB0crQB1LC6QfpCWw/pub?gid=1801163127&single=true&output=csv';
+
+async function renderColaboradores(container){
+  container.innerHTML=`<div class="loading-state"><div class="spinner"></div>Conectando con Google Sheets…</div>`;
+
+  let VIAJES_DATA=[];
+  try{
+    const url=VIAJES_URL+(VIAJES_URL.includes('?')?'&':'?')+'cb='+Date.now();
+    const res=await fetch(url,{cache:'no-store'});
+    if(!res.ok)throw new Error('HTTP '+res.status);
+    const txt=await res.text();
+    if(txt.trim().startsWith('<'))throw new Error('HTML recibido — verifica que la URL sea de publicación CSV');
+    const raw=parseCSV(txt);
+    if(!raw.length)throw new Error('CSV vacío');
+    VIAJES_DATA=raw.map(r=>({
+      Mes:        normDate(r.Mes||r.mes||'')?.substring(0,7)||'',
+      NoEmpleado: (r['No Empleado']||r.NoEmpleado||'').toString().trim(),
+      Colaborador:(r.Colaborador||r.colaborador||'').toString().trim().toUpperCase(),
+      Puesto:     (r.Puesto||r.puesto||'CHOFER').toString().trim().toUpperCase(),
+      Unidad:     (r.Unidad||r.unidad||'').toString().trim().toUpperCase(),
+      Local:      parseInt((r.Local||'0').toString().replace(/[^\d]/g,''))||0,
+      Foraneo:    parseInt((r.Foraneo||r['Foráneo']||'0').toString().replace(/[^\d]/g,''))||0,
+      Total:      parseInt((r['Total de viajes']||r.Total||'0').toString().replace(/[^\d]/g,''))||0,
+      NoViajMin:  parseInt((r['No viajes minimos']||r['No viajes mínimos']||r.NoViajMin||'50').toString().replace(/[^\d]/g,''))||50,
+      Meta:       parseInt((r['Meta 100%']||r.Meta||'60').toString().replace(/[^\d]/g,''))||60,
+      PctViajes:  (()=>{
+        const v=(r['% DE VIAJES']||r['% de viajes']||r.PctViajes||'0').toString().replace(/[^0-9.]/g,'');
+        const n=parseFloat(v)||0;
+        return n>1?n/100:n; // acepta tanto 0.1666 como 16.66
+      })(),
+    })).filter(r=>r.Colaborador&&r.Mes.length>=7);
+    if(!VIAJES_DATA.length)throw new Error('Sin registros válidos. Verifica los encabezados de tu hoja.');
+  }catch(e){
+    container.innerHTML=`<div class="empty-state">
+      <div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="1.8" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+      <div class="empty-title">Error al cargar datos</div>
+      <div class="empty-desc">Verifica que la URL de Google Sheets sea correcta y esté publicada como CSV.<br><br>
+      <span style="color:var(--red);font-size:11px;font-family:'JetBrains Mono',monospace">⚠ ${e.message}</span></div>
+      <div class="empty-url">${VIAJES_URL}</div></div>`;
+    return;
+  }
+
+  /* ── Extraer meses y unidades disponibles ── */
+  const mesesSet=new Set(VIAJES_DATA.map(r=>r.Mes));
+  const unidadesSet=new Set(VIAJES_DATA.map(r=>r.Unidad));
+  const mesesList=[...mesesSet].sort().reverse();
+  const unidadesList=[...unidadesSet].sort();
+
+  let filtroMes=mesesList[0]||'todos';
+  let filtroUnidad='todos';
+  let filtroColab='';
+
+  function mesLabel(m){
+    const[y,mm]=m.split('-');
+    return`${MESES[+mm-1]} ${y}`;
+  }
+
+  function filtrar(){
+    return VIAJES_DATA
+      .filter(r=>(filtroMes==='todos'||r.Mes===filtroMes))
+      .filter(r=>(filtroUnidad==='todos'||r.Unidad===filtroUnidad))
+      .filter(r=>(!filtroColab||r.Colaborador.toLowerCase().includes(filtroColab.toLowerCase())))
+      .sort((a,b)=>b.Total-a.Total);
+  }
+
+  function getColor(pct,meta){
+    const ratio=meta>0?pct/meta:0;
+    if(ratio>=1)return{fill:'#1A9E5C',cls:'status-ok',label:'Meta cumplida'};
+    if(ratio>=0.7)return{fill:'#B87A10',cls:'status-warn',label:'En proceso'};
+    return{fill:'#C0152A',cls:'status-low',label:'Bajo meta'};
+  }
+
+  function unidadBadge(u){
+    const cl=u==='CAMION'?'unidad-camion':u==='CAMIONETA'?'unidad-camioneta':'unidad-quinta';
+    return`<span class="unidad-badge ${cl}">${u}</span>`;
+  }
+
+  function rankBadge(i){
+    const cl=i===0?'rank-1':i===1?'rank-2':i===2?'rank-3':'rank-n';
+    return`<span class="rank-num ${cl}">${i+1}</span>`;
+  }
+
+  function kpisGlobal(data){
+    const total=data.reduce((s,r)=>s+r.Total,0);
+    const local=data.reduce((s,r)=>s+r.Local,0);
+    const foraneo=data.reduce((s,r)=>s+r.Foraneo,0);
+    const metaCump=data.filter(r=>r.Total>=r.NoViajMin).length;
+    const pctPromedio=data.length?data.reduce((s,r)=>s+r.PctViajes,0)/data.length:0;
+    return{total,local,foraneo,metaCump,pctPromedio,n:data.length};
+  }
+
+  function render(){
+    const data=filtrar();
+    const k=kpisGlobal(data);
+    const maxTotal=data.length?Math.max(...data.map(r=>r.Total),1):1;
+
+    /* ── Charts data ── */
+    const topN=5;
+    const top5=data.slice(0,topN);
+    const unidadTotales={};
+    data.forEach(r=>{unidadTotales[r.Unidad]=(unidadTotales[r.Unidad]||0)+r.Total;});
+    const unidadKeys=Object.keys(unidadTotales);
+    const unidadColors={'CAMION':'rgba(26,58,112,0.82)','CAMIONETA':'rgba(26,158,130,0.82)','QUINTA':'rgba(184,122,16,0.82)'};
+
+    container.innerHTML=`
+      <div class="banner ok">✓ Datos de Viajes.xlsx cargados · ${VIAJES_DATA.length} colaboradores registrados · Actualización manual</div>
+
+      <div class="filters-bar">
+        <div class="filter-group"><span class="filter-label">Mes</span>
+          <select class="filter-select" id="cv-mes">
+            <option value="todos">Todos los meses</option>
+            ${mesesList.map(m=>`<option value="${m}"${filtroMes===m?' selected':''}>${mesLabel(m)}</option>`).join('')}
+          </select>
+        </div>
+        <div class="filter-group"><span class="filter-label">Unidad</span>
+          <select class="filter-select" id="cv-unidad">
+            <option value="todos">Todas las unidades</option>
+            ${unidadesList.map(u=>`<option value="${u}"${filtroUnidad===u?' selected':''}>${u}</option>`).join('')}
+          </select>
+        </div>
+        <div class="filter-group"><span class="filter-label">Colaborador</span>
+          <input type="text" class="filter-input" id="cv-colab" placeholder="Buscar nombre…" value="${filtroColab}">
+        </div>
+        <button class="filter-btn" onclick="applyFiltersColab()">Aplicar</button>
+        <button class="filter-clear" onclick="clearFiltersColab()">Limpiar</button>
+        <span class="filter-period-tag">${filtroMes==='todos'?'Todos los períodos':mesLabel(filtroMes)}</span>
+      </div>
+
+      <div class="kpi-row">
+        <div class="ckpi" style="--ck-color:var(--ink)"><div class="lbl">Total viajes</div><div class="val">${k.total}</div><div class="sub">${k.n} colaboradores</div></div>
+        <div class="ckpi" style="--ck-color:var(--blue)"><div class="lbl">Locales</div><div class="val">${k.local}</div><div class="sub">${k.total?Math.round(k.local/k.total*100):0}% del total</div></div>
+        <div class="ckpi" style="--ck-color:var(--teal)"><div class="lbl">Foráneos</div><div class="val">${k.foraneo}</div><div class="sub">${k.total?Math.round(k.foraneo/k.total*100):0}% del total</div></div>
+        <div class="ckpi" style="--ck-color:var(--green)"><div class="lbl">Meta mínima ✓</div><div class="val">${k.metaCump}</div><div class="sub">de ${k.n} colaboradores</div></div>
+        <div class="ckpi" style="--ck-color:var(--red)"><div class="lbl">% Prom. viajes</div><div class="val">${(k.pctPromedio*100).toFixed(1)}%</div><div class="sub">participación media</div></div>
+      </div>
+
+      <div class="charts-grid">
+        <div class="chart-box">
+          <div class="chart-title">Top colaboradores por viajes <span class="chart-badge">Top ${Math.min(topN,data.length)}</span></div>
+          <div style="position:relative;width:100%;height:230px"><canvas id="cv-bar-top"></canvas></div>
+        </div>
+        <div class="chart-box">
+          <div class="chart-title">Distribución por unidad <span class="chart-badge">${unidadKeys.length} tipos</span></div>
+          <div style="position:relative;width:100%;height:230px"><canvas id="cv-dona-unidad"></canvas></div>
+        </div>
+        <div class="chart-box full">
+          <div class="chart-title">% de Participación por colaborador <span class="chart-badge">ordenado desc.</span></div>
+          <div style="position:relative;width:100%;overflow-x:auto;">
+            <canvas id="cv-pct-bar" style="height:${Math.max(280,data.length*32)}px"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <div class="table-head-bar">
+          <span class="ttl">Productividades por colaborador</span>
+          <span class="meta">${data.length} registros · ${filtroMes==='todos'?'Todos los períodos':mesLabel(filtroMes)}</span>
+        </div>
+        <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:36px">#</th>
+              <th>Mes</th>
+              <th>Colaborador</th>
+              <th>Unidad</th>
+              <th class="num">No Viajes Mín.</th>
+              <th>Local</th>
+              <th>Foráneo</th>
+              <th class="num">Total viajes</th>
+              <th>% de Viajes</th>
+              <th class="num">Meta 100%</th>
+              <th class="center">Estatus</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${data.map((r,i)=>{
+              const pctMeta=r.Meta>0?r.PctViajes/(r.Meta/60):r.PctViajes;
+              const color=getColor(r.Total,r.NoViajMin);
+              const pctDisplay=(r.PctViajes*100).toFixed(1)+'%';
+              const localPct=r.Total>0?Math.round(r.Local/r.Total*100):0;
+              const foranPct=r.Total>0?Math.round(r.Foraneo/r.Total*100):0;
+              const totalPct=maxTotal>0?Math.round(r.Total/maxTotal*100):0;
+              const pctBarPct=Math.min(100,Math.round(r.Total/r.NoViajMin*100));
+              return`<tr>
+                <td>${rankBadge(i)}</td>
+                <td style="font-size:11px;color:var(--ink3)">${mesLabel(r.Mes)}</td>
+                <td style="font-weight:600;font-size:13px">${r.Colaborador}</td>
+                <td>${unidadBadge(r.Unidad)}</td>
+                <td class="num"><span class="pill pill-amber">${r.NoViajMin}</span></td>
+                <td>
+                  <div class="minibar-wrap">
+                    <div class="minibar-track"><div class="minibar-fill local" style="width:${localPct}%"></div></div>
+                    <span class="minibar-val">${r.Local}</span>
+                  </div>
+                </td>
+                <td>
+                  <div class="minibar-wrap">
+                    <div class="minibar-track"><div class="minibar-fill foraneo" style="width:${foranPct}%"></div></div>
+                    <span class="minibar-val">${r.Foraneo}</span>
+                  </div>
+                </td>
+                <td class="num">
+                  <div class="minibar-wrap" style="justify-content:flex-end">
+                    <div class="minibar-track"><div class="minibar-fill total" style="width:${totalPct}%"></div></div>
+                    <span class="minibar-val">${r.Total}</span>
+                  </div>
+                </td>
+                <td>
+                  <div class="pctbar-wrap">
+                    <div class="pctbar-track"><div class="pctbar-fill" style="width:${pctBarPct}%;background:${color.fill}"></div></div>
+                    <span class="pctbar-lbl" style="color:${color.fill}">${pctDisplay}</span>
+                  </div>
+                </td>
+                <td class="num"><span class="pill pill-green">${r.Meta}</span></td>
+                <td class="center"><span class="${color.cls}" style="font-size:11px">${color.label}</span></td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="4">TOTALES / PROMEDIO</td>
+              <td class="num">—</td>
+              <td class="num">${k.local}</td>
+              <td class="num">${k.foraneo}</td>
+              <td class="num">${k.total}</td>
+              <td class="num">${(k.pctPromedio*100).toFixed(1)}%</td>
+              <td class="num">—</td>
+              <td class="center">${k.metaCump}/${k.n} ✓</td>
+            </tr>
+          </tfoot>
+        </table>
+        </div>
+      </div>`;
+
+    /* ── Configurar filtros ── */
+    window.applyFiltersColab=()=>{
+      filtroMes=document.getElementById('cv-mes').value;
+      filtroUnidad=document.getElementById('cv-unidad').value;
+      filtroColab=document.getElementById('cv-colab').value.trim();
+      ['cv-bar-top','cv-dona-unidad','cv-pct-bar'].forEach(DC);
+      render();
+    };
+    window.clearFiltersColab=()=>{
+      filtroMes=mesesList[0]||'todos';filtroUnidad='todos';filtroColab='';
+      ['cv-bar-top','cv-dona-unidad','cv-pct-bar'].forEach(DC);render();
+    };
+
+    /* ── Gráficas ── */
+    setTimeout(()=>{
+      const gc='rgba(0,0,0,0.05)',tc='#9A7078',mf='JetBrains Mono';
+
+      /* Top 5 colaboradores */
+      DC('cv-bar-top');
+      CI['cv-bar-top']=new Chart(document.getElementById('cv-bar-top'),{
+        type:'bar',
+        data:{
+          labels:top5.map(r=>r.Colaborador.split(' ').slice(0,2).join(' ')),
+          datasets:[
+            {label:'Local',data:top5.map(r=>r.Local),backgroundColor:'rgba(26,58,112,0.82)',borderRadius:4,borderSkipped:false},
+            {label:'Foráneo',data:top5.map(r=>r.Foraneo),backgroundColor:'rgba(26,158,130,0.82)',borderRadius:4,borderSkipped:false},
+          ]
+        },
+        options:{
+          responsive:true,maintainAspectRatio:false,
+          plugins:{
+            legend:{display:true,position:'bottom',labels:{color:'#5C3038',font:{size:11,family:'Outfit'},usePointStyle:true,padding:16}},
+            tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.parsed.y}`}},
+            datalabels:{display:false}
+          },
+          scales:{
+            x:{grid:{display:false},ticks:{color:tc,font:{size:10,family:mf},maxRotation:0},border:{color:'transparent'}},
+            y:{grid:{color:gc},ticks:{color:tc,font:{size:11}},border:{color:'transparent'},beginAtZero:true}
+          }
+        }
+      });
+
+      /* Dona por unidad */
+      DC('cv-dona-unidad');
+      const donaColors=unidadKeys.map(u=>unidadColors[u]||'rgba(150,150,150,0.75)');
+      CI['cv-dona-unidad']=new Chart(document.getElementById('cv-dona-unidad'),{
+        type:'doughnut',
+        data:{labels:unidadKeys,datasets:[{data:unidadKeys.map(u=>unidadTotales[u]),backgroundColor:donaColors,borderWidth:1,hoverOffset:6}]},
+        options:{
+          responsive:true,maintainAspectRatio:false,cutout:'62%',
+          plugins:{
+            legend:{position:'bottom',labels:{color:'#5C3038',font:{size:12,family:'Outfit'}}},
+            tooltip:{callbacks:{label:c=>`${c.label}: ${c.parsed} viajes`}},
+            datalabels:{display:false}
+          }
+        }
+      });
+
+      /* % participación horizontal */
+      DC('cv-pct-bar');
+      const sortedByPct=[...data].sort((a,b)=>b.PctViajes-a.PctViajes);
+      const pctCanvas=document.getElementById('cv-pct-bar');
+      const pctH=Math.max(280,data.length*32);
+      pctCanvas.style.height=pctH+'px';
+      pctCanvas.height=pctH;
+      CI['cv-pct-bar']=new Chart(pctCanvas,{
+        type:'bar',
+        data:{
+          labels:sortedByPct.map(r=>r.Colaborador.split(' ').slice(0,3).join(' ')),
+          datasets:[{
+            label:'% de Viajes',
+            data:sortedByPct.map(r=>+(r.PctViajes*100).toFixed(2)),
+            backgroundColor:sortedByPct.map(r=>{
+              const ratio=r.NoViajMin>0?r.Total/r.NoViajMin:0;
+              return ratio>=1?'rgba(26,158,92,0.80)':ratio>=0.7?'rgba(184,122,16,0.80)':'rgba(192,21,42,0.80)';
+            }),
+            borderRadius:4,borderSkipped:false,
+          }]
+        },
+        options:{
+          indexAxis:'y',responsive:false,maintainAspectRatio:false,
+          plugins:{
+            legend:{display:false},
+            tooltip:{callbacks:{label:c=>`${c.parsed.x.toFixed(1)}%`}},
+            datalabels:{anchor:'end',align:'end',offset:2,color:'#5C3038',font:{size:10,family:mf,weight:'600'},formatter:v=>`${v.toFixed(1)}%`}
+          },
+          scales:{
+            y:{grid:{display:false},ticks:{color:tc,font:{size:11,family:mf}},border:{color:'transparent'}},
+            x:{grid:{color:gc},ticks:{color:tc,font:{size:10},callback:v=>`${v}%`},border:{color:'transparent'},beginAtZero:true,grace:'10%'}
+          }
+        }
+      });
+    },80);
+  }
+
+  render();
+
+  if(window._timerColab)clearInterval(window._timerColab);
+  window._timerColab=setInterval(()=>{
+    ['cv-bar-top','cv-dona-unidad','cv-pct-bar'].forEach(DC);
+    renderColaboradores(container);
+  },5*60*1000);
+}
+
+/* ════════════════════════════════════════
+   ÁREAS Y NAVEGACIÓN
+════════════════════════════════════════ */
 function renderEmpty(name){
   return container=>{
     container.innerHTML=`<div class="empty-state">
@@ -570,23 +903,30 @@ function renderEmpty(name){
       <div class="empty-desc">Conecta una hoja de Google Sheets para activar <strong>${name}</strong>.</div></div>`;
   };
 }
+
 const areas={
   maquilas:{name:'Maquilas',submods:[]},
   ventas:{name:'Ventas',submods:[]},
-  logistica:{name:'Logística',submods:[{id:'cargas',label:'📦 Cargas anticipadas',render:renderCargas}]},
+  logistica:{name:'Logística',submods:[
+    {id:'cargas',     label:'📦 Cargas anticipadas',         render:renderCargas},
+    {id:'colab',      label:'👥 Participación colaboradores', render:renderColaboradores},
+  ]},
   operaciones:{name:'Operaciones especiales',submods:[]},
   vigilancia:{name:'Vigilancia',submods:[]},
 };
+
 function setNav(id){document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));const e=document.getElementById(id);if(e)e.classList.add('active');}
+
 function showHome(){
   setNav('nav-home');
   document.getElementById('page-home').classList.add('active');
   document.getElementById('page-detail').classList.remove('active');
   document.getElementById('bc-current').textContent='Resumen general';
-  if(window._timer){clearInterval(window._timer);window._timer=null;}
-  ['g-bar','g-dona','g-dow','g-acum'].forEach(DC);
+  if(window._timerCargas){clearInterval(window._timerCargas);window._timerCargas=null;}
+  ['g-bar','g-dona','g-dow','g-acum','cv-bar-top','cv-dona-unidad','cv-pct-bar'].forEach(DC);
   if(window.innerWidth<900)toggleSidebar();
 }
+
 function openArea(key){
   const area=areas[key];
   setNav('nav-'+key);
@@ -606,6 +946,7 @@ function openArea(key){
   window.scrollTo({top:0,behavior:'smooth'});
   if(window.innerWidth<900)toggleSidebar();
 }
+
 function switchTab(areaKey,subId,btn){
   document.querySelectorAll('.submod-tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.submod-panel').forEach(p=>p.classList.remove('active'));
