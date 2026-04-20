@@ -198,6 +198,189 @@ tfoot td.num{text-align:right}
   .filter-select,.filter-input{min-width:unset;width:100%}.overview-grid{grid-template-columns:1fr}
   .minibar-wrap{min-width:80px}.pctbar-wrap{min-width:100px}
 }
+
+/* ══════════════════════════════
+   SLIDESHOW / PRESENTACIÓN
+══════════════════════════════ */
+.btn-presentar{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--ink);border:none;border-radius:10px;
+  padding:9px 20px;font-size:13px;font-weight:600;
+  color:#fff;font-family:'Outfit',sans-serif;cursor:pointer;
+  transition:all .2s;box-shadow:0 3px 12px rgba(0,0,0,0.18);
+}
+.btn-presentar:hover{background:#000;transform:translateY(-1px);box-shadow:0 5px 16px rgba(0,0,0,0.25)}
+.btn-presentar svg{width:16px;height:16px}
+
+.slideshow-overlay{
+  position:fixed;inset:0;z-index:9999;
+  background:#0D0608;
+  display:none;flex-direction:column;
+  opacity:0;transition:opacity .35s;
+}
+.slideshow-overlay.open{display:flex}
+.slideshow-overlay.visible{opacity:1}
+
+.ss-topbar{
+  height:56px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 2rem;
+  border-bottom:1px solid rgba(255,255,255,0.08);
+}
+.ss-brand{display:flex;align-items:center;gap:12px}
+.ss-brand-logo{
+  width:36px;height:36px;border-radius:8px;
+  background:var(--red);display:flex;align-items:center;justify-content:center;
+}
+.ss-brand-logo svg{width:18px;height:18px;stroke:#fff}
+.ss-brand-name{font-size:15px;font-weight:700;color:#fff;letter-spacing:.02em}
+.ss-brand-name span{color:rgba(255,255,255,0.4);font-weight:300}
+.ss-nav-pills{display:flex;gap:4px}
+.ss-pill{
+  width:8px;height:8px;border-radius:50%;
+  background:rgba(255,255,255,0.2);cursor:pointer;
+  transition:all .2s;
+}
+.ss-pill.active{background:#fff;width:24px;border-radius:4px}
+.ss-controls{display:flex;align-items:center;gap:8px}
+.ss-btn{
+  background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);
+  border-radius:8px;padding:6px 14px;font-size:12px;font-weight:600;
+  color:rgba(255,255,255,0.7);font-family:'Outfit',sans-serif;cursor:pointer;
+  transition:all .18s;display:flex;align-items:center;gap:6px;
+}
+.ss-btn:hover{background:rgba(255,255,255,0.15);color:#fff}
+.ss-btn svg{width:14px;height:14px}
+.ss-btn-close{background:rgba(192,21,42,0.2);border-color:rgba(192,21,42,0.4);color:#ff6b7a}
+.ss-btn-close:hover{background:rgba(192,21,42,0.4);color:#fff}
+.ss-counter{font-size:11px;font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,0.35);padding:0 8px}
+
+.ss-stage{
+  flex:1;overflow:hidden;position:relative;
+}
+.ss-slide{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:2.5rem 3rem;
+  opacity:0;transform:translateX(40px);
+  transition:opacity .4s ease,transform .4s ease;
+  pointer-events:none;overflow-y:auto;
+}
+.ss-slide.active{
+  opacity:1;transform:translateX(0);pointer-events:all;
+}
+.ss-slide.exit-left{
+  opacity:0;transform:translateX(-40px);
+}
+
+/* Slide 0 — Portada */
+.ss-cover{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;height:100%;gap:1.5rem;
+}
+.ss-cover-eyebrow{
+  font-size:10px;letter-spacing:.25em;text-transform:uppercase;
+  color:var(--red);font-family:'JetBrains Mono',monospace;
+}
+.ss-cover-title{
+  font-size:clamp(32px,5vw,62px);font-weight:700;color:#fff;line-height:1.1;
+}
+.ss-cover-title span{color:var(--red)}
+.ss-cover-sub{font-size:16px;color:rgba(255,255,255,0.45);max-width:520px;line-height:1.6}
+.ss-cover-period{
+  font-size:13px;font-family:'JetBrains Mono',monospace;
+  color:rgba(255,255,255,0.5);
+  background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);
+  border-radius:8px;padding:8px 20px;margin-top:.5rem;
+}
+.ss-cover-line{
+  width:60px;height:3px;background:var(--red);border-radius:2px;
+}
+
+/* Slide genérico */
+.ss-slide-title{
+  font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(255,255,255,0.3);font-family:'JetBrains Mono',monospace;
+  margin-bottom:.75rem;
+}
+.ss-slide-heading{
+  font-size:clamp(22px,3vw,34px);font-weight:700;color:#fff;
+  margin-bottom:2rem;line-height:1.2;
+}
+.ss-slide-heading span{color:var(--red)}
+
+/* KPIs en slide */
+.ss-kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:2rem}
+.ss-kpi{
+  background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);
+  border-radius:14px;padding:1.5rem;position:relative;overflow:hidden;
+}
+.ss-kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--sskpi-c,var(--red))}
+.ss-kpi .lbl{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,0.4);margin-bottom:8px;font-weight:600}
+.ss-kpi .val{font-size:36px;font-weight:700;font-family:'JetBrains Mono',monospace;color:#fff;line-height:1}
+.ss-kpi .sub{font-size:12px;color:rgba(255,255,255,0.35);margin-top:6px}
+
+/* Chart wrapper en slide */
+.ss-chart-wrap{
+  background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);
+  border-radius:14px;padding:1.5rem;flex:1;display:flex;flex-direction:column;
+}
+.ss-chart-title{font-size:12px;font-weight:600;color:rgba(255,255,255,0.6);margin-bottom:1rem}
+.ss-chart-inner{flex:1;position:relative;min-height:200px}
+.ss-two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;flex:1}
+.ss-full-col{display:flex;flex-direction:column;flex:1;gap:16px}
+
+/* Tabla en slide */
+.ss-table-wrap{
+  background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);
+  border-radius:14px;overflow:hidden;
+}
+.ss-table{width:100%;border-collapse:collapse}
+.ss-table thead th{
+  font-size:10px;text-transform:uppercase;letter-spacing:.1em;
+  color:rgba(255,255,255,0.35);padding:10px 16px;text-align:left;
+  border-bottom:1px solid rgba(255,255,255,0.07);font-weight:700;
+}
+.ss-table thead th.r{text-align:right}
+.ss-table tbody tr{border-bottom:1px solid rgba(255,255,255,0.05)}
+.ss-table tbody tr:last-child{border-bottom:none}
+.ss-table tbody tr:hover{background:rgba(255,255,255,0.04)}
+.ss-table tbody td{font-size:12px;padding:9px 16px;color:rgba(255,255,255,0.75)}
+.ss-table tbody td:first-child{color:#fff;font-weight:600}
+.ss-table tbody td.r{text-align:right;font-family:'JetBrains Mono',monospace}
+.ss-table tfoot td{
+  font-size:11px;padding:10px 16px;font-weight:700;
+  border-top:1px solid rgba(255,255,255,0.15);
+  font-family:'JetBrains Mono',monospace;color:#fff;
+  background:rgba(255,255,255,0.06);
+}
+.ss-table tfoot td.r{text-align:right}
+
+/* Barra progreso en tabla slide */
+.ss-pbar{display:flex;align-items:center;gap:8px;min-width:130px}
+.ss-pbar-track{flex:1;height:6px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden}
+.ss-pbar-fill{height:100%;border-radius:3px}
+.ss-pbar-lbl{font-size:11px;font-family:'JetBrains Mono',monospace;font-weight:600;min-width:38px;text-align:right}
+
+/* Slide de cierre */
+.ss-end{
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;text-align:center;height:100%;gap:1rem;
+}
+.ss-end-icon{
+  width:72px;height:72px;border-radius:20px;background:rgba(192,21,42,0.15);
+  border:1px solid rgba(192,21,42,0.3);
+  display:flex;align-items:center;justify-content:center;margin-bottom:.5rem;
+}
+.ss-end-icon svg{width:32px;height:32px;stroke:var(--red)}
+.ss-end-title{font-size:32px;font-weight:700;color:#fff}
+.ss-end-sub{font-size:15px;color:rgba(255,255,255,0.4);max-width:400px;line-height:1.6}
+
+@media(max-width:700px){
+  .ss-slide{padding:1.5rem 1.25rem}
+  .ss-two-col{grid-template-columns:1fr}
+  .ss-kpi .val{font-size:26px}
+}
 </style>
 </head>
 <body>
@@ -611,7 +794,8 @@ async function renderColaboradores(container){
       PctViajes:  (()=>{
         const v=(r['% DE VIAJES']||r['% de viajes']||r['% De Viajes']||r.PctViajes||'0').toString().replace(/[^0-9.]/g,'');
         const n=parseFloat(v)||0;
-        return n>1?n/100:n;
+        // Normaliza siempre a porcentaje (0-100). Si viene como decimal 0.1666 → 16.66
+        return n>1?n:n*100;
       })(),
     })).filter(r=>r.Colaborador&&r.Colaborador.length>2);
     // Asigna mes fallback si parseMes devolvió vacío
@@ -694,7 +878,7 @@ async function renderColaboradores(container){
     const unidadColors={'CAMION':'rgba(26,58,112,0.82)','CAMIONETA':'rgba(26,158,130,0.82)','QUINTA':'rgba(184,122,16,0.82)'};
 
     container.innerHTML=`
-      <div class="banner ok">✓ Datos de Viajes.xlsx cargados · ${VIAJES_DATA.length} colaboradores registrados · Actualización manual</div>
+      <div class="banner ok">✓ Google Sheets conectado · ${VIAJES_DATA.length} colaboradores · Auto-refresco cada 5 min</div>
 
       <div class="filters-bar">
         <div class="filter-group"><span class="filter-label">Mes</span>
@@ -715,6 +899,10 @@ async function renderColaboradores(container){
         <button class="filter-btn" onclick="applyFiltersColab()">Aplicar</button>
         <button class="filter-clear" onclick="clearFiltersColab()">Limpiar</button>
         <span class="filter-period-tag">${filtroMes==='todos'?'Todos los períodos':mesLabel(filtroMes)}</span>
+        <button class="btn-presentar" onclick="abrirSlideshow()" style="margin-left:auto">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><circle cx="12" cy="10" r="3" fill="currentColor" stroke="none"/><polygon points="10,8 14,10 10,12" fill="#fff" stroke="none"/></svg>
+          Presentar
+        </button>
       </div>
 
       <div class="kpi-row">
@@ -722,7 +910,7 @@ async function renderColaboradores(container){
         <div class="ckpi" style="--ck-color:var(--blue)"><div class="lbl">Locales</div><div class="val">${k.local}</div><div class="sub">${k.total?Math.round(k.local/k.total*100):0}% del total</div></div>
         <div class="ckpi" style="--ck-color:var(--teal)"><div class="lbl">Foráneos</div><div class="val">${k.foraneo}</div><div class="sub">${k.total?Math.round(k.foraneo/k.total*100):0}% del total</div></div>
         <div class="ckpi" style="--ck-color:var(--green)"><div class="lbl">Meta mínima ✓</div><div class="val">${k.metaCump}</div><div class="sub">de ${k.n} colaboradores</div></div>
-        <div class="ckpi" style="--ck-color:var(--red)"><div class="lbl">% Prom. viajes</div><div class="val">${(k.pctPromedio*100).toFixed(1)}%</div><div class="sub">participación media</div></div>
+        <div class="ckpi" style="--ck-color:var(--red)"><div class="lbl">% Prom. viajes</div><div class="val">${k.pctPromedio.toFixed(1)}%</div><div class="sub">participación media</div></div>
       </div>
 
       <div class="charts-grid">
@@ -768,7 +956,7 @@ async function renderColaboradores(container){
             ${data.map((r,i)=>{
               const pctMeta=r.Meta>0?r.PctViajes/(r.Meta/60):r.PctViajes;
               const color=getColor(r.Total,r.NoViajMin);
-              const pctDisplay=(r.PctViajes*100).toFixed(1)+'%';
+              const pctDisplay=r.PctViajes.toFixed(1)+'%';
               const localPct=r.Total>0?Math.round(r.Local/r.Total*100):0;
               const foranPct=r.Total>0?Math.round(r.Foraneo/r.Total*100):0;
               const totalPct=maxTotal>0?Math.round(r.Total/maxTotal*100):0;
@@ -815,7 +1003,7 @@ async function renderColaboradores(container){
               <td class="num">${k.local}</td>
               <td class="num">${k.foraneo}</td>
               <td class="num">${k.total}</td>
-              <td class="num">${(k.pctPromedio*100).toFixed(1)}%</td>
+              <td class="num">${k.pctPromedio.toFixed(1)}%</td>
               <td class="num">—</td>
               <td class="center">${k.metaCump}/${k.n} ✓</td>
             </tr>
@@ -895,7 +1083,7 @@ async function renderColaboradores(container){
           labels:sortedByPct.map(r=>r.Colaborador.split(' ').slice(0,3).join(' ')),
           datasets:[{
             label:'% de Viajes',
-            data:sortedByPct.map(r=>+(r.PctViajes*100).toFixed(2)),
+            data:sortedByPct.map(r=>+r.PctViajes.toFixed(2)),
             backgroundColor:sortedByPct.map(r=>{
               const ratio=r.NoViajMin>0?r.Total/r.NoViajMin:0;
               return ratio>=1?'rgba(26,158,92,0.80)':ratio>=0.7?'rgba(184,122,16,0.80)':'rgba(192,21,42,0.80)';
@@ -919,6 +1107,20 @@ async function renderColaboradores(container){
     },80);
   }
 
+  // Exponer datos para slideshow — se actualiza con cada filtro
+  function _expSS(){
+    window._ssColabData=filtrar();
+    window._ssColabKpis=kpisGlobal(window._ssColabData);
+    window._ssColabPeriodo=filtroMes==='todos'?'Todos los períodos':mesLabel(filtroMes);
+  }
+
+  // Parchear applyFilters y clearFilters para re-exponer tras filtrar
+  const _origApply=window.applyFiltersColab;
+  window.applyFiltersColab=()=>{_origApply();_expSS();};
+  const _origClear=window.clearFiltersColab;
+  window.clearFiltersColab=()=>{_origClear();_expSS();};
+
+  _expSS(); // primera exposición
   render();
 
   if(window._timerColab)clearInterval(window._timerColab);
@@ -992,5 +1194,34 @@ function switchTab(areaKey,subId,btn){
   if(!panel.innerHTML.trim()){const sub=areas[areaKey].submods.find(s=>s.id===subId);if(sub)sub.render(panel);}
 }
 </script>
+
+<!-- ══════════════════ SLIDESHOW OVERLAY ══════════════════ -->
+<div class="slideshow-overlay" id="ssOverlay">
+  <div class="ss-topbar">
+    <div class="ss-brand">
+      <div class="ss-brand-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+      </div>
+      <div class="ss-brand-name">FIS <span>FIBER</span> · Logística</div>
+    </div>
+    <div class="ss-nav-pills" id="ssPills"></div>
+    <div class="ss-controls">
+      <span class="ss-counter" id="ssCounter">1 / 5</span>
+      <button class="ss-btn" onclick="ssNav(-1)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Anterior
+      </button>
+      <button class="ss-btn" onclick="ssNav(1)">
+        Siguiente
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+      <button class="ss-btn ss-btn-close" onclick="cerrarSlideshow()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        Cerrar
+      </button>
+    </div>
+  </div>
+  <div class="ss-stage" id="ssStage"></div>
+</div>
 </body>
 </html>
