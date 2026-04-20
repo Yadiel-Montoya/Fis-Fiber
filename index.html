@@ -794,10 +794,10 @@ async function renderColaboradores(container){
       PctViajes:  (()=>{
         const v=(r['% DE VIAJES']||r['% de viajes']||r['% De Viajes']||r.PctViajes||'0').toString().replace(/[^0-9.]/g,'');
         const n=parseFloat(v)||0;
-        // Normaliza siempre a porcentaje (0-100). Si viene como decimal 0.1666 → 16.66
-        return n>1?n:n*100;
+        // SIEMPRE guardamos como decimal 0-1. Si viene 0.225 → 0.225. Si viene 22.5 → 0.225
+        return n>=1?n/100:n;
       })(),
-    })).filter(r=>r.Colaborador&&r.Colaborador.length>2);
+    })).filter(r=>r.Colaborador&&r.Colaborador.length>2&&r.Colaborador!=='COLABORADOR'&&!/^(no|mes|puesto|unidad)$/i.test(r.Colaborador));
     // Asigna mes fallback si parseMes devolvió vacío
     VIAJES_DATA.forEach(r=>{if(!r.Mes||r.Mes.length<7)r.Mes='2026-04';});
     console.log('Registros procesados:',VIAJES_DATA.length, VIAJES_DATA[0]);
@@ -871,7 +871,7 @@ async function renderColaboradores(container){
 
     /* ── Charts data ── */
     const topN=5;
-    const top5=data.slice(0,topN);
+    const top5=[...data].sort((a,b)=>b.Total-a.Total).slice(0,topN);
     const unidadTotales={};
     data.forEach(r=>{unidadTotales[r.Unidad]=(unidadTotales[r.Unidad]||0)+r.Total;});
     const unidadKeys=Object.keys(unidadTotales);
@@ -910,7 +910,7 @@ async function renderColaboradores(container){
         <div class="ckpi" style="--ck-color:var(--blue)"><div class="lbl">Locales</div><div class="val">${k.local}</div><div class="sub">${k.total?Math.round(k.local/k.total*100):0}% del total</div></div>
         <div class="ckpi" style="--ck-color:var(--teal)"><div class="lbl">Foráneos</div><div class="val">${k.foraneo}</div><div class="sub">${k.total?Math.round(k.foraneo/k.total*100):0}% del total</div></div>
         <div class="ckpi" style="--ck-color:var(--green)"><div class="lbl">Meta mínima ✓</div><div class="val">${k.metaCump}</div><div class="sub">de ${k.n} colaboradores</div></div>
-        <div class="ckpi" style="--ck-color:var(--red)"><div class="lbl">% Prom. viajes</div><div class="val">${k.pctPromedio.toFixed(1)}%</div><div class="sub">participación media</div></div>
+        <div class="ckpi" style="--ck-color:var(--red)"><div class="lbl">% Prom. viajes</div><div class="val">${(k.pctPromedio*100).toFixed(1)}%</div><div class="sub">participación media</div></div>
       </div>
 
       <div class="charts-grid">
@@ -956,7 +956,7 @@ async function renderColaboradores(container){
             ${data.map((r,i)=>{
               const pctMeta=r.Meta>0?r.PctViajes/(r.Meta/60):r.PctViajes;
               const color=getColor(r.Total,r.NoViajMin);
-              const pctDisplay=r.PctViajes.toFixed(1)+'%';
+              const pctDisplay=(r.PctViajes*100).toFixed(1)+'%';
               const localPct=r.Total>0?Math.round(r.Local/r.Total*100):0;
               const foranPct=r.Total>0?Math.round(r.Foraneo/r.Total*100):0;
               const totalPct=maxTotal>0?Math.round(r.Total/maxTotal*100):0;
@@ -1003,7 +1003,7 @@ async function renderColaboradores(container){
               <td class="num">${k.local}</td>
               <td class="num">${k.foraneo}</td>
               <td class="num">${k.total}</td>
-              <td class="num">${k.pctPromedio.toFixed(1)}%</td>
+              <td class="num">${(k.pctPromedio*100).toFixed(1)}%</td>
               <td class="num">—</td>
               <td class="center">${k.metaCump}/${k.n} ✓</td>
             </tr>
@@ -1036,8 +1036,8 @@ async function renderColaboradores(container){
         data:{
           labels:top5.map(r=>r.Colaborador.split(' ').slice(0,2).join(' ')),
           datasets:[
-            {label:'Local',data:top5.map(r=>r.Local),backgroundColor:'rgba(26,58,112,0.82)',borderRadius:4,borderSkipped:false},
-            {label:'Foráneo',data:top5.map(r=>r.Foraneo),backgroundColor:'rgba(26,158,130,0.82)',borderRadius:4,borderSkipped:false},
+            {label:'Local',data:top5.map(r=>r.Local),backgroundColor:'rgba(26,58,112,0.85)',borderRadius:4,borderSkipped:false},
+            {label:'Foráneo',data:top5.map(r=>r.Foraneo),backgroundColor:'rgba(26,158,130,0.85)',borderRadius:4,borderSkipped:false},
           ]
         },
         options:{
@@ -1045,11 +1045,11 @@ async function renderColaboradores(container){
           plugins:{
             legend:{display:true,position:'bottom',labels:{color:'#5C3038',font:{size:11,family:'Outfit'},usePointStyle:true,padding:16}},
             tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.parsed.y}`}},
-            datalabels:{display:false}
+            datalabels:{anchor:'end',align:'end',offset:1,color:'#5C3038',font:{size:10,family:mf,weight:'600'},formatter:v=>v||''}
           },
           scales:{
             x:{grid:{display:false},ticks:{color:tc,font:{size:10,family:mf},maxRotation:0},border:{color:'transparent'}},
-            y:{grid:{color:gc},ticks:{color:tc,font:{size:11}},border:{color:'transparent'},beginAtZero:true}
+            y:{grid:{color:gc},ticks:{color:tc,font:{size:11}},border:{color:'transparent'},beginAtZero:true,grace:'15%'}
           }
         }
       });
@@ -1059,13 +1059,13 @@ async function renderColaboradores(container){
       const donaColors=unidadKeys.map(u=>unidadColors[u]||'rgba(150,150,150,0.75)');
       CI['cv-dona-unidad']=new Chart(document.getElementById('cv-dona-unidad'),{
         type:'doughnut',
-        data:{labels:unidadKeys,datasets:[{data:unidadKeys.map(u=>unidadTotales[u]),backgroundColor:donaColors,borderWidth:1,hoverOffset:6}]},
+        data:{labels:unidadKeys,datasets:[{data:unidadKeys.map(u=>unidadTotales[u]),backgroundColor:donaColors,borderWidth:0,hoverOffset:8}]},
         options:{
           responsive:true,maintainAspectRatio:false,cutout:'62%',
           plugins:{
-            legend:{position:'bottom',labels:{color:'#5C3038',font:{size:12,family:'Outfit'}}},
-            tooltip:{callbacks:{label:c=>`${c.label}: ${c.parsed} viajes`}},
-            datalabels:{display:false}
+            legend:{position:'bottom',labels:{color:'#5C3038',font:{size:12,family:'Outfit'},usePointStyle:true,padding:14}},
+            tooltip:{callbacks:{label:c=>{const tot=c.dataset.data.reduce((a,b)=>a+b,0);return`${c.label}: ${c.parsed} viajes (${Math.round(c.parsed/tot*100)}%)`}}},
+            datalabels:{color:'#fff',font:{size:11,family:mf,weight:'700'},formatter:(v,ctx)=>{const tot=ctx.dataset.data.reduce((a,b)=>a+b,0);return tot&&v?Math.round(v/tot*100)+'%':''}}
           }
         }
       });
@@ -1083,7 +1083,7 @@ async function renderColaboradores(container){
           labels:sortedByPct.map(r=>r.Colaborador.split(' ').slice(0,3).join(' ')),
           datasets:[{
             label:'% de Viajes',
-            data:sortedByPct.map(r=>+r.PctViajes.toFixed(2)),
+            data:sortedByPct.map(r=>+(r.PctViajes*100).toFixed(2)),
             backgroundColor:sortedByPct.map(r=>{
               const ratio=r.NoViajMin>0?r.Total/r.NoViajMin:0;
               return ratio>=1?'rgba(26,158,92,0.80)':ratio>=0.7?'rgba(184,122,16,0.80)':'rgba(192,21,42,0.80)';
@@ -1099,8 +1099,8 @@ async function renderColaboradores(container){
             datalabels:{anchor:'end',align:'end',offset:2,color:'#5C3038',font:{size:10,family:mf,weight:'600'},formatter:v=>`${v.toFixed(1)}%`}
           },
           scales:{
-            y:{grid:{display:false},ticks:{color:tc,font:{size:11,family:mf}},border:{color:'transparent'}},
-            x:{grid:{color:gc},ticks:{color:tc,font:{size:10},callback:v=>`${v}%`},border:{color:'transparent'},beginAtZero:true,grace:'10%'}
+            y:{grid:{display:false},ticks:{color:tc,font:{size:10,family:mf}},border:{color:'transparent'}},
+            x:{grid:{color:gc},ticks:{color:tc,font:{size:10},callback:v=>`${v}%`},border:{color:'transparent'},beginAtZero:true,grace:'10%',max:Math.ceil(Math.max(...data.map(r=>r.PctViajes*100))*1.15)||30}
           }
         }
       });
