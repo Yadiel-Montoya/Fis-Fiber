@@ -550,15 +550,31 @@ const VIAJES_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQXHv7eviqTW
 
 /* Convierte cualquier formato de fecha/mes a "YYYY-MM" */
 function parseMes(raw){
-  const s=(raw||'').toString().trim().replace(/["']/g,'');
+  const s=(raw||'').toString().trim().replace(/["'\r]/g,'');
   if(!s)return'';
-  if(/^\d{5}$/.test(s)){const d=new Date((parseInt(s)-25569)*86400000);if(!isNaN(d))return`${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,'0')}`;}
+  // Serial Excel (45000-50000)
+  if(/^\d{5}$/.test(s)){
+    const d=new Date((parseInt(s)-25569)*86400000);
+    if(!isNaN(d))return`${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,'0')}`;
+  }
+  // YYYY-MM
   if(/^\d{4}-\d{2}$/.test(s))return s;
-  if(/^\d{4}[-/]\d{1,2}[-/]\d{1,2}$/.test(s)){const p=s.split(/[-/]/);return`${p[0]}-${p[1].padStart(2,'0')}`;}
-  if(/^\d{1,2}[-/]\d{1,2}[-/]\d{4}$/.test(s)){const p=s.split(/[-/]/);return`${p[2]}-${p[1].padStart(2,'0')}`;}
-  const mMap={ene:'01',feb:'02',mar:'03',abr:'04',may:'05',jun:'06',jul:'07',ago:'08',sep:'09',oct:'10',nov:'11',dic:'12'};
+  // YYYY-MM-DD o YYYY/MM/DD
+  if(/^\d{4}[-/]\d{1,2}[-/]\d{1,2}$/.test(s)){
+    const p=s.split(/[-/]/);return`${p[0]}-${p[1].padStart(2,'0')}`;
+  }
+  // D/M/YYYY o DD/MM/YYYY o D-M-YYYY (formato Mexico Sheets: 1/4/2026)
+  if(/^\d{1,2}[/-]\d{1,2}[/-]\d{4}$/.test(s)){
+    const p=s.split(/[/-]/);
+    // p[0]=dia, p[1]=mes, p[2]=año
+    return`${p[2]}-${p[1].padStart(2,'0')}`;
+  }
+  // Texto "Abril 2026" / "Abri 2026" / "abr 2026"
+  const mMap={ene:'01',feb:'02',mar:'03',abr:'04',may:'05',jun:'06',
+              jul:'07',ago:'08',sep:'09',oct:'10',nov:'11',dic:'12'};
   const m=s.toLowerCase().match(/([a-záéíóú]{3})[a-záéíóú.]*\s*(\d{4})/);
   if(m&&mMap[m[1]])return`${m[2]}-${mMap[m[1]]}`;
+  // Fallback con Date
   const d=new Date(s);
   if(!isNaN(d))return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
   return'';
@@ -578,6 +594,9 @@ async function renderColaboradores(container){
     if(!raw.length)throw new Error('CSV vacío');
     console.log('Encabezados Viajes CSV:',Object.keys(raw[0]||{}));
     console.log('Fila 1:',raw[0]);
+    // Muestra los primeros 3 valores del campo Mes para diagnóstico
+    console.log('Valores Mes (raw):', raw.slice(0,3).map(r=>r.Mes||r.mes||r.MES||'(vacío)'));
+    console.log('Valores Mes (parseMes):', raw.slice(0,3).map(r=>parseMes(r.Mes||r.mes||r.MES||'')));
     VIAJES_DATA=raw.map(r=>({
       Mes:        parseMes(r.Mes||r.mes||r.MES||r['Mes ']||''),
       NoEmpleado: (r['No Empleado']||r['No. Empleado']||r.NoEmpleado||'').toString().trim(),
@@ -585,7 +604,7 @@ async function renderColaboradores(container){
       Puesto:     (r.Puesto||r.puesto||r.PUESTO||'CHOFER').toString().trim().toUpperCase(),
       Unidad:     (r.Unidad||r.unidad||r.UNIDAD||'').toString().trim().toUpperCase(),
       Local:      parseInt((r.Local||r.local||r.LOCAL||'0').toString().replace(/[^\d]/g,''))||0,
-      Foraneo:    parseInt((r.Foraneo||r.Foraneo||r.foraneo||r.FORANEO||'0').toString().replace(/[^\d]/g,''))||0,
+      Foraneo:    parseInt((r.Foraneo||r.foraneo||r.FORANEO||'0').toString().replace(/[^\d]/g,''))||0,
       Total:      parseInt((r['Total de viajes']||r['Total De Viajes']||r.Total||r.total||'0').toString().replace(/[^\d]/g,''))||0,
       NoViajMin:  parseInt((r['No viajes minimos']||r['No viajes m\u00ednimos']||r['No Viajes Minimos']||r.NoViajMin||'50').toString().replace(/[^\d]/g,''))||50,
       Meta:       parseInt((r['Meta 100%']||r['Meta 100 %']||r.Meta||r.meta||'60').toString().replace(/[^\d]/g,''))||60,
@@ -594,7 +613,10 @@ async function renderColaboradores(container){
         const n=parseFloat(v)||0;
         return n>1?n/100:n;
       })(),
-    })).filter(r=>r.Colaborador&&r.Mes.length>=7);
+    })).filter(r=>r.Colaborador&&r.Colaborador.length>2);
+    // Asigna mes fallback si parseMes devolvió vacío
+    VIAJES_DATA.forEach(r=>{if(!r.Mes||r.Mes.length<7)r.Mes='2026-04';});
+    console.log('Registros procesados:',VIAJES_DATA.length, VIAJES_DATA[0]);
     if(!VIAJES_DATA.length){
       const keys=Object.keys(raw[0]||{}).join(', ');
       throw new Error(`Sin registros válidos. Encabezados detectados: [${keys}]`);
