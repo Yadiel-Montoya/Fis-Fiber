@@ -494,28 +494,56 @@ async function loadCasetasMensual(){
     if(!res.ok)throw new Error('HTTP '+res.status);
     const txt=await res.text();
     if(txt.trim().startsWith('<'))throw new Error('Recibido HTML — URL no es CSV público');
-    const raw=parseCSV(txt);
-    if(!raw.length)throw new Error('CSV vacío o sin filas');
-    const headersList=Object.keys(raw[0]||{});
-    const fila1=raw[0]||{};
+
+    // Parser por posicion — ignora nombres de columna con espacios/tildes raros
+    const lineas=txt.trim().split('\n').filter(l=>l.trim());
+    if(lineas.length<2)throw new Error('CSV vacío');
+    function parseLine(line){
+      const vals=[];let cur='',inQ=false;
+      for(let i=0;i<line.length;i++){
+        const c=line[i];
+        if(c==='"'){inQ=!inQ;}
+        else if(c===','&&!inQ){vals.push(cur.trim().replace(/^"|"$/g,'').replace(/\r/g,''));cur='';}
+        else cur+=c;
+      }
+      vals.push(cur.trim().replace(/^"|"$/g,'').replace(/\r/g,''));
+      return vals;
+    }
+    const hdr=parseLine(lineas[0]);
+    function findCol(...terms){
+      for(const t of terms){
+        const tl=t.toLowerCase().replace(/\s+/g,'');
+        const idx=hdr.findIndex(h=>h.toLowerCase().replace(/\s+/g,'').includes(tl));
+        if(idx>=0)return idx;
+      }
+      return -1;
+    }
+    const iMes=findCol('mes');
+    const iC23=findCol('2023');
+    const iC24=findCol('2024');
+    const iC25=findCol('2025');
+    const iC26=findCol('2026');
+    const iEst=findCol('estatus','status');
     const debug={
-      headers: headersList.join(' | '),
-      mesFila1: Object.values(fila1).slice(0,3).join(' / '),
-      valoresFila1: headersList.filter(h=>/\d{4}/.test(h)).map(h=>`${h}=${fila1[h]}`).join(', ')
+      headers:hdr.join(' | '),
+      mesFila1:parseLine(lineas[1]||'').slice(0,4).join(' / '),
+      valoresFila1:`iMes=${iMes} iC23=${iC23} iC24=${iC24} iC25=${iC25} iC26=${iC26}`
     };
+    if(iMes<0)throw new Error('Columna MES no encontrada. Encabezados: '+hdr.join(' | '));
+    if(iC24<0)throw new Error('Columna 2024 no encontrada. Encabezados: '+hdr.join(' | '));
     const MESES_VALIDOS=['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE'];
-    const rows=raw.map(r=>{
-      const get=makeGet(r);
-      const mes=(get('MES','mes','Mes')||'').toString().trim().toUpperCase();
+    const rows=lineas.slice(1).map(linea=>{
+      const v=parseLine(linea);
+      const mes=(v[iMes]||'').trim().toUpperCase();
       if(!MESES_VALIDOS.includes(mes))return null;
-      const c23=parseMoney(get('2023'));
-      const c24=parseMoney(get('2024'));
-      const c25=parseMoney(get('2025'));
-      const c26=parseMoney(get('2026'));
-      const estatus=parseEstatus(get('Estatus','estatus','ESTATUS'));
+      const c23=iC23>=0?parseMoney(v[iC23]):0;
+      const c24=iC24>=0?parseMoney(v[iC24]):0;
+      const c25=iC25>=0?parseMoney(v[iC25]):0;
+      const c26=iC26>=0?parseMoney(v[iC26]):0;
+      const estatus=iEst>=0?parseEstatus(v[iEst]):(c26<=c25?'Ahorro':'Gasto');
       return{mes,c23,c24,c25,c26,dif2324:c24-c23,dif2425:c25-c24,dif2526:c26-c25,estatus};
     }).filter(Boolean);
-    if(!rows.length)throw new Error('Ninguna fila tiene un mes válido. Encabezados: '+headersList.join(' | '));
+    if(!rows.length)throw new Error('Ningún mes válido encontrado. Revisá que la columna MES tenga ENERO, FEBRERO…');
     return{rows,error:null,debug};
   }catch(e){return{rows:[],error:e.message,debug:null};}
 }
@@ -568,35 +596,38 @@ async function renderCasetas(container){
 
   if(e1||e2||sinDatosMensual||sinDatosComp){
     container.innerHTML=`
-      <div class="empty-state" style="max-width:700px;margin:0 auto;text-align:left;padding:2rem">
-        <div style="font-size:16px;font-weight:700;color:var(--ink);margin-bottom:1rem">⚠ Diagnóstico de conexión — Casetas</div>
+      <div style="max-width:680px;margin:0 auto;padding:2rem">
+        <div style="font-size:16px;font-weight:700;color:var(--ink);margin-bottom:1.25rem">⚠ Diagnóstico de conexión — Casetas</div>
 
-        <div style="background:var(--off);border:1px solid var(--border);border-radius:10px;padding:1rem;margin-bottom:1rem;font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.8">
+        <div style="background:var(--off);border:1px solid ${e1||sinDatosMensual?'var(--red)':'rgba(26,158,92,0.3)'};border-radius:10px;padding:1rem;margin-bottom:1rem;font-family:'JetBrains Mono',monospace;font-size:11px;line-height:2">
           <b>📋 HOJA MENSUAL</b><br>
-          Estado: <span style="color:${e1?'var(--red)':'var(--green)'}">${e1?'❌ ERROR':'✓ Conectada'}</span><br>
-          ${e1?`Error: <span style="color:var(--red)">${e1}</span><br>`:''}
+          Estado: <span style="color:${e1?'var(--red)':sinDatosMensual?'var(--amber)':'var(--green)'}">${e1?'❌ ERROR':sinDatosMensual?'⚠ CONECTADA PERO VALORES EN 0':'✓ OK'}</span><br>
+          ${e1?`Error: <b style="color:var(--red)">${e1}</b><br>`:''}
           Filas cargadas: <b>${mensual.length}</b><br>
-          ${d1?`Encabezados CSV: <span style="color:var(--blue)">${d1.headers}</span><br>Fila 1 MES: <b>${d1.mesFila1}</b><br>Fila 1 valores: <span style="color:var(--amber)">${d1.valoresFila1}</span>`:''}
-          ${mensual.length&&sinDatosMensual?`<br><span style="color:var(--red)">⚠ Filas cargadas pero todos los valores son 0 — los nombres de columna no coinciden con los años</span>`:''}
+          ${d1?`Encabezados detectados: <span style="color:var(--blue);word-break:break-all">${d1.headers}</span><br>Posiciones columnas: <span style="color:var(--amber)">${d1.valoresFila1}</span>`:''}
+          ${sinDatosMensual&&mensual.length?`<br>⚠ El parser encontró las filas pero los índices de columnas 2023/2024/2025/2026 están en -1 (no encontrados)`:''}
         </div>
 
-        <div style="background:var(--off);border:1px solid var(--border);border-radius:10px;padding:1rem;margin-bottom:1rem;font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.8">
+        <div style="background:var(--off);border:1px solid ${e2?'var(--red)':'rgba(26,158,92,0.3)'};border-radius:10px;padding:1rem;margin-bottom:1rem;font-family:'JetBrains Mono',monospace;font-size:11px;line-height:2">
           <b>📋 HOJA COMPARATIVO</b><br>
-          Estado: <span style="color:${e2?'var(--red)':'var(--green)'}">${e2?'❌ ERROR':'✓ Conectada'}</span><br>
-          ${e2?`Error: <span style="color:var(--red)">${e2}</span><br>`:''}
+          Estado: <span style="color:${e2?'var(--red)':'var(--green)'}">${e2?'❌ ERROR':'✓ OK'}</span><br>
+          ${e2==='Failed to fetch'?`<span style="color:var(--red)">❌ La hoja Comparativo NO está publicada como CSV.</span><br>`:e2?`Error: <b style="color:var(--red)">${e2}</b><br>`:''}
           Filas cargadas: <b>${comparativo.length}</b><br>
-          ${d2?`Encabezados CSV: <span style="color:var(--blue)">${d2.headers}</span><br>Fila 1 Unidad: <b>${d2.unidadFila1}</b>`:''}
+          ${d2?`Encabezados: <span style="color:var(--blue);word-break:break-all">${d2.headers}</span>`:''}
         </div>
 
-        <div style="background:var(--off);border:1px solid var(--border);border-radius:10px;padding:1rem;font-size:12px;line-height:1.8">
-          <b>¿Qué revisar en tu Google Sheets?</b><br>
-          1. Hoja <b>Mensual</b> debe tener columna <b>MES</b> y columnas con <b>2023, 2024, 2025, 2026</b> en el nombre<br>
-          2. Hoja <b>Comparativo</b> debe tener columnas <b>Mes</b>, <b>Unidad</b>, <b>Tipo de unidad</b><br>
-          3. Archivo → Compartir → Publicar en la web → CSV → cada hoja por separado
+        <div style="background:#fff3cd;border:1px solid #ffc107;border-radius:10px;padding:1rem;font-size:12px;line-height:1.9;margin-bottom:1rem">
+          <b>📌 Acción necesaria — Hoja Comparativo no publicada:</b><br>
+          1. Abre tu Google Sheets<br>
+          2. <b>Archivo → Compartir → Publicar en la web</b><br>
+          3. En el desplegable izquierdo selecciona <b>"Comparativo"</b> (no "Todo el documento")<br>
+          4. En el desplegable derecho selecciona <b>"Valores separados por comas (.csv)"</b><br>
+          5. Clic en <b>Publicar</b> → copia la URL → pégala en el código como <b>CASETAS_COMPARATIVO_URL</b>
         </div>
 
-        <button onclick="renderCasetas(this.closest('#detail-body > div, #ct-panel-anual')?.parentElement?.parentElement || document.getElementById('panel-casetas'))" style="margin-top:1rem;background:var(--red);color:#fff;border:none;border-radius:8px;padding:8px 20px;font-size:13px;font-weight:600;cursor:pointer">🔄 Reintentar</button>
+        <button id="btn-reintentar-casetas" style="background:var(--red);color:#fff;border:none;border-radius:8px;padding:9px 22px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif">🔄 Reintentar conexión</button>
       </div>`;
+    document.getElementById('btn-reintentar-casetas').onclick=()=>renderCasetas(container);
     return;
   }
   container.innerHTML=`
