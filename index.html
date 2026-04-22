@@ -471,6 +471,23 @@ const VIAJES_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQXHv7eviqTW
 function parseMoney(v){return parseFloat((v||'0').toString().replace(/[$,\s]/g,''))||0;}
 function parseEstatus(v){return/ahorro/i.test((v||'').toString())?'Ahorro':'Gasto';}
 
+/* Busca una columna por SUBSTRING — resuelve dobles espacios, tildes, mayúsculas */
+function makeGet(r){
+  const keys=Object.keys(r);
+  return function get(...terms){
+    for(const term of terms){
+      const tl=term.trim().toLowerCase().replace(/\s+/g,' ');
+      // 1. exact match normalizado
+      const exact=keys.find(h=>h.trim().toLowerCase().replace(/\s+/g,' ')===tl);
+      if(exact!==undefined&&r[exact]!==undefined&&r[exact]!=='')return r[exact];
+      // 2. substring — el encabezado CONTIENE el término
+      const sub=keys.find(h=>h.trim().toLowerCase().replace(/\s+/g,' ').includes(tl));
+      if(sub!==undefined&&r[sub]!==undefined&&r[sub]!=='')return r[sub];
+    }
+    return'';
+  };
+}
+
 async function loadCasetasMensual(){
   try{
     const res=await fetch(CASETAS_MENSUAL_URL+'&cb='+Date.now(),{cache:'no-store'});
@@ -479,21 +496,29 @@ async function loadCasetasMensual(){
     if(txt.trim().startsWith('<'))throw new Error('Recibido HTML — verifica URL CSV');
     const raw=parseCSV(txt);
     if(!raw.length)throw new Error('CSV vacío');
+    // DEBUG: log primeros encabezados para diagnóstico
+    console.log('[Casetas Mensual] Encabezados:', Object.keys(raw[0]||{}));
+    console.log('[Casetas Mensual] Fila 1:', raw[0]);
     const rows=raw.map(r=>{
-      const get=(...keys)=>{for(const k of keys){const f=Object.keys(r).find(h=>h.trim().toLowerCase()===k.toLowerCase());if(f&&r[f]!==undefined)return r[f];}return'';};
+      const get=makeGet(r);
+      // MES — busca columna que se llame exactamente MES o contenga "mes"
       const mes=(get('MES','mes','Mes')||'').toString().trim().toUpperCase();
-      if(!mes||mes==='MES')return null;
-      const c23=parseMoney(get('Casetas  2023','Casetas 2023','casetas 2023'));
-      const c24=parseMoney(get('Casetas  2024','Casetas 2024','casetas 2024'));
-      const c25=parseMoney(get('Casetas  2025','Casetas 2025','casetas 2025'));
-      const c26=parseMoney(get('Casetas  2026','Casetas 2026','casetas 2026'));
+      // Filtra filas que no son meses reales
+      const MESES_VALIDOS=['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE'];
+      if(!mes||!MESES_VALIDOS.includes(mes))return null;
+      // Columnas de años — busca por "2023", "2024", etc. dentro del nombre
+      const c23=parseMoney(get('2023'));
+      const c24=parseMoney(get('2024'));
+      const c25=parseMoney(get('2025'));
+      const c26=parseMoney(get('2026'));
       const estatus=parseEstatus(get('Estatus','estatus','ESTATUS'));
       return{mes,c23,c24,c25,c26,dif2324:c24-c23,dif2425:c25-c24,dif2526:c26-c25,estatus};
     }).filter(Boolean);
-    if(!rows.length)throw new Error('Sin filas válidas — verifica columna MES');
+    if(!rows.length)throw new Error('Sin meses válidos. Encabezados detectados: '+Object.keys(raw[0]||{}).join(' | '));
     return{rows,error:null};
   }catch(e){return{rows:[],error:e.message};}
 }
+
 async function loadCasetasComparativo(){
   try{
     const res=await fetch(CASETAS_COMPARATIVO_URL+'&cb='+Date.now(),{cache:'no-store'});
@@ -502,22 +527,29 @@ async function loadCasetasComparativo(){
     if(txt.trim().startsWith('<'))throw new Error('Recibido HTML — verifica URL CSV');
     const raw=parseCSV(txt);
     if(!raw.length)throw new Error('CSV vacío');
+    // DEBUG
+    console.log('[Casetas Comparativo] Encabezados:', Object.keys(raw[0]||{}));
+    console.log('[Casetas Comparativo] Fila 1:', raw[0]);
+    const MESES_VALIDOS=['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE'];
     let ord=0;
     const rows=raw.map(r=>{
-      const get=(...keys)=>{for(const k of keys){const f=Object.keys(r).find(h=>h.trim().toLowerCase()===k.toLowerCase());if(f&&r[f]!==undefined)return r[f];}return'';};
+      const get=makeGet(r);
       const mes=(get('Mes','MES','mes')||'').toString().trim().toUpperCase();
       const unidad=(get('Unidad','UNIDAD','unidad')||'').toString().trim().toUpperCase();
-      if(!mes||mes==='MES'||!unidad)return null;
-      const tipo=(get('Tipo de unidad','tipo de unidad','Tipo','tipo')||'').toString().trim();
-      const c24=parseMoney(get('Caseta 2024','Casetas 2024','caseta 2024'));
-      const c25=parseMoney(get('Casetas 2025','Caseta 2025','casetas 2025'));
-      const c26=parseMoney(get('Caseta 2026','Casetas 2026','caseta 2026'));
-      const dif=parseMoney(get('Diferencia','diferencia','dif'));
-      const pres=parseMoney(get('Presupuesto','presupuesto','$ Presupuesto'));
-      const estatus=parseEstatus(get('Estatus','estatus','ESTATUS'));
+      // Solo filas con mes válido y unidad real (U1, U2, etc.)
+      if(!MESES_VALIDOS.includes(mes)||!unidad||unidad.length<1)return null;
+      const tipo=(get('Tipo de unidad','tipo','Tipo')||'').toString().trim();
+      // Años: busca por substring "2024", "2025", "2026" en nombre de columna
+      // Pero hay "Caseta 2024" y "Casetas 2025" — buscar el que contenga solo ESE año
+      const c24=parseMoney(get('caseta 2024','casetas 2024','2024'));
+      const c25=parseMoney(get('casetas 2025','caseta 2025','2025'));
+      const c26=parseMoney(get('caseta 2026','casetas 2026','2026'));
+      const dif=parseMoney(get('Diferencia','diferencia'));
+      const pres=parseMoney(get('Presupuesto','presupuesto'));
+      const estatus=parseEstatus(get('Estatus','estatus'));
       ord++;return{ord,mes,unidad,tipo,c24,c25,c26,dif,estatus,pres};
     }).filter(Boolean);
-    if(!rows.length)throw new Error('Sin filas válidas — verifica columnas Mes, Unidad');
+    if(!rows.length)throw new Error('Sin unidades válidas. Encabezados detectados: '+Object.keys(raw[0]||{}).join(' | '));
     return{rows,error:null};
   }catch(e){return{rows:[],error:e.message};}
 }
