@@ -755,7 +755,7 @@ function renderCasetasAnual(container,CM){
         <div class="chart-box full"><div class="chart-title">Comparativo de Gastos por Mes <span class="chart-badge">2023–2026</span></div><div style="position:relative;width:100%;height:320px"><canvas id="ca-bar-comp"></canvas></div></div>
         <div class="chart-box"><div class="chart-title">Tendencia anual <span class="chart-badge">líneas</span></div><div style="position:relative;width:100%;height:260px"><canvas id="ca-line-trend"></canvas></div></div>
         <div class="chart-box"><div class="chart-title">Diferencia 2025 vs 2026 <span class="chart-badge">ahorro/gasto</span></div><div style="position:relative;width:100%;height:260px"><canvas id="ca-bar-dif"></canvas></div></div>
-        <div class="chart-box"><div class="chart-title">Gasto 2025 vs 2026 <span class="chart-badge">${mesesCon26} meses comparados</span></div><div style="position:relative;width:100%;height:260px"><canvas id="ca-dona-estatus"></canvas></div></div>
+        <div class="chart-box"><div class="chart-title">Comparativo 2025 vs 2026 <span class="chart-badge">${mesesCon26} meses · ${mesesCon26>0?'▼ Ahorro':'—'}</span></div><div style="position:relative;width:100%;height:260px"><canvas id="ca-dona-estatus"></canvas></div></div>
         <div class="chart-box"><div class="chart-title">% Variación 2025→2026</div><div style="position:relative;width:100%;height:260px"><canvas id="ca-pct-var"></canvas></div></div>
       </div>
       <div class="table-wrap">
@@ -799,19 +799,22 @@ function renderCasetasAnual(container,CM){
         return'$'+abs;
       };
 
-      // ── Gráfica 1: Comparativo 4 años ──
+      // ── Gráfica 1: Comparativo 4 años — etiquetas en TODOS los años ──
       DC('ca-bar-comp');
       CI['ca-bar-comp']=new Chart(document.getElementById('ca-bar-comp'),{type:'bar',
         data:{labels,datasets:[
-          {label:'2023',data:data.map(r=>r.c23),backgroundColor:C23,borderRadius:3,borderSkipped:false,datalabels:{display:false}},
-          {label:'2024',data:data.map(r=>r.c24),backgroundColor:C24,borderRadius:3,borderSkipped:false,datalabels:{display:false}},
-          {label:'2025',data:data.map(r=>r.c25),backgroundColor:C25,borderRadius:3,borderSkipped:false,datalabels:{display:false}},
+          {label:'2023',data:data.map(r=>r.c23),backgroundColor:C23,borderRadius:3,borderSkipped:false,
+           datalabels:{display:true,anchor:'end',align:'end',clamp:true,offset:1,color:'rgba(107,114,128,0.8)',font:{size:8,family:mf,weight:'600'},formatter:v=>v>0?'$'+Math.round(v/1000)+'k':''}},
+          {label:'2024',data:data.map(r=>r.c24),backgroundColor:C24,borderRadius:3,borderSkipped:false,
+           datalabels:{display:true,anchor:'end',align:'end',clamp:true,offset:1,color:'rgba(59,130,246,0.9)',font:{size:8,family:mf,weight:'600'},formatter:v=>v>0?'$'+Math.round(v/1000)+'k':''}},
+          {label:'2025',data:data.map(r=>r.c25),backgroundColor:C25,borderRadius:3,borderSkipped:false,
+           datalabels:{display:true,anchor:'end',align:'end',clamp:true,offset:1,color:'rgba(251,191,36,0.95)',font:{size:8,family:mf,weight:'600'},formatter:v=>v>0?'$'+Math.round(v/1000)+'k':''}},
           {label:'2026',data:data.map(r=>r.c26>0?r.c26:null),
            backgroundColor:data.map(r=>r.dif2526<0?'rgba(34,197,94,0.82)':'rgba(239,68,68,0.82)'),
            borderRadius:3,borderSkipped:false,
-           datalabels:{display:true,anchor:'end',align:'end',clamp:true,offset:2,
+           datalabels:{display:true,anchor:'end',align:'end',clamp:true,offset:1,
              color:data.map(r=>r.dif2526<0?'#15803d':'#b91c1c'),
-             font:{size:9,family:mf,weight:'700'},
+             font:{size:8,family:mf,weight:'700'},
              formatter:(v)=>v!=null?'$'+Math.round(v/1000)+'k':''}}
         ]},
         options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
@@ -860,22 +863,48 @@ function renderCasetasAnual(container,CM){
             y:{grid:{color:gc},ticks:{color:tc,font:{size:10},callback:yFmt},border:{color:'transparent'},max:difMax,min:-difMax}}}
       });
 
-      // ── Gráfica 4: Dona — Gasto 2025 vs Gasto 2026 (comparativo real $) ──
+      // ── Gráfica 4: Barras comparativo 2025 vs 2026 por mes — monto + % ──
       const conDato=data.filter(r=>r.c26>0);
       const tot26real=conDato.reduce((s,r)=>s+r.c26,0);
       const tot25enMismosMeses=conDato.reduce((s,r)=>s+r.c25,0);
+      const difTotal=tot26real-tot25enMismosMeses;
+      const pctTotal=tot25enMismosMeses>0?((difTotal/tot25enMismosMeses)*100).toFixed(1):0;
       DC('ca-dona-estatus');
-      CI['ca-dona-estatus']=new Chart(document.getElementById('ca-dona-estatus'),{type:'doughnut',
-        data:{labels:['Gasto 2025','Gasto 2026'],
-          datasets:[{data:[tot25enMismosMeses,tot26real],
-            backgroundColor:['rgba(251,191,36,0.75)','rgba(34,197,94,0.85)'],
-            borderWidth:2,borderColor:['rgba(251,191,36,0.25)','rgba(34,197,94,0.25)'],hoverOffset:8}]},
-        options:{responsive:true,maintainAspectRatio:false,cutout:'55%',
+      CI['ca-dona-estatus']=new Chart(document.getElementById('ca-dona-estatus'),{type:'bar',
+        data:{labels:conDato.map(r=>r.mes.substring(0,3)),
+          datasets:[
+            {label:'2025',data:conDato.map(r=>r.c25),backgroundColor:'rgba(251,191,36,0.72)',borderRadius:4,borderSkipped:false,
+             datalabels:{display:true,anchor:'end',align:'end',clamp:true,offset:1,color:'rgba(180,130,0,0.9)',font:{size:8,family:mf,weight:'600'},formatter:v=>'$'+Math.round(v/1000)+'k'}},
+            {label:'2026',data:conDato.map(r=>r.c26),
+             backgroundColor:conDato.map(r=>r.dif2526<0?'rgba(34,197,94,0.82)':'rgba(239,68,68,0.82)'),
+             borderRadius:4,borderSkipped:false,
+             datalabels:{display:true,anchor:'end',align:'end',clamp:true,offset:1,
+               color:conDato.map(r=>r.dif2526<0?'#15803d':'#b91c1c'),
+               font:{size:8,family:mf,weight:'700'},
+               formatter:(v,ctx)=>{
+                 const r=conDato[ctx.dataIndex];
+                 const pct=r.c25>0?((r.dif2526/r.c25)*100).toFixed(0):0;
+                 return '$'+Math.round(v/1000)+'k\n'+(pct>0?'+':'')+pct+'%';
+               }}}
+          ]},
+        options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
           plugins:{
-            legend:{position:'bottom',labels:{color:'#5C3038',font:{size:11,family:'Outfit'},usePointStyle:true,padding:12}},
-            tooltip:{callbacks:{label:c=>`${c.label}: $${c.parsed.toLocaleString('es-MX')}`}},
-            datalabels:{color:'#fff',font:{size:11,family:mf,weight:'700'},
-              formatter:(v,ctx)=>{const t=ctx.dataset.data.reduce((a,b)=>a+b,0);return t?'$'+Math.round(v/1000)+'k':''}}
+            legend:{display:true,position:'bottom',labels:{color:'#5C3038',font:{size:11,family:'Outfit'},usePointStyle:true,padding:12}},
+            tooltip:{callbacks:{
+              label:c=>`${c.dataset.label}: $${c.parsed.y.toLocaleString('es-MX')}`,
+              afterBody:items=>{
+                const r=conDato[items[0]?.dataIndex];
+                if(!r)return[];
+                const pct=r.c25>0?((r.dif2526/r.c25)*100).toFixed(1):0;
+                return[`Variación: ${pct>0?'+':''}${pct}% ($${Math.abs(r.dif2526).toLocaleString('es-MX')})`];
+              }
+            }},
+            datalabels:{}
+          },
+          scales:{
+            x:{grid:{display:false},ticks:{color:tc,font:{size:10,family:mf}},border:{color:'transparent'}},
+            y:{grid:{color:gc},ticks:{color:tc,font:{size:10},callback:yFmt},border:{color:'transparent'},beginAtZero:true,
+               max:Math.ceil(Math.max(...conDato.map(r=>Math.max(r.c25,r.c26)))*1.3)||100000}
           }}
       });
 
