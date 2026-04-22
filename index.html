@@ -421,7 +421,13 @@ const MESES=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','
 const DIAS=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
 const CI={};
 function DC(id){if(CI[id]){CI[id].destroy();delete CI[id];}}
-function fmtDif(n){if(n===0)return'<span style="color:var(--ink3)">$0</span>';const cls=n>0?'dif-positive':'dif-negative';return`<span class="${cls}">${n>0?'+':''}$${Math.abs(n).toLocaleString('es-MX')}</span>`;}
+function fmtDif(n){
+  if(n===0)return'<span style="color:var(--ink3)">$0</span>';
+  // En gastos: positivo = gastó MÁS (malo=rojo), negativo = gastó MENOS (bueno=verde)
+  const cls=n>0?'dif-positive':'dif-negative';
+  const sign=n>0?'+':'-';
+  return`<span class="${cls}">${sign}$${Math.abs(n).toLocaleString('es-MX')}</span>`;
+}
 function parseCSV(txt){
   const lines=txt.trim().split('\n').filter(l=>l.trim());
   if(lines.length<2)return[];
@@ -609,7 +615,7 @@ async function loadCasetasMensual(){
       const c24=parseMoney(v[iC24]||'0');
       const c25=parseMoney(v[iC25]||'0');
       const c26=parseMoney(v[iC26]||'0');
-      const estatus=parseEstatus(v[iEst]||'');
+      const estatus=v[iEst]&&/ahorro/i.test(v[iEst])?'Ahorro':v[iEst]&&/gasto/i.test(v[iEst])?'Gasto':(c26>0&&c26<c25?'Ahorro':c26>0&&c26>=c25?'Gasto':'Sin dato');
       return{mes,c23,c24,c25,c26,dif2324:c24-c23,dif2425:c25-c24,dif2526:c26-c25,estatus};
     }).filter(Boolean);
 
@@ -722,7 +728,7 @@ async function renderCasetas(container){
 function renderCasetasAnual(container,CM){
   if(!CM||!CM.length){container.innerHTML=`<div class="loading-state">Sin datos.</div>`;return;}
   const mesesCon26=CM.filter(r=>r.c26>0).length;
-  const ahorroCount=CM.filter(r=>r.c26>0&&r.estatus==='Ahorro').length;
+  const ahorroCount=CM.filter(r=>r.c26>0&&r.c26<r.c25).length;
   let filtroMes='todos';
   function filtrar(){return filtroMes==='todos'?CM:CM.filter(r=>r.mes===filtroMes);}
   function render(){
@@ -772,7 +778,13 @@ function renderCasetasAnual(container,CM){
             <td class="num">${fmtDif(r.dif2324)}</td>
             <td class="num">${fmtDif(r.dif2425)}</td>
             <td class="num">${r.c26>0?fmtDif(r.dif2526):'<span style="color:var(--ink3)">—</span>'}</td>
-            <td class="center"><span class="estatus-pill estatus-${r.estatus.toLowerCase()}">${r.estatus}</span></td>
+            <td class="center">${(()=>{
+              if(!r.c26||r.c26===0)return'<span style="color:var(--ink3)">—</span>';
+              const esAhorro=r.c26<r.c25;
+              const cls=esAhorro?'estatus-ahorro':'estatus-gasto';
+              const lbl=esAhorro?'Ahorro':'Gasto';
+              return`<span class="estatus-pill ${cls}">${lbl}</span>`;
+            })()}</td>
           </tr>`).join('')}</tbody>
           <tfoot><tr><td colspan="2">TOTALES</td><td class="num">$${ft23.toLocaleString('es-MX')}</td><td class="num">$${ft24.toLocaleString('es-MX')}</td><td class="num">$${ft25.toLocaleString('es-MX')}</td><td class="num">$${ft26.toLocaleString('es-MX')}</td><td class="num">${fmtDif(ft24-ft23)}</td><td class="num">${fmtDif(ft25-ft24)}</td><td class="num">${fmtDif(ft26-ft25)}</td><td class="center">${ahorroCount}/${mesesCon26} Ahorro</td></tr></tfoot>
         </table></div>
