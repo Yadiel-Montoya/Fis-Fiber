@@ -460,7 +460,7 @@ const SS_BTN=`<button class="btn-presentar" onclick="FNNAME()" style="margin-lef
 /* ══════════════════════════
    URLS GOOGLE SHEETS
 ══════════════════════════ */
-const CASETAS_MENSUAL_URL   = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSb8jHJ_Fqmp-Pxvy1Y8Frwc_uj49tWkcgVydTBUe1kBK7e1xte_1s5YLvx1UXetA/pub?output=csv';
+const CASETAS_MENSUAL_URL   = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSb8jHJ_Fqmp-Pxvy1Y8Frwc_uj49tWkcgVydTBUe1kBK7e1xte_1s5YLvx1UXetA/pub?gid=1168469221&single=true&output=csv';
 const CASETAS_COMPARATIVO_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSb8jHJ_Fqmp-Pxvy1Y8Frwc_uj49tWkcgVydTBUe1kBK7e1xte_1s5YLvx1UXetA/pub?gid=439879445&single=true&output=csv';
 const SHEETS_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSoLF8K76RuGVjuJsZPOVfAsQn698ryqhVPrjd-vGtCoLKUg3ts2MqzMXnEy490zw/pub?gid=241439534&single=true&output=csv';
 const VIAJES_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQXHv7eviqTWjlZLJLhnvKtACyFtBMYT2LbnahX5qzju4y_5rB0crQB1LC6QfpCWw/pub?gid=1801163127&single=true&output=csv';
@@ -493,20 +493,21 @@ async function loadCasetasMensual(){
     const res=await fetch(CASETAS_MENSUAL_URL+'&cb='+Date.now(),{cache:'no-store'});
     if(!res.ok)throw new Error('HTTP '+res.status);
     const txt=await res.text();
-    if(txt.trim().startsWith('<'))throw new Error('Recibido HTML — verifica URL CSV');
+    if(txt.trim().startsWith('<'))throw new Error('Recibido HTML — URL no es CSV público');
     const raw=parseCSV(txt);
-    if(!raw.length)throw new Error('CSV vacío');
-    // DEBUG: log primeros encabezados para diagnóstico
-    console.log('[Casetas Mensual] Encabezados:', Object.keys(raw[0]||{}));
-    console.log('[Casetas Mensual] Fila 1:', raw[0]);
+    if(!raw.length)throw new Error('CSV vacío o sin filas');
+    const headersList=Object.keys(raw[0]||{});
+    const fila1=raw[0]||{};
+    const debug={
+      headers: headersList.join(' | '),
+      mesFila1: Object.values(fila1).slice(0,3).join(' / '),
+      valoresFila1: headersList.filter(h=>/\d{4}/.test(h)).map(h=>`${h}=${fila1[h]}`).join(', ')
+    };
+    const MESES_VALIDOS=['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE'];
     const rows=raw.map(r=>{
       const get=makeGet(r);
-      // MES — busca columna que se llame exactamente MES o contenga "mes"
       const mes=(get('MES','mes','Mes')||'').toString().trim().toUpperCase();
-      // Filtra filas que no son meses reales
-      const MESES_VALIDOS=['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE'];
-      if(!mes||!MESES_VALIDOS.includes(mes))return null;
-      // Columnas de años — busca por "2023", "2024", etc. dentro del nombre
+      if(!MESES_VALIDOS.includes(mes))return null;
       const c23=parseMoney(get('2023'));
       const c24=parseMoney(get('2024'));
       const c25=parseMoney(get('2025'));
@@ -514,9 +515,9 @@ async function loadCasetasMensual(){
       const estatus=parseEstatus(get('Estatus','estatus','ESTATUS'));
       return{mes,c23,c24,c25,c26,dif2324:c24-c23,dif2425:c25-c24,dif2526:c26-c25,estatus};
     }).filter(Boolean);
-    if(!rows.length)throw new Error('Sin meses válidos. Encabezados detectados: '+Object.keys(raw[0]||{}).join(' | '));
-    return{rows,error:null};
-  }catch(e){return{rows:[],error:e.message};}
+    if(!rows.length)throw new Error('Ninguna fila tiene un mes válido. Encabezados: '+headersList.join(' | '));
+    return{rows,error:null,debug};
+  }catch(e){return{rows:[],error:e.message,debug:null};}
 }
 
 async function loadCasetasComparativo(){
@@ -524,23 +525,23 @@ async function loadCasetasComparativo(){
     const res=await fetch(CASETAS_COMPARATIVO_URL+'&cb='+Date.now(),{cache:'no-store'});
     if(!res.ok)throw new Error('HTTP '+res.status);
     const txt=await res.text();
-    if(txt.trim().startsWith('<'))throw new Error('Recibido HTML — verifica URL CSV');
+    if(txt.trim().startsWith('<'))throw new Error('Recibido HTML — URL no es CSV público');
     const raw=parseCSV(txt);
-    if(!raw.length)throw new Error('CSV vacío');
-    // DEBUG
-    console.log('[Casetas Comparativo] Encabezados:', Object.keys(raw[0]||{}));
-    console.log('[Casetas Comparativo] Fila 1:', raw[0]);
+    if(!raw.length)throw new Error('CSV vacío o sin filas');
+    const headersList=Object.keys(raw[0]||{});
+    const fila1=raw[0]||{};
+    const debug={
+      headers: headersList.join(' | '),
+      unidadFila1: Object.values(fila1).slice(0,6).join(' / ')
+    };
     const MESES_VALIDOS=['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE'];
     let ord=0;
     const rows=raw.map(r=>{
       const get=makeGet(r);
       const mes=(get('Mes','MES','mes')||'').toString().trim().toUpperCase();
       const unidad=(get('Unidad','UNIDAD','unidad')||'').toString().trim().toUpperCase();
-      // Solo filas con mes válido y unidad real (U1, U2, etc.)
       if(!MESES_VALIDOS.includes(mes)||!unidad||unidad.length<1)return null;
       const tipo=(get('Tipo de unidad','tipo','Tipo')||'').toString().trim();
-      // Años: busca por substring "2024", "2025", "2026" en nombre de columna
-      // Pero hay "Caseta 2024" y "Casetas 2025" — buscar el que contenga solo ESE año
       const c24=parseMoney(get('caseta 2024','casetas 2024','2024'));
       const c25=parseMoney(get('casetas 2025','caseta 2025','2025'));
       const c26=parseMoney(get('caseta 2026','casetas 2026','2026'));
@@ -549,9 +550,9 @@ async function loadCasetasComparativo(){
       const estatus=parseEstatus(get('Estatus','estatus'));
       ord++;return{ord,mes,unidad,tipo,c24,c25,c26,dif,estatus,pres};
     }).filter(Boolean);
-    if(!rows.length)throw new Error('Sin unidades válidas. Encabezados detectados: '+Object.keys(raw[0]||{}).join(' | '));
-    return{rows,error:null};
-  }catch(e){return{rows:[],error:e.message};}
+    if(!rows.length)throw new Error('Ninguna fila válida. Encabezados: '+headersList.join(' | '));
+    return{rows,error:null,debug};
+  }catch(e){return{rows:[],error:e.message,debug:null};}
 }
 
 /* ══════════════════════════
@@ -559,11 +560,44 @@ async function loadCasetasComparativo(){
 ══════════════════════════ */
 async function renderCasetas(container){
   container.innerHTML=`<div class="loading-state"><div class="spinner"></div>Cargando datos de casetas…</div>`;
-  const[{rows:mensual,error:e1},{rows:comparativo,error:e2}]=await Promise.all([loadCasetasMensual(),loadCasetasComparativo()]);
-  if(!mensual.length||!comparativo.length){
-    container.innerHTML=`<div class="empty-state"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
-      <div class="empty-title">Error al cargar datos</div>
-      <div class="empty-desc">${e1?`<b>Mensual:</b> ${e1}<br>`:''}${e2?`<b>Comparativo:</b> ${e2}`:''}</div></div>`;return;
+  const[{rows:mensual,error:e1,debug:d1},{rows:comparativo,error:e2,debug:d2}]=await Promise.all([loadCasetasMensual(),loadCasetasComparativo()]);
+
+  // Siempre mostrar diagnóstico si hay algún problema
+  const sinDatosMensual = !mensual.length || !mensual.some(r=>r.c23>0||r.c24>0||r.c25>0||r.c26>0);
+  const sinDatosComp = !comparativo.length;
+
+  if(e1||e2||sinDatosMensual||sinDatosComp){
+    container.innerHTML=`
+      <div class="empty-state" style="max-width:700px;margin:0 auto;text-align:left;padding:2rem">
+        <div style="font-size:16px;font-weight:700;color:var(--ink);margin-bottom:1rem">⚠ Diagnóstico de conexión — Casetas</div>
+
+        <div style="background:var(--off);border:1px solid var(--border);border-radius:10px;padding:1rem;margin-bottom:1rem;font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.8">
+          <b>📋 HOJA MENSUAL</b><br>
+          Estado: <span style="color:${e1?'var(--red)':'var(--green)'}">${e1?'❌ ERROR':'✓ Conectada'}</span><br>
+          ${e1?`Error: <span style="color:var(--red)">${e1}</span><br>`:''}
+          Filas cargadas: <b>${mensual.length}</b><br>
+          ${d1?`Encabezados CSV: <span style="color:var(--blue)">${d1.headers}</span><br>Fila 1 MES: <b>${d1.mesFila1}</b><br>Fila 1 valores: <span style="color:var(--amber)">${d1.valoresFila1}</span>`:''}
+          ${mensual.length&&sinDatosMensual?`<br><span style="color:var(--red)">⚠ Filas cargadas pero todos los valores son 0 — los nombres de columna no coinciden con los años</span>`:''}
+        </div>
+
+        <div style="background:var(--off);border:1px solid var(--border);border-radius:10px;padding:1rem;margin-bottom:1rem;font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.8">
+          <b>📋 HOJA COMPARATIVO</b><br>
+          Estado: <span style="color:${e2?'var(--red)':'var(--green)'}">${e2?'❌ ERROR':'✓ Conectada'}</span><br>
+          ${e2?`Error: <span style="color:var(--red)">${e2}</span><br>`:''}
+          Filas cargadas: <b>${comparativo.length}</b><br>
+          ${d2?`Encabezados CSV: <span style="color:var(--blue)">${d2.headers}</span><br>Fila 1 Unidad: <b>${d2.unidadFila1}</b>`:''}
+        </div>
+
+        <div style="background:var(--off);border:1px solid var(--border);border-radius:10px;padding:1rem;font-size:12px;line-height:1.8">
+          <b>¿Qué revisar en tu Google Sheets?</b><br>
+          1. Hoja <b>Mensual</b> debe tener columna <b>MES</b> y columnas con <b>2023, 2024, 2025, 2026</b> en el nombre<br>
+          2. Hoja <b>Comparativo</b> debe tener columnas <b>Mes</b>, <b>Unidad</b>, <b>Tipo de unidad</b><br>
+          3. Archivo → Compartir → Publicar en la web → CSV → cada hoja por separado
+        </div>
+
+        <button onclick="renderCasetas(this.closest('#detail-body > div, #ct-panel-anual')?.parentElement?.parentElement || document.getElementById('panel-casetas'))" style="margin-top:1rem;background:var(--red);color:#fff;border:none;border-radius:8px;padding:8px 20px;font-size:13px;font-weight:600;cursor:pointer">🔄 Reintentar</button>
+      </div>`;
+    return;
   }
   container.innerHTML=`
     <div class="submod-tabs">
