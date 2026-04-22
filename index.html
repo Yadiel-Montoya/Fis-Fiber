@@ -217,52 +217,73 @@ tfoot td.num{text-align:right}
 .ss-btn{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:6px 14px;font-size:12px;font-weight:600;color:rgba(255,255,255,0.7);font-family:'Outfit',sans-serif;cursor:pointer;transition:all .18s;display:flex;align-items:center;gap:6px}
 .ss-btn:hover{background:rgba(255,255,255,0.15);color:#fff}
 .ss-btn svg{width:14px;height:14px}
-.ss-btn-close{background:rgba(192,21,42,0.2);border-color:rgba(192,21,42,0.4);color:#ff6b7a}
-.ss-btn-close:hover{background:rgba(192,21,42,0.4);color:#fff}
-.ss-counter{font-size:11px;font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,0.35);padding:0 8px}
-.ss-stage{flex:1;overflow:hidden;position:relative}
-.ss-slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:2.5rem 3rem;opacity:0;transform:translateX(40px);transition:opacity .4s ease,transform .4s ease;pointer-events:none;overflow-y:auto}
+.ss-btn-close{background:rgba(192,21,42,0.18);border-color:rgba(192,21,42,0.35);color:#ff8896}
+.ss-btn-close:hover{background:rgba(192,21,42,0.38);color:#fff}
+.ss-counter{font-size:11px;font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,0.3);padding:0 8px}
+.ss-stage{flex:1;overflow:hidden;position:relative;background:linear-gradient(135deg,#0D0608 0%,#130810 50%,#0a0610 100%)}
+.ss-stage::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 80% 20%,rgba(192,21,42,0.06) 0%,transparent 70%),radial-gradient(ellipse 40% 40% at 20% 80%,rgba(26,95,160,0.05) 0%,transparent 70%);pointer-events:none}
+.ss-slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:2.25rem 3rem;opacity:0;transform:translateX(36px);transition:opacity .38s cubic-bezier(.4,0,.2,1),transform .38s cubic-bezier(.4,0,.2,1);pointer-events:none;overflow-y:auto}
 .ss-slide.active{opacity:1;transform:translateX(0);pointer-events:all}
-.ss-slide.exit-left{opacity:0;transform:translateX(-40px)}
-.ss-cover{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;height:100%;gap:1.5rem}
-.ss-cover-eyebrow{font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:var(--red);font-family:'JetBrains Mono',monospace}
-.ss-cover-title{font-size:clamp(32px,5vw,62px);font-weight:700;color:#fff;line-height:1.1}
-.ss-cover-title span{color:var(--red)}
-.ss-cover-sub{font-size:16px;color:rgba(255,255,255,0.45);max-width:520px;line-height:1.6}
-.ss-cover-period{font-size:13px;font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:8px 20px;margin-top:.5rem}
-.ss-cover-line{width:60px;height:3px;background:var(--red);border-radius:2px}
-.ss-slide-title{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);font-family:'JetBrains Mono',monospace;margin-bottom:.75rem}
-.ss-slide-heading{font-size:clamp(22px,3vw,34px);font-weight:700;color:#fff;margin-bottom:2rem;line-height:1.2}
-.ss-slide-heading span{color:var(--red)}
-.ss-kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:2rem}
-.ss-kpi{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:1.5rem;position:relative;overflow:hidden}
-.ss-kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--sskpi-c,var(--red))}
-.ss-kpi .lbl{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,0.4);margin-bottom:8px;font-weight:600}
-.ss-kpi .val{font-size:36px;font-weight:700;font-family:'JetBrains Mono',monospace;color:#fff;line-height:1}
-.ss-kpi .sub{font-size:12px;color:rgba(255,255,255,0.35);margin-top:6px}
-.ss-chart-wrap{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:1.5rem;flex:1;display:flex;flex-direction:column}
-.ss-chart-title{font-size:12px;font-weight:600;color:rgba(255,255,255,0.6);margin-bottom:1rem}
-.ss-chart-inner{flex:1;position:relative;min-height:200px}
-.ss-two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;flex:1}
-.ss-full-col{display:flex;flex-direction:column;flex:1;gap:16px}
-.ss-table-wrap{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:14px;overflow:hidden}
+.ss-slide.exit-left{opacity:0;transform:translateX(-36px)}
+/* COVER */
+.ss-cover{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;height:100%;gap:1.25rem;position:relative}
+.ss-cover::before{content:'FIS FIBER';position:absolute;font-size:clamp(80px,12vw,180px);font-weight:900;color:rgba(255,255,255,0.018);letter-spacing:-.02em;white-space:nowrap;pointer-events:none;user-select:none}
+.ss-cover-eyebrow{font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:rgba(192,21,42,0.9);font-family:'JetBrains Mono',monospace;background:rgba(192,21,42,0.08);border:1px solid rgba(192,21,42,0.2);border-radius:20px;padding:4px 14px}
+.ss-cover-title{font-size:clamp(36px,5.5vw,68px);font-weight:700;color:#fff;line-height:1.05;letter-spacing:-.02em}
+.ss-cover-title span{background:linear-gradient(135deg,#E8192F,#C0152A);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.ss-cover-sub{font-size:15px;color:rgba(255,255,255,0.38);max-width:480px;line-height:1.65;letter-spacing:.01em}
+.ss-cover-period{font-size:12px;font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,0.45);background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09);border-radius:8px;padding:7px 18px}
+.ss-cover-line{width:40px;height:2px;background:linear-gradient(90deg,#C0152A,rgba(192,21,42,0));border-radius:2px}
+/* SLIDE HEADER */
+.ss-slide-eyebrow{font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:rgba(192,21,42,0.8);font-family:'JetBrains Mono',monospace;margin-bottom:.5rem;display:flex;align-items:center;gap:10px}
+.ss-slide-eyebrow::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(192,21,42,0.3),transparent)}
+.ss-slide-heading{font-size:clamp(20px,2.8vw,30px);font-weight:700;color:#fff;margin-bottom:1.5rem;line-height:1.2;letter-spacing:-.01em}
+.ss-slide-heading span{color:#E8192F}
+/* Filtro badge en slide */
+.ss-filtro-badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,0.55);background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:4px 12px;margin-bottom:1.25rem}
+.ss-filtro-badge b{color:rgba(255,255,255,0.85)}
+/* KPIs */
+.ss-kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:1.5rem}
+.ss-kpi{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:1.25rem 1.5rem;position:relative;overflow:hidden;transition:border-color .2s}
+.ss-kpi:hover{border-color:rgba(255,255,255,0.14)}
+.ss-kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--sskpi-c,rgba(192,21,42,0.9))}
+.ss-kpi::after{content:'';position:absolute;bottom:0;left:0;right:0;height:60%;background:linear-gradient(to top,rgba(0,0,0,0.15),transparent);pointer-events:none}
+.ss-kpi .lbl{font-size:9px;text-transform:uppercase;letter-spacing:.16em;color:rgba(255,255,255,0.35);margin-bottom:10px;font-weight:700}
+.ss-kpi .val{font-size:32px;font-weight:700;font-family:'JetBrains Mono',monospace;color:#fff;line-height:1;letter-spacing:-.02em}
+.ss-kpi .sub{font-size:11px;color:rgba(255,255,255,0.3);margin-top:6px;line-height:1.4}
+.ss-kpi .trend{font-size:11px;font-weight:700;margin-top:5px;font-family:'JetBrains Mono',monospace}
+.trend-up{color:#ff7a8a}.trend-down{color:#4ade80}.trend-neu{color:rgba(255,255,255,0.35)}
+/* Charts */
+.ss-chart-wrap{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:1.25rem 1.5rem;flex:1;display:flex;flex-direction:column}
+.ss-chart-title{font-size:11px;font-weight:700;color:rgba(255,255,255,0.5);margin-bottom:1rem;text-transform:uppercase;letter-spacing:.1em}
+.ss-chart-inner{flex:1;position:relative;min-height:180px}
+.ss-two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;flex:1}
+.ss-full-col{display:flex;flex-direction:column;flex:1;gap:14px}
+/* Table */
+.ss-table-wrap{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:12px;overflow:hidden}
 .ss-table{width:100%;border-collapse:collapse}
-.ss-table thead th{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,0.35);padding:10px 16px;text-align:left;border-bottom:1px solid rgba(255,255,255,0.07);font-weight:700}
+.ss-table thead th{font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,0.3);padding:10px 14px;text-align:left;border-bottom:1px solid rgba(255,255,255,0.07);font-weight:700;background:rgba(255,255,255,0.02)}
 .ss-table thead th.r{text-align:right}
-.ss-table tbody tr{border-bottom:1px solid rgba(255,255,255,0.05)}
+.ss-table tbody tr{border-bottom:1px solid rgba(255,255,255,0.04);transition:background .15s}
 .ss-table tbody tr:last-child{border-bottom:none}
 .ss-table tbody tr:hover{background:rgba(255,255,255,0.04)}
-.ss-table tbody td{font-size:12px;padding:9px 16px;color:rgba(255,255,255,0.75)}
-.ss-table tbody td:first-child{color:#fff;font-weight:600}
-.ss-table tbody td.r{text-align:right;font-family:'JetBrains Mono',monospace}
-.ss-table tfoot td{font-size:11px;padding:10px 16px;font-weight:700;border-top:1px solid rgba(255,255,255,0.15);font-family:'JetBrains Mono',monospace;color:#fff;background:rgba(255,255,255,0.06)}
+.ss-table tbody td{font-size:12px;padding:9px 14px;color:rgba(255,255,255,0.65)}
+.ss-table tbody td:first-child{color:rgba(255,255,255,0.9);font-weight:600}
+.ss-table tbody td.r{text-align:right;font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,0.8)}
+.ss-table tfoot td{font-size:11px;padding:10px 14px;font-weight:700;border-top:1px solid rgba(255,255,255,0.12);font-family:'JetBrains Mono',monospace;color:#fff;background:rgba(255,255,255,0.05)}
 .ss-table tfoot td.r{text-align:right}
-.ss-end{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;height:100%;gap:1rem}
-.ss-end-icon{width:72px;height:72px;border-radius:20px;background:rgba(192,21,42,0.15);border:1px solid rgba(192,21,42,0.3);display:flex;align-items:center;justify-content:center;margin-bottom:.5rem}
-.ss-end-icon svg{width:32px;height:32px;stroke:var(--red)}
-.ss-end-title{font-size:32px;font-weight:700;color:#fff}
-.ss-end-sub{font-size:15px;color:rgba(255,255,255,0.4);max-width:400px;line-height:1.6}
-@media(max-width:700px){.ss-slide{padding:1.5rem 1.25rem}.ss-two-col{grid-template-columns:1fr}.ss-kpi .val{font-size:26px}}
+/* End slide */
+.ss-end{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;height:100%;gap:1.25rem}
+.ss-end-icon{width:80px;height:80px;border-radius:24px;background:rgba(192,21,42,0.1);border:1px solid rgba(192,21,42,0.25);display:flex;align-items:center;justify-content:center;margin-bottom:.5rem}
+.ss-end-icon svg{width:36px;height:36px;stroke:rgba(192,21,42,0.9)}
+.ss-end-badge{font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:rgba(192,21,42,0.8);font-family:'JetBrains Mono',monospace}
+.ss-end-title{font-size:36px;font-weight:700;color:#fff;letter-spacing:-.02em}
+.ss-end-stat{display:flex;gap:2rem;flex-wrap:wrap;justify-content:center;margin-top:.5rem}
+.ss-end-stat-item{text-align:center}
+.ss-end-stat-val{font-size:24px;font-weight:700;font-family:'JetBrains Mono',monospace;color:#fff}
+.ss-end-stat-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,0.3);margin-top:3px}
+.ss-end-sub{font-size:14px;color:rgba(255,255,255,0.3);max-width:420px;line-height:1.6}
+@media(max-width:700px){.ss-slide{padding:1.25rem 1rem}.ss-two-col{grid-template-columns:1fr}.ss-kpi .val{font-size:24px}}
 </style>
 </head>
 <body>
@@ -720,6 +741,9 @@ function renderCasetasAnual(container,CM){
       </div>`;
     window.applyFiltroAnual=()=>{filtroMes=document.getElementById('ca-mes').value;['ca-bar-comp','ca-line-trend','ca-bar-dif','ca-dona-estatus','ca-pct-var'].forEach(DC);render();};
     window.clearFiltroAnual=()=>{filtroMes='todos';['ca-bar-comp','ca-line-trend','ca-bar-dif','ca-dona-estatus','ca-pct-var'].forEach(DC);render();};
+    // Guardar estado para slideshow
+    window._ssDataCasetas=data;
+    window._ssPeriodoCasetas=filtroMes==='todos'?'Acumulado anual':filtroMes.charAt(0)+filtroMes.slice(1).toLowerCase();
     setTimeout(()=>{
       const gc='rgba(0,0,0,0.05)',tc='#9A7078',mf='JetBrains Mono';
       const labels=data.map(r=>r.mes.substring(0,3));
@@ -1040,93 +1064,276 @@ function switchTab(areaKey,subId,btn){
 /* ══════════════════════════
    SLIDESHOWS
 ══════════════════════════ */
+
+/* Helpers de formato */
+function ss$(n){if(!n&&n!==0)return'—';return'$'+Math.abs(n).toLocaleString('es-MX');}
+function ssTrend(n){if(!n)return`<span class="trend-neu">—</span>`;const pct=n>0?'+'+Math.abs(n).toLocaleString('es-MX'):'-'+Math.abs(n).toLocaleString('es-MX');return`<span class="${n>0?'trend-up':'trend-down'}">${n>0?'▲':'▼'} $${Math.abs(n).toLocaleString('es-MX')}</span>`;}
+function ssPct(a,b){if(!b)return'';const p=((a-b)/b*100);return`<span class="${p>0?'trend-up':'trend-down'}">${p>0?'+':''}${p.toFixed(1)}%</span>`;}
+const SS_MF='JetBrains Mono',SS_GC='rgba(255,255,255,0.06)',SS_TC='rgba(255,255,255,0.28)';
+function ssChartDefaults(){return{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false}};}
+
+/* ── CASETAS ── */
 function abrirSlideshowCasetas(){
   const CM=window._casetasMensual||[],CC=window._casetasComparativo||[];
   if(!CM.length){alert('Carga los datos primero desde el módulo de Casetas.');return;}
-  const tot23=CM.reduce((s,r)=>s+r.c23,0),tot24=CM.reduce((s,r)=>s+r.c24,0),tot25=CM.reduce((s,r)=>s+r.c25,0),tot26=CM.reduce((s,r)=>s+r.c26,0);
-  const dif2526=tot26-tot25,mesesCon26=CM.filter(r=>r.c26>0),ahorros=mesesCon26.filter(r=>r.estatus==='Ahorro').length;
+  // Usar datos del filtro activo (guardados en _ssData)
+  const data=window._ssDataCasetas||CM;
+  const tot23=data.reduce((s,r)=>s+r.c23,0),tot24=data.reduce((s,r)=>s+r.c24,0);
+  const tot25=data.reduce((s,r)=>s+r.c25,0),tot26=data.reduce((s,r)=>s+r.c26,0);
+  const dif2526=tot26-tot25,dif2425=tot25-tot24;
+  const mesesCon26=data.filter(r=>r.c26>0);
+  const ahorros=mesesCon26.filter(r=>r.estatus==='Ahorro').length;
+  const periodo=window._ssPeriodoCasetas||'Acumulado anual';
+  const pct2526=tot25>0?((dif2526/tot25)*100).toFixed(1):'—';
+  const pct2425=tot24>0?((dif2425/tot24)*100).toFixed(1):'—';
+
   ssSlides=[
-    `<div class="ss-slide active" id="ss-slide-0"><div class="ss-cover"><div class="ss-cover-line"></div><div class="ss-cover-eyebrow">Logística · FIS FIBER</div><div class="ss-cover-title">Gastos de <span>Casetas</span></div><div class="ss-cover-sub">Informe comparativo anual 2023/2024/2025/2026 — por mes y por unidad</div><div class="ss-cover-period">Actualizado: ${new Date().toLocaleDateString('es-MX',{day:'numeric',month:'long',year:'numeric'})}</div><div class="ss-cover-line"></div></div></div>`,
+    /* 0 — Portada */
+    `<div class="ss-slide active" id="ss-slide-0"><div class="ss-cover">
+      <div class="ss-cover-line"></div>
+      <div class="ss-cover-eyebrow">Logística · FIS FIBER</div>
+      <div class="ss-cover-title">Gastos de <span>Casetas</span></div>
+      <div class="ss-cover-sub">Informe comparativo anual 2023 / 2024 / 2025 / 2026</div>
+      <div class="ss-cover-period">📅 ${periodo} · ${new Date().toLocaleDateString('es-MX',{day:'numeric',month:'long',year:'numeric'})}</div>
+      <div class="ss-cover-line"></div>
+    </div></div>`,
+
+    /* 1 — KPIs acumulados */
     `<div class="ss-slide" id="ss-slide-1">
-      <div class="ss-slide-title">Resumen ejecutivo</div><div class="ss-slide-heading">Acumulado <span>anual</span></div>
+      <div class="ss-slide-eyebrow">Resumen ejecutivo</div>
+      <div class="ss-slide-heading">Gasto acumulado <span>${periodo}</span></div>
+      <div class="ss-filtro-badge">🗓 Período: <b>${periodo}</b> · ${data.length} meses · ${mesesCon26.length} con dato 2026</div>
       <div class="ss-kpi-grid">
-        <div class="ss-kpi" style="--sskpi-c:#6B7280"><div class="lbl">Casetas 2023</div><div class="val">$${Math.round(tot23/1000)}k</div><div class="sub">$${tot23.toLocaleString('es-MX')}</div></div>
-        <div class="ss-kpi" style="--sskpi-c:var(--blue)"><div class="lbl">Casetas 2024</div><div class="val">$${Math.round(tot24/1000)}k</div><div class="sub">$${tot24.toLocaleString('es-MX')}</div></div>
-        <div class="ss-kpi" style="--sskpi-c:var(--amber)"><div class="lbl">Casetas 2025</div><div class="val">$${Math.round(tot25/1000)}k</div><div class="sub">$${tot25.toLocaleString('es-MX')}</div></div>
-        <div class="ss-kpi" style="--sskpi-c:var(--red)"><div class="lbl">Casetas 2026</div><div class="val">$${Math.round(tot26/1000)}k</div><div class="sub">${mesesCon26.length} meses · ${dif2526>0?'+':''}\$${Math.abs(Math.round(dif2526/1000))}k vs 2025</div></div>
+        <div class="ss-kpi" style="--sskpi-c:rgba(107,114,128,0.9)">
+          <div class="lbl">Casetas 2023</div><div class="val">${ss$(tot23)}</div>
+          <div class="sub">Año base de referencia</div>
+        </div>
+        <div class="ss-kpi" style="--sskpi-c:rgba(26,95,160,0.9)">
+          <div class="lbl">Casetas 2024</div><div class="val">${ss$(tot24)}</div>
+          <div class="sub">vs 2023</div><div class="trend">${ssTrend(tot24-tot23)} ${tot23>0?'('+((tot24-tot23)/tot23*100).toFixed(1)+'%)':''}</div>
+        </div>
+        <div class="ss-kpi" style="--sskpi-c:rgba(184,122,16,0.9)">
+          <div class="lbl">Casetas 2025</div><div class="val">${ss$(tot25)}</div>
+          <div class="sub">vs 2024</div><div class="trend">${ssTrend(dif2425)} ${pct2425!=='—'?'('+pct2425+'%)':''}</div>
+        </div>
+        <div class="ss-kpi" style="--sskpi-c:rgba(192,21,42,0.9)">
+          <div class="lbl">Casetas 2026</div><div class="val">${ss$(tot26)}</div>
+          <div class="sub">vs 2025 · ${mesesCon26.length} meses</div><div class="trend">${ssTrend(dif2526)} ${pct2526!=='—'?'('+pct2526+'%)':''}</div>
+        </div>
       </div>
       <div class="ss-two-col">
         <div class="ss-chart-wrap"><div class="ss-chart-title">Comparativo mensual 2023–2026</div><div class="ss-chart-inner"><canvas id="ss-bar-comp"></canvas></div></div>
-        <div class="ss-chart-wrap"><div class="ss-chart-title">Estatus 2026 (${mesesCon26.length} meses)</div><div class="ss-chart-inner"><canvas id="ss-dona-est"></canvas></div></div>
+        <div class="ss-chart-wrap"><div class="ss-chart-title">Estatus meses 2026 (${mesesCon26.length} meses)</div><div class="ss-chart-inner"><canvas id="ss-dona-est"></canvas></div></div>
       </div>
     </div>`,
+
+    /* 2 — Tabla comparativa */
     `<div class="ss-slide" id="ss-slide-2">
-      <div class="ss-slide-title">Comparativo anual</div><div class="ss-slide-heading">Detalle por <span>mes</span></div>
+      <div class="ss-slide-eyebrow">Comparativo anual</div>
+      <div class="ss-slide-heading">Detalle por <span>mes</span></div>
+      <div class="ss-filtro-badge">🗓 <b>${periodo}</b> · ${data.length} meses mostrados</div>
       <div class="ss-table-wrap"><table class="ss-table">
-        <thead><tr><th>Mes</th><th class="r">2023</th><th class="r">2024</th><th class="r">2025</th><th class="r">2026</th><th class="r">Dif 25→26</th><th>Estatus</th></tr></thead>
-        <tbody>${CM.map(r=>`<tr><td>${r.mes.charAt(0)+r.mes.slice(1).toLowerCase()}</td><td class="r">$${Math.round(r.c23/1000)}k</td><td class="r">$${Math.round(r.c24/1000)}k</td><td class="r">$${Math.round(r.c25/1000)}k</td><td class="r">${r.c26>0?'$'+Math.round(r.c26/1000)+'k':'—'}</td><td class="r" style="color:${r.c26>0&&r.dif2526>0?'#ff7a8a':r.c26>0?'#4ade80':'rgba(255,255,255,0.3)'}">${r.c26>0?(r.dif2526>0?'+':'')+('$'+Math.round(Math.abs(r.dif2526)/1000)+'k'):'—'}</td><td><span style="padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;background:${r.estatus==='Ahorro'?'rgba(26,158,92,0.2)':'rgba(192,21,42,0.2)'};color:${r.estatus==='Ahorro'?'#4ade80':'#ff7a8a'}">${r.estatus}</span></td></tr>`).join('')}</tbody>
-        <tfoot><tr><td>TOTAL</td><td class="r">$${Math.round(tot23/1000)}k</td><td class="r">$${Math.round(tot24/1000)}k</td><td class="r">$${Math.round(tot25/1000)}k</td><td class="r">$${Math.round(tot26/1000)}k</td><td class="r" style="color:${dif2526>0?'#ff7a8a':'#4ade80'}">${dif2526>0?'+':''}\$${Math.round(Math.abs(dif2526)/1000)}k</td><td>${ahorros}/${mesesCon26.length} Ahorro</td></tr></tfoot>
+        <thead><tr><th>Mes</th><th class="r">2023</th><th class="r">2024</th><th class="r">2025</th><th class="r">2026</th><th class="r">Dif $ 25→26</th><th class="r">Dif % 25→26</th><th>Estatus</th></tr></thead>
+        <tbody>${data.map(r=>{
+          const difAmt=r.dif2526;
+          const difPct=r.c25>0?((difAmt/r.c25)*100).toFixed(1)+'%':'—';
+          const color=r.c26>0&&difAmt>0?'#ff8896':r.c26>0?'#4ade80':'rgba(255,255,255,0.2)';
+          const bg=r.c26>0&&difAmt>0?'rgba(192,21,42,0.15)':r.c26>0?'rgba(26,158,92,0.12)':'transparent';
+          return`<tr>
+            <td><b>${r.mes.charAt(0)+r.mes.slice(1).toLowerCase()}</b></td>
+            <td class="r" style="color:rgba(255,255,255,0.45)">${ss$(r.c23)}</td>
+            <td class="r" style="color:rgba(255,255,255,0.55)">${ss$(r.c24)}</td>
+            <td class="r" style="color:rgba(255,255,255,0.75)">${ss$(r.c25)}</td>
+            <td class="r" style="color:#fff;font-weight:700">${r.c26>0?ss$(r.c26):'<span style="color:rgba(255,255,255,0.2)">—</span>'}</td>
+            <td class="r" style="color:${color};font-weight:700">${r.c26>0?(difAmt>0?'▲ ':'▼ ')+ss$(Math.abs(difAmt)):'—'}</td>
+            <td class="r" style="color:${color};font-weight:700">${r.c26>0?difPct:'—'}</td>
+            <td><span style="padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;background:${bg};color:${color};border:1px solid ${color}20">${r.estatus}</span></td>
+          </tr>`;}).join('')}
+        </tbody>
+        <tfoot><tr>
+          <td>TOTAL</td>
+          <td class="r">${ss$(tot23)}</td><td class="r">${ss$(tot24)}</td><td class="r">${ss$(tot25)}</td>
+          <td class="r" style="color:#fff">${ss$(tot26)}</td>
+          <td class="r" style="color:${dif2526>0?'#ff8896':'#4ade80'};font-weight:700">${dif2526>0?'▲ ':'▼ '}${ss$(Math.abs(dif2526))}</td>
+          <td class="r" style="color:${dif2526>0?'#ff8896':'#4ade80'};font-weight:700">${pct2526!=='—'?(dif2526>0?'+':'')+pct2526+'%':'—'}</td>
+          <td>${ahorros}/${mesesCon26.length} Ahorro</td>
+        </tr></tfoot>
       </table></div>
     </div>`,
+
+    /* 3 — Por unidad */
     `<div class="ss-slide" id="ss-slide-3">
-      <div class="ss-slide-title">Análisis por unidad</div><div class="ss-slide-heading">Gasto por <span>unidad</span></div>
-      <div class="ss-kpi-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:1.5rem">
-        <div class="ss-kpi" style="--sskpi-c:var(--blue)"><div class="lbl">Total 2024</div><div class="val">$${Math.round(CC.reduce((s,r)=>s+r.c24,0)/1000)}k</div></div>
-        <div class="ss-kpi" style="--sskpi-c:var(--amber)"><div class="lbl">Total 2025</div><div class="val">$${Math.round(CC.reduce((s,r)=>s+r.c25,0)/1000)}k</div></div>
-        <div class="ss-kpi" style="--sskpi-c:var(--red)"><div class="lbl">Total 2026</div><div class="val">$${Math.round(CC.reduce((s,r)=>s+r.c26,0)/1000)}k</div><div class="sub">${CC.filter(r=>r.estatus==='Ahorro').length}/${CC.length} Ahorro</div></div>
+      <div class="ss-slide-eyebrow">Análisis por unidad</div>
+      <div class="ss-slide-heading">Gasto por <span>unidad 2026</span></div>
+      <div class="ss-kpi-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:1.25rem">
+        ${(()=>{const t24=CC.reduce((s,r)=>s+r.c24,0),t25=CC.reduce((s,r)=>s+r.c25,0),t26=CC.reduce((s,r)=>s+r.c26,0);const d=t26-t25;const p=t25>0?((d/t25)*100).toFixed(1):'—';return`
+          <div class="ss-kpi" style="--sskpi-c:rgba(26,95,160,0.9)"><div class="lbl">Total 2024</div><div class="val">${ss$(t24)}</div></div>
+          <div class="ss-kpi" style="--sskpi-c:rgba(184,122,16,0.9)"><div class="lbl">Total 2025</div><div class="val">${ss$(t25)}</div></div>
+          <div class="ss-kpi" style="--sskpi-c:rgba(192,21,42,0.9)"><div class="lbl">Total 2026</div><div class="val">${ss$(t26)}</div>
+            <div class="sub">${CC.filter(r=>r.estatus==='Ahorro').length}/${CC.length} unidades en ahorro</div>
+            <div class="trend">${ssTrend(d)} ${p!=='—'?'('+p+'%)':''}</div>
+          </div>`;})()}
       </div>
-      <div class="ss-full-col"><div class="ss-chart-wrap" style="flex:1"><div class="ss-chart-title">Top unidades con mayor gasto 2026</div><div class="ss-chart-inner"><canvas id="ss-top-unidades"></canvas></div></div></div>
+      <div class="ss-full-col"><div class="ss-chart-wrap" style="flex:1"><div class="ss-chart-title">Top unidades · gasto 2025 vs 2026 (monto + % variación)</div><div class="ss-chart-inner"><canvas id="ss-top-unidades"></canvas></div></div></div>
     </div>`,
-    `<div class="ss-slide" id="ss-slide-4"><div class="ss-end"><div class="ss-end-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="1.8" stroke-linecap="round"><path d="M9 20l-5.447-2.724A1 1 0 0 1 3 16.382V5.618a1 1 0 0 1 1.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0 0 21 18.382V7.618a1 1 0 0 0-.553-.894L15 4m0 13V4m0 0L9 7"/></svg></div><div class="ss-end-title">Resumen Casetas</div><div class="ss-end-sub">Ahorro en ${ahorros} de ${mesesCon26.length} meses con datos 2026. Total acumulado: $${tot26.toLocaleString('es-MX')}</div></div></div>`,
+
+    /* 4 — Cierre */
+    `<div class="ss-slide" id="ss-slide-4"><div class="ss-end">
+      <div class="ss-end-badge">FIS FIBER · Logística</div>
+      <div class="ss-end-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 20l-5.447-2.724A1 1 0 0 1 3 16.382V5.618a1 1 0 0 1 1.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0 0 21 18.382V7.618a1 1 0 0 0-.553-.894L15 4m0 13V4m0 0L9 7"/></svg></div>
+      <div class="ss-end-title">Gastos de Casetas</div>
+      <div class="ss-end-stat">
+        <div class="ss-end-stat-item"><div class="ss-end-stat-val">${ss$(tot26)}</div><div class="ss-end-stat-lbl">Acumulado 2026</div></div>
+        <div class="ss-end-stat-item"><div class="ss-end-stat-val" style="color:${dif2526>0?'#ff8896':'#4ade80'}">${dif2526>0?'▲':'▼'} ${ss$(Math.abs(dif2526))}</div><div class="ss-end-stat-lbl">vs 2025</div></div>
+        <div class="ss-end-stat-item"><div class="ss-end-stat-val">${ahorros}/${mesesCon26.length}</div><div class="ss-end-stat-lbl">Meses en ahorro</div></div>
+      </div>
+      <div class="ss-end-sub">${periodo} · Período: ${new Date().toLocaleDateString('es-MX',{month:'long',year:'numeric'})}</div>
+    </div></div>`,
   ];
+
   _abrirSS('FIS <span>FIBER</span> · Casetas');
   setTimeout(()=>{
-    const mf='JetBrains Mono';
-    const canvComp=document.getElementById('ss-bar-comp');
-    if(canvComp){const labels=CM.map(r=>r.mes.substring(0,3));CI['ss-bar-comp']=new Chart(canvComp,{type:'bar',data:{labels,datasets:[{label:'2023',data:CM.map(r=>r.c23),backgroundColor:'rgba(150,150,150,0.4)',borderRadius:2,datalabels:{display:false}},{label:'2024',data:CM.map(r=>r.c24),backgroundColor:'rgba(26,95,160,0.55)',borderRadius:2,datalabels:{display:false}},{label:'2025',data:CM.map(r=>r.c25),backgroundColor:'rgba(184,122,16,0.55)',borderRadius:2,datalabels:{display:false}},{label:'2026',data:CM.map(r=>r.c26||null),backgroundColor:'rgba(192,21,42,0.85)',borderRadius:2,datalabels:{display:false}}]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:true,position:'bottom',labels:{color:'rgba(255,255,255,0.5)',font:{size:10,family:'Outfit'},usePointStyle:true,padding:10}},datalabels:{display:false},tooltip:{callbacks:{label:c=>`${c.dataset.label}: $${(c.parsed.y||0).toLocaleString('es-MX')}`}}},scales:{x:{grid:{display:false},ticks:{color:'rgba(255,255,255,0.3)',font:{size:9,family:mf}},border:{color:'transparent'}},y:{grid:{color:'rgba(255,255,255,0.06)'},ticks:{color:'rgba(255,255,255,0.3)',font:{size:9},callback:v=>'$'+Math.round(v/1000)+'k'},border:{color:'transparent'},beginAtZero:true}}}});}
-    const canvDona=document.getElementById('ss-dona-est');
-    if(canvDona){const aho=CM.filter(r=>r.c26>0&&r.estatus==='Ahorro').length,gas=CM.filter(r=>r.c26>0&&r.estatus==='Gasto').length;CI['ss-dona-est']=new Chart(canvDona,{type:'doughnut',data:{labels:['Ahorro','Gasto'],datasets:[{data:[aho,gas],backgroundColor:['rgba(26,158,92,0.8)','rgba(192,21,42,0.8)'],borderWidth:0,hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{position:'bottom',labels:{color:'rgba(255,255,255,0.5)',font:{size:11,family:'Outfit'},usePointStyle:true,padding:12}},datalabels:{color:'#fff',font:{size:14,family:mf,weight:'700'},formatter:(v,ctx)=>{const t=ctx.dataset.data.reduce((a,b)=>a+b,0);return t?Math.round(v/t*100)+'%':''}}}}});}
-    const canvTop=document.getElementById('ss-top-unidades');
-    if(canvTop&&CC.length){const topU=[...CC].filter(r=>r.c26>0).sort((a,b)=>b.c26-a.c26).slice(0,8);CI['ss-top-unidades']=new Chart(canvTop,{type:'bar',data:{labels:topU.map(r=>r.unidad),datasets:[{label:'2025',data:topU.map(r=>r.c25),backgroundColor:'rgba(184,122,16,0.55)',borderRadius:3,datalabels:{display:false}},{label:'2026',data:topU.map(r=>r.c26),backgroundColor:topU.map(r=>r.estatus==='Gasto'?'rgba(192,21,42,0.85)':'rgba(26,158,92,0.8)'),borderRadius:3,datalabels:{anchor:'end',align:'end',offset:1,color:'rgba(255,255,255,0.6)',font:{size:9,family:mf,weight:'700'},formatter:v=>'$'+Math.round(v/1000)+'k'}}]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:true,position:'bottom',labels:{color:'rgba(255,255,255,0.5)',font:{size:10,family:'Outfit'},usePointStyle:true,padding:10}},datalabels:{},tooltip:{callbacks:{label:c=>`${c.dataset.label}: $${c.parsed.y.toLocaleString('es-MX')}`}}},scales:{x:{grid:{display:false},ticks:{color:'rgba(255,255,255,0.35)',font:{size:10,family:mf}},border:{color:'transparent'}},y:{grid:{color:'rgba(255,255,255,0.06)'},ticks:{color:'rgba(255,255,255,0.3)',font:{size:9},callback:v=>'$'+Math.round(v/1000)+'k'},border:{color:'transparent'},beginAtZero:true,grace:'15%'}}}});}
+    const labels=data.map(r=>r.mes.substring(0,3));
+    DC('ss-bar-comp');
+    CI['ss-bar-comp']=new Chart(document.getElementById('ss-bar-comp'),{type:'bar',
+      data:{labels,datasets:[
+        {label:'2023',data:data.map(r=>r.c23),backgroundColor:'rgba(107,114,128,0.35)',borderRadius:3,borderSkipped:false,datalabels:{display:false}},
+        {label:'2024',data:data.map(r=>r.c24),backgroundColor:'rgba(26,95,160,0.5)',borderRadius:3,borderSkipped:false,datalabels:{display:false}},
+        {label:'2025',data:data.map(r=>r.c25),backgroundColor:'rgba(184,122,16,0.55)',borderRadius:3,borderSkipped:false,datalabels:{display:false}},
+        {label:'2026',data:data.map(r=>r.c26||null),backgroundColor:'rgba(192,21,42,0.85)',borderRadius:3,borderSkipped:false,
+          datalabels:{anchor:'end',align:'end',offset:2,color:'rgba(255,255,255,0.7)',font:{size:9,family:SS_MF,weight:'700'},formatter:v=>v?'$'+Math.round(v/1000)+'k':''}},
+      ]},
+      options:{...ssChartDefaults(),plugins:{
+        legend:{display:true,position:'bottom',labels:{color:'rgba(255,255,255,0.4)',font:{size:10,family:'Outfit'},usePointStyle:true,padding:10}},
+        datalabels:{},tooltip:{callbacks:{label:c=>`${c.dataset.label}: $${(c.parsed.y||0).toLocaleString('es-MX')}`}}
+      },scales:{
+        x:{grid:{display:false},ticks:{color:SS_TC,font:{size:9,family:SS_MF}},border:{color:'transparent'}},
+        y:{grid:{color:SS_GC},ticks:{color:SS_TC,font:{size:9},callback:v=>'$'+Math.round(v/1000)+'k'},border:{color:'transparent'},beginAtZero:true}
+      }}
+    });
+    DC('ss-dona-est');
+    const aho=data.filter(r=>r.c26>0&&r.estatus==='Ahorro').length,gas=data.filter(r=>r.c26>0&&r.estatus==='Gasto').length;
+    CI['ss-dona-est']=new Chart(document.getElementById('ss-dona-est'),{type:'doughnut',
+      data:{labels:['Ahorro','Gasto'],datasets:[{data:[aho,gas],backgroundColor:['rgba(74,222,128,0.75)','rgba(255,120,138,0.75)'],borderWidth:0,hoverOffset:6}]},
+      options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{
+        legend:{position:'bottom',labels:{color:'rgba(255,255,255,0.45)',font:{size:11,family:'Outfit'},usePointStyle:true,padding:12}},
+        datalabels:{color:'#fff',font:{size:13,family:SS_MF,weight:'700'},formatter:(v,ctx)=>{const t=ctx.dataset.data.reduce((a,b)=>a+b,0);return t?Math.round(v/t*100)+'%':'';}}
+      }}
+    });
+    DC('ss-top-unidades');
+    const topU=[...CC].filter(r=>r.c26>0).sort((a,b)=>b.c26-a.c26).slice(0,10);
+    CI['ss-top-unidades']=new Chart(document.getElementById('ss-top-unidades'),{type:'bar',
+      data:{labels:topU.map(r=>r.unidad),datasets:[
+        {label:'2025',data:topU.map(r=>r.c25),backgroundColor:'rgba(184,122,16,0.45)',borderRadius:3,borderSkipped:false,datalabels:{display:false}},
+        {label:'2026',data:topU.map(r=>r.c26),backgroundColor:topU.map(r=>r.estatus==='Gasto'?'rgba(255,120,138,0.82)':'rgba(74,222,128,0.72)'),borderRadius:3,borderSkipped:false,
+          datalabels:{anchor:'end',align:'end',offset:1,color:'rgba(255,255,255,0.8)',font:{size:9,family:SS_MF,weight:'700'},
+            formatter:(v,ctx)=>{const r25=topU[ctx.dataIndex].c25;const pct=r25>0?((v-r25)/r25*100).toFixed(0):'—';return'$'+Math.round(v/1000)+'k'+(pct!=='—'?'\n'+(pct>0?'+':'')+pct+'%':'');}}}
+      ]},
+      options:{...ssChartDefaults(),plugins:{
+        legend:{display:true,position:'bottom',labels:{color:'rgba(255,255,255,0.4)',font:{size:10,family:'Outfit'},usePointStyle:true,padding:10}},
+        datalabels:{},tooltip:{callbacks:{label:c=>{const r=topU[c.dataIndex];const yr=c.dataset.label;const v=yr==='2025'?r.c25:r.c26;const d=yr==='2026'?r.c26-r.c25:null;const p=d!==null&&r.c25>0?(d/r.c25*100).toFixed(1):null;return[`${yr}: $${v.toLocaleString('es-MX')}`,d!==null?`Dif: ${d>0?'+':''}$${Math.abs(d).toLocaleString('es-MX')} (${p}%)`:''].filter(Boolean);}}}
+      },scales:{
+        x:{grid:{display:false},ticks:{color:SS_TC,font:{size:9,family:SS_MF}},border:{color:'transparent'}},
+        y:{grid:{color:SS_GC},ticks:{color:SS_TC,font:{size:9},callback:v=>'$'+Math.round(v/1000)+'k'},border:{color:'transparent'},beginAtZero:true,grace:'18%'}
+      }}
+    });
   },300);
 }
 
+/* ── CARGAS ── */
 function abrirSlideshowCargas(){
   const data=window._cargasData||[],k=window._cargasKpis||{tot:0,ant:0,noc:0,pct:0,prom:0,dias:0},periodo=window._cargasPeriodo||'Sin período';
   if(!data.length){alert('Sin datos de cargas disponibles.');return;}
   const bD=[0,0,0,0,0,0,0],bN=[0,0,0,0,0,0,0],bC=[0,0,0,0,0,0,0];
   data.forEach(r=>{const dow=new Date(r.Fecha+'T12:00:00').getDay();bD[dow]+=r.Anticipadas;bN[dow]+=r.Nocturnas;bC[dow]++;});
+
   ssSlides=[
-    `<div class="ss-slide active" id="ss-slide-0"><div class="ss-cover"><div class="ss-cover-line"></div><div class="ss-cover-eyebrow">Logística · FIS FIBER</div><div class="ss-cover-title">Cargas <span>Anticipadas</span></div><div class="ss-cover-sub">Análisis de cargas anticipadas y nocturnas por período</div><div class="ss-cover-period">${periodo} · ${data.length} días registrados</div><div class="ss-cover-line"></div></div></div>`,
+    `<div class="ss-slide active" id="ss-slide-0"><div class="ss-cover">
+      <div class="ss-cover-line"></div>
+      <div class="ss-cover-eyebrow">Logística · FIS FIBER</div>
+      <div class="ss-cover-title">Cargas <span>Anticipadas</span></div>
+      <div class="ss-cover-sub">Análisis de cargas anticipadas y nocturnas por período</div>
+      <div class="ss-cover-period">📅 ${periodo} · ${data.length} días registrados</div>
+      <div class="ss-cover-line"></div>
+    </div></div>`,
+
     `<div class="ss-slide" id="ss-slide-1">
-      <div class="ss-slide-title">Resumen ejecutivo</div><div class="ss-slide-heading">KPIs del <span>período</span></div>
+      <div class="ss-slide-eyebrow">Resumen ejecutivo</div>
+      <div class="ss-slide-heading">KPIs del <span>período</span></div>
+      <div class="ss-filtro-badge">🗓 Período: <b>${periodo}</b> · ${k.dias} días registrados</div>
       <div class="ss-kpi-grid">
-        <div class="ss-kpi" style="--sskpi-c:#fff"><div class="lbl">Total cargas</div><div class="val">${k.tot}</div><div class="sub">${k.dias} días</div></div>
+        <div class="ss-kpi" style="--sskpi-c:#fff"><div class="lbl">Total cargas</div><div class="val">${k.tot}</div><div class="sub">${k.dias} días · prom ${k.prom}/día</div></div>
         <div class="ss-kpi" style="--sskpi-c:rgba(26,95,160,0.9)"><div class="lbl">Anticipadas</div><div class="val">${k.ant}</div><div class="sub">${k.pct}% del total</div></div>
-        <div class="ss-kpi" style="--sskpi-c:var(--teal)"><div class="lbl">Nocturnas</div><div class="val">${k.noc}</div><div class="sub">${100-k.pct}% del total</div></div>
-        <div class="ss-kpi" style="--sskpi-c:rgba(26,158,92,0.9)"><div class="lbl">Promedio/día</div><div class="val">${k.prom}</div><div class="sub">cargas por día</div></div>
+        <div class="ss-kpi" style="--sskpi-c:rgba(26,158,130,0.9)"><div class="lbl">Nocturnas</div><div class="val">${k.noc}</div><div class="sub">${100-k.pct}% del total</div></div>
+        <div class="ss-kpi" style="--sskpi-c:rgba(26,158,92,0.9)"><div class="lbl">Promedio/día</div><div class="val">${k.prom}</div><div class="sub">cargas por día hábil</div></div>
       </div>
       <div class="ss-two-col">
         <div class="ss-chart-wrap"><div class="ss-chart-title">Anticipadas vs Nocturnas</div><div class="ss-chart-inner"><canvas id="ss-c-dona"></canvas></div></div>
         <div class="ss-chart-wrap"><div class="ss-chart-title">Promedio por día de semana</div><div class="ss-chart-inner"><canvas id="ss-c-dow"></canvas></div></div>
       </div>
     </div>`,
+
     `<div class="ss-slide" id="ss-slide-2">
-      <div class="ss-slide-title">Evolución</div><div class="ss-slide-heading">Tendencia <span>acumulada</span></div>
-      <div class="ss-full-col"><div class="ss-chart-wrap" style="flex:1"><div class="ss-chart-title">Acumulado total · ${periodo}</div><div class="ss-chart-inner"><canvas id="ss-c-acum"></canvas></div></div></div>
+      <div class="ss-slide-eyebrow">Evolución temporal</div>
+      <div class="ss-slide-heading">Tendencia <span>acumulada</span></div>
+      <div class="ss-filtro-badge">🗓 <b>${periodo}</b> · Total acumulado: <b>${k.tot} cargas</b></div>
+      <div class="ss-full-col"><div class="ss-chart-wrap" style="flex:1"><div class="ss-chart-title">Acumulado total de cargas · ${periodo}</div><div class="ss-chart-inner"><canvas id="ss-c-acum"></canvas></div></div></div>
     </div>`,
-    `<div class="ss-slide" id="ss-slide-3"><div class="ss-end"><div class="ss-end-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="1.8" stroke-linecap="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div><div class="ss-end-title">Resumen Cargas</div><div class="ss-end-sub">${periodo} · ${k.tot} cargas totales · ${k.pct}% anticipadas · Promedio ${k.prom}/día</div></div></div>`,
+
+    `<div class="ss-slide" id="ss-slide-3"><div class="ss-end">
+      <div class="ss-end-badge">FIS FIBER · Logística</div>
+      <div class="ss-end-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>
+      <div class="ss-end-title">Cargas Anticipadas</div>
+      <div class="ss-end-stat">
+        <div class="ss-end-stat-item"><div class="ss-end-stat-val">${k.tot}</div><div class="ss-end-stat-lbl">Total cargas</div></div>
+        <div class="ss-end-stat-item"><div class="ss-end-stat-val">${k.pct}%</div><div class="ss-end-stat-lbl">Anticipadas</div></div>
+        <div class="ss-end-stat-item"><div class="ss-end-stat-val">${k.prom}</div><div class="ss-end-stat-lbl">Prom. diario</div></div>
+      </div>
+      <div class="ss-end-sub">${periodo} · ${k.dias} días registrados</div>
+    </div></div>`,
   ];
+
   _abrirSS('FIS <span>FIBER</span> · Cargas');
   setTimeout(()=>{
-    const mf='JetBrains Mono',gc='rgba(255,255,255,0.07)',tc='rgba(255,255,255,0.3)';
-    DC('ss-c-dona');CI['ss-c-dona']=new Chart(document.getElementById('ss-c-dona'),{type:'doughnut',data:{labels:['Anticipadas','Nocturnas'],datasets:[{data:[k.ant,k.noc],backgroundColor:['rgba(26,95,160,0.85)','rgba(26,158,130,0.85)'],borderWidth:0,hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{position:'bottom',labels:{color:'rgba(255,255,255,0.5)',font:{size:11,family:'Outfit'},usePointStyle:true,padding:12}},datalabels:{color:'#fff',font:{size:13,family:mf,weight:'700'},formatter:(v,ctx)=>{const t=ctx.dataset.data.reduce((a,b)=>a+b,0);return t?Math.round(v/t*100)+'%':''}}}}});
-    DC('ss-c-dow');CI['ss-c-dow']=new Chart(document.getElementById('ss-c-dow'),{type:'bar',data:{labels:DIAS,datasets:[{label:'Anticipadas',data:bD.map((v,i)=>bC[i]?+(v/bC[i]).toFixed(1):0),backgroundColor:'rgba(26,95,160,0.75)',borderRadius:4,borderSkipped:false},{label:'Nocturnas',data:bN.map((v,i)=>bC[i]?+(v/bC[i]).toFixed(1):0),backgroundColor:'rgba(26,158,130,0.75)',borderRadius:4,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{color:tc,font:{size:10,family:'Outfit'},usePointStyle:true,padding:10}},datalabels:{display:false}},scales:{x:{grid:{display:false},ticks:{color:tc,font:{size:10,family:mf}},border:{color:'transparent'}},y:{grid:{color:gc},ticks:{color:tc,font:{size:9}},border:{color:'transparent'},beginAtZero:true}}}});
-    DC('ss-c-acum');let ac2=0;const acL2=data.map(r=>{const d=new Date(r.Fecha+'T12:00:00');return`${d.getDate()}/${d.getMonth()+1}`;});const acD2=data.map(r=>{ac2+=r.Anticipadas+r.Nocturnas;return ac2;});
-    CI['ss-c-acum']=new Chart(document.getElementById('ss-c-acum'),{type:'line',data:{labels:acL2,datasets:[{label:'Acumulado',data:acD2,borderColor:'#C0152A',backgroundColor:'rgba(192,21,42,0.1)',borderWidth:2.5,pointRadius:2,fill:true,tension:0.35}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},datalabels:{display:false}},scales:{x:{grid:{display:false},ticks:{color:tc,font:{size:9,family:mf},maxTicksLimit:12,autoSkip:true},border:{color:'transparent'}},y:{grid:{color:gc},ticks:{color:tc,font:{size:9}},border:{color:'transparent'},beginAtZero:true}}}});
+    DC('ss-c-dona');
+    CI['ss-c-dona']=new Chart(document.getElementById('ss-c-dona'),{type:'doughnut',
+      data:{labels:['Anticipadas','Nocturnas'],datasets:[{data:[k.ant,k.noc],backgroundColor:['rgba(26,95,160,0.82)','rgba(26,158,130,0.82)'],borderWidth:0,hoverOffset:6}]},
+      options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{
+        legend:{position:'bottom',labels:{color:'rgba(255,255,255,0.45)',font:{size:11,family:'Outfit'},usePointStyle:true,padding:12}},
+        datalabels:{color:'#fff',font:{size:13,family:SS_MF,weight:'700'},formatter:(v,ctx)=>{const t=ctx.dataset.data.reduce((a,b)=>a+b,0);return t?Math.round(v/t*100)+'%':'';}},
+        tooltip:{callbacks:{label:c=>`${c.label}: ${c.parsed} (${Math.round(c.parsed/(k.ant+k.noc)*100)}%)`}}
+      }}
+    });
+    DC('ss-c-dow');
+    CI['ss-c-dow']=new Chart(document.getElementById('ss-c-dow'),{type:'bar',
+      data:{labels:DIAS,datasets:[
+        {label:'Anticipadas',data:bD.map((v,i)=>bC[i]?+(v/bC[i]).toFixed(1):0),backgroundColor:'rgba(26,95,160,0.7)',borderRadius:4,borderSkipped:false},
+        {label:'Nocturnas',data:bN.map((v,i)=>bC[i]?+(v/bC[i]).toFixed(1):0),backgroundColor:'rgba(26,158,130,0.7)',borderRadius:4,borderSkipped:false}
+      ]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{
+        legend:{display:true,position:'bottom',labels:{color:'rgba(255,255,255,0.4)',font:{size:10,family:'Outfit'},usePointStyle:true,padding:10}},
+        datalabels:{anchor:'end',align:'end',offset:1,color:'rgba(255,255,255,0.6)',font:{size:9,family:SS_MF,weight:'600'},formatter:v=>v||''}
+      },scales:{
+        x:{grid:{display:false},ticks:{color:SS_TC,font:{size:10,family:SS_MF}},border:{color:'transparent'}},
+        y:{grid:{color:SS_GC},ticks:{color:SS_TC,font:{size:9}},border:{color:'transparent'},beginAtZero:true}
+      }}
+    });
+    DC('ss-c-acum');
+    let ac2=0;const acL2=data.map(r=>{const d=new Date(r.Fecha+'T12:00:00');return`${d.getDate()}/${d.getMonth()+1}`;});
+    const acD2=data.map(r=>{ac2+=r.Anticipadas+r.Nocturnas;return ac2;});
+    CI['ss-c-acum']=new Chart(document.getElementById('ss-c-acum'),{type:'line',
+      data:{labels:acL2,datasets:[{label:'Acumulado',data:acD2,borderColor:'#C0152A',backgroundColor:'rgba(192,21,42,0.08)',borderWidth:2.5,pointRadius:1.5,fill:true,tension:0.4}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},datalabels:{display:false},
+        tooltip:{callbacks:{label:c=>`Acumulado: ${c.parsed.y} cargas`}}},
+      scales:{
+        x:{grid:{display:false},ticks:{color:SS_TC,font:{size:9,family:SS_MF},maxTicksLimit:14,autoSkip:true},border:{color:'transparent'}},
+        y:{grid:{color:SS_GC},ticks:{color:SS_TC,font:{size:9}},border:{color:'transparent'},beginAtZero:true}
+      }}
+    });
   },300);
 }
 
+/* ── COLABORADORES ── */
 function abrirSlideshowColab(){
   const data=window._ssColabData||[],k=window._ssColabKpis||{total:0,local:0,foraneo:0,metaCump:0,pctPromedio:0,n:0},periodo=window._ssColabPeriodo||'Sin período';
   if(!data.length){alert('Sin datos de colaboradores disponibles.');return;}
@@ -1134,36 +1341,96 @@ function abrirSlideshowColab(){
   const uTot={};data.forEach(r=>{uTot[r.Unidad]=(uTot[r.Unidad]||0)+r.Total;});
   const uKeys=Object.keys(uTot);
   const uColors={'CAMION':'rgba(26,58,112,0.85)','CAMIONETA':'rgba(26,158,130,0.85)','QUINTA':'rgba(184,122,16,0.85)'};
+
   ssSlides=[
-    `<div class="ss-slide active" id="ss-slide-0"><div class="ss-cover"><div class="ss-cover-line"></div><div class="ss-cover-eyebrow">Logística · FIS FIBER</div><div class="ss-cover-title">Participación <span>Colaboradores</span></div><div class="ss-cover-sub">Productividad por colaborador · viajes locales y foráneos · metas</div><div class="ss-cover-period">${periodo} · ${k.n} colaboradores</div><div class="ss-cover-line"></div></div></div>`,
+    `<div class="ss-slide active" id="ss-slide-0"><div class="ss-cover">
+      <div class="ss-cover-line"></div>
+      <div class="ss-cover-eyebrow">Logística · FIS FIBER</div>
+      <div class="ss-cover-title">Participación <span>Colaboradores</span></div>
+      <div class="ss-cover-sub">Productividad · viajes locales y foráneos · cumplimiento de metas</div>
+      <div class="ss-cover-period">📅 ${periodo} · ${k.n} colaboradores</div>
+      <div class="ss-cover-line"></div>
+    </div></div>`,
+
     `<div class="ss-slide" id="ss-slide-1">
-      <div class="ss-slide-title">Resumen ejecutivo</div><div class="ss-slide-heading">KPIs <span>${periodo}</span></div>
+      <div class="ss-slide-eyebrow">Resumen ejecutivo</div>
+      <div class="ss-slide-heading">KPIs <span>${periodo}</span></div>
+      <div class="ss-filtro-badge">🗓 <b>${periodo}</b> · ${k.n} colaboradores · ${k.metaCump} con meta cumplida</div>
       <div class="ss-kpi-grid">
-        <div class="ss-kpi" style="--sskpi-c:#fff"><div class="lbl">Total viajes</div><div class="val">${k.total}</div><div class="sub">${k.n} colaboradores</div></div>
-        <div class="ss-kpi" style="--sskpi-c:rgba(26,95,160,0.9)"><div class="lbl">Locales</div><div class="val">${k.local}</div><div class="sub">${k.total?Math.round(k.local/k.total*100):0}%</div></div>
-        <div class="ss-kpi" style="--sskpi-c:rgba(26,158,130,0.9)"><div class="lbl">Foráneos</div><div class="val">${k.foraneo}</div><div class="sub">${k.total?Math.round(k.foraneo/k.total*100):0}%</div></div>
-        <div class="ss-kpi" style="--sskpi-c:rgba(26,158,92,0.9)"><div class="lbl">Meta cumplida</div><div class="val">${k.metaCump}</div><div class="sub">de ${k.n}</div></div>
+        <div class="ss-kpi" style="--sskpi-c:#fff"><div class="lbl">Total viajes</div><div class="val">${k.total}</div><div class="sub">${k.n} colaboradores activos</div></div>
+        <div class="ss-kpi" style="--sskpi-c:rgba(26,95,160,0.9)"><div class="lbl">Locales</div><div class="val">${k.local}</div><div class="sub">${k.total?Math.round(k.local/k.total*100):0}% del total</div></div>
+        <div class="ss-kpi" style="--sskpi-c:rgba(26,158,130,0.9)"><div class="lbl">Foráneos</div><div class="val">${k.foraneo}</div><div class="sub">${k.total?Math.round(k.foraneo/k.total*100):0}% del total</div></div>
+        <div class="ss-kpi" style="--sskpi-c:rgba(74,222,128,0.9)"><div class="lbl">Meta cumplida</div><div class="val">${k.metaCump}</div><div class="sub">de ${k.n} · ${k.n>0?Math.round(k.metaCump/k.n*100):0}% del equipo</div></div>
       </div>
       <div class="ss-two-col">
-        <div class="ss-chart-wrap"><div class="ss-chart-title">Top 5 colaboradores</div><div class="ss-chart-inner"><canvas id="ss-v-top"></canvas></div></div>
-        <div class="ss-chart-wrap"><div class="ss-chart-title">Por tipo de unidad</div><div class="ss-chart-inner"><canvas id="ss-v-dona"></canvas></div></div>
+        <div class="ss-chart-wrap"><div class="ss-chart-title">Top 5 colaboradores · viajes</div><div class="ss-chart-inner"><canvas id="ss-v-top"></canvas></div></div>
+        <div class="ss-chart-wrap"><div class="ss-chart-title">Distribución por tipo de unidad</div><div class="ss-chart-inner"><canvas id="ss-v-dona"></canvas></div></div>
       </div>
     </div>`,
+
     `<div class="ss-slide" id="ss-slide-2">
-      <div class="ss-slide-title">Detalle</div><div class="ss-slide-heading">Tabla de <span>productividad</span></div>
+      <div class="ss-slide-eyebrow">Detalle de productividad</div>
+      <div class="ss-slide-heading">Ranking de <span>colaboradores</span></div>
+      <div class="ss-filtro-badge">🗓 <b>${periodo}</b> · Top 12 por total de viajes</div>
       <div class="ss-table-wrap"><table class="ss-table">
-        <thead><tr><th>#</th><th>Colaborador</th><th>Unidad</th><th class="r">Local</th><th class="r">Foráneo</th><th class="r">Total</th><th class="r">% Viajes</th><th>Estatus</th></tr></thead>
-        <tbody>${data.slice(0,12).map((r,i)=>{const ratio=r.NoViajMin>0?r.Total/r.NoViajMin:0;const color=ratio>=1?'#4ade80':ratio>=0.7?'#fbbf24':'#ff7a8a';const label=ratio>=1?'Meta ✓':ratio>=0.7?'En proceso':'Bajo meta';return`<tr><td style="color:rgba(255,255,255,0.4);font-size:11px">${i+1}</td><td>${r.Colaborador.split(' ').slice(0,3).join(' ')}</td><td style="font-size:10px;color:rgba(255,255,255,0.5)">${r.Unidad}</td><td class="r">${r.Local}</td><td class="r">${r.Foraneo}</td><td class="r">${r.Total}</td><td class="r" style="color:${color}">${(r.PctViajes*100).toFixed(1)}%</td><td style="color:${color};font-size:11px;font-weight:600">${label}</td></tr>`;}).join('')}</tbody>
-        <tfoot><tr><td colspan="3">TOTALES</td><td class="r">${k.local}</td><td class="r">${k.foraneo}</td><td class="r">${k.total}</td><td class="r">${(k.pctPromedio*100).toFixed(1)}%</td><td>${k.metaCump}/${k.n} ✓</td></tr></tfoot>
+        <thead><tr><th>#</th><th>Colaborador</th><th>Unidad</th><th class="r">Local</th><th class="r">Foráneo</th><th class="r">Total</th><th class="r">% Part.</th><th>Estatus</th></tr></thead>
+        <tbody>${data.slice(0,12).map((r,i)=>{
+          const ratio=r.NoViajMin>0?r.Total/r.NoViajMin:0;
+          const color=ratio>=1?'#4ade80':ratio>=0.7?'#fbbf24':'#ff8896';
+          const label=ratio>=1?'✓ Meta':'En proceso';
+          const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':`${i+1}`;
+          return`<tr>
+            <td style="color:rgba(255,255,255,0.5);font-size:11px">${medal}</td>
+            <td><b>${r.Colaborador.split(' ').slice(0,3).join(' ')}</b></td>
+            <td style="font-size:10px;color:rgba(255,255,255,0.4)">${r.Unidad}</td>
+            <td class="r">${r.Local}</td><td class="r">${r.Foraneo}</td>
+            <td class="r" style="color:#fff;font-weight:700">${r.Total}</td>
+            <td class="r" style="color:${color};font-weight:700">${(r.PctViajes*100).toFixed(1)}%</td>
+            <td style="color:${color};font-size:11px;font-weight:700">${label}</td>
+          </tr>`;}).join('')}
+        </tbody>
+        <tfoot><tr><td colspan="3">TOTALES</td><td class="r">${k.local}</td><td class="r">${k.foraneo}</td><td class="r" style="color:#fff">${k.total}</td><td class="r">${(k.pctPromedio*100).toFixed(1)}%</td><td>${k.metaCump}/${k.n} ✓</td></tr></tfoot>
       </table></div>
     </div>`,
-    `<div class="ss-slide" id="ss-slide-3"><div class="ss-end"><div class="ss-end-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="1.8" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div class="ss-end-title">Resumen Colaboradores</div><div class="ss-end-sub">${periodo} · ${k.total} viajes · ${k.metaCump}/${k.n} meta cumplida · ${(k.pctPromedio*100).toFixed(1)}% participación promedio</div></div></div>`,
+
+    `<div class="ss-slide" id="ss-slide-3"><div class="ss-end">
+      <div class="ss-end-badge">FIS FIBER · Logística</div>
+      <div class="ss-end-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+      <div class="ss-end-title">Participación Colaboradores</div>
+      <div class="ss-end-stat">
+        <div class="ss-end-stat-item"><div class="ss-end-stat-val">${k.total}</div><div class="ss-end-stat-lbl">Total viajes</div></div>
+        <div class="ss-end-stat-item"><div class="ss-end-stat-val" style="color:#4ade80">${k.metaCump}/${k.n}</div><div class="ss-end-stat-lbl">Meta cumplida</div></div>
+        <div class="ss-end-stat-item"><div class="ss-end-stat-val">${(k.pctPromedio*100).toFixed(1)}%</div><div class="ss-end-stat-lbl">Part. promedio</div></div>
+      </div>
+      <div class="ss-end-sub">${periodo}</div>
+    </div></div>`,
   ];
+
   _abrirSS('FIS <span>FIBER</span> · Colaboradores');
   setTimeout(()=>{
-    const mf='JetBrains Mono',gc='rgba(255,255,255,0.07)',tc='rgba(255,255,255,0.3)';
-    DC('ss-v-top');CI['ss-v-top']=new Chart(document.getElementById('ss-v-top'),{type:'bar',data:{labels:top5.map(r=>r.Colaborador.split(' ').slice(0,2).join(' ')),datasets:[{label:'Local',data:top5.map(r=>r.Local),backgroundColor:'rgba(26,58,112,0.85)',borderRadius:3,borderSkipped:false},{label:'Foráneo',data:top5.map(r=>r.Foraneo),backgroundColor:'rgba(26,158,130,0.85)',borderRadius:3,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{color:tc,font:{size:10,family:'Outfit'},usePointStyle:true,padding:10}},datalabels:{display:false}},scales:{x:{grid:{display:false},ticks:{color:tc,font:{size:9,family:mf},maxRotation:0},border:{color:'transparent'}},y:{grid:{color:gc},ticks:{color:tc,font:{size:9}},border:{color:'transparent'},beginAtZero:true,grace:'15%'}}}});
-    DC('ss-v-dona');CI['ss-v-dona']=new Chart(document.getElementById('ss-v-dona'),{type:'doughnut',data:{labels:uKeys,datasets:[{data:uKeys.map(u=>uTot[u]),backgroundColor:uKeys.map(u=>uColors[u]||'rgba(150,150,150,0.75)'),borderWidth:0,hoverOffset:8}]},options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{position:'bottom',labels:{color:tc,font:{size:11,family:'Outfit'},usePointStyle:true,padding:12}},datalabels:{color:'#fff',font:{size:12,family:mf,weight:'700'},formatter:(v,ctx)=>{const t=ctx.dataset.data.reduce((a,b)=>a+b,0);return t?Math.round(v/t*100)+'%':''}}}}});
+    DC('ss-v-top');
+    CI['ss-v-top']=new Chart(document.getElementById('ss-v-top'),{type:'bar',
+      data:{labels:top5.map(r=>r.Colaborador.split(' ').slice(0,2).join(' ')),datasets:[
+        {label:'Local',data:top5.map(r=>r.Local),backgroundColor:'rgba(26,58,112,0.82)',borderRadius:3,borderSkipped:false},
+        {label:'Foráneo',data:top5.map(r=>r.Foraneo),backgroundColor:'rgba(26,158,130,0.82)',borderRadius:3,borderSkipped:false}
+      ]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{
+        legend:{display:true,position:'bottom',labels:{color:'rgba(255,255,255,0.4)',font:{size:10,family:'Outfit'},usePointStyle:true,padding:10}},
+        datalabels:{anchor:'end',align:'end',offset:1,color:'rgba(255,255,255,0.6)',font:{size:9,family:SS_MF,weight:'600'},formatter:v=>v||''},
+        tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.parsed.y}`}}
+      },scales:{
+        x:{grid:{display:false},ticks:{color:SS_TC,font:{size:9,family:SS_MF},maxRotation:0},border:{color:'transparent'}},
+        y:{grid:{color:SS_GC},ticks:{color:SS_TC,font:{size:9}},border:{color:'transparent'},beginAtZero:true,grace:'15%'}
+      }}
+    });
+    DC('ss-v-dona');
+    CI['ss-v-dona']=new Chart(document.getElementById('ss-v-dona'),{type:'doughnut',
+      data:{labels:uKeys,datasets:[{data:uKeys.map(u=>uTot[u]),backgroundColor:uKeys.map(u=>uColors[u]||'rgba(150,150,150,0.75)'),borderWidth:0,hoverOffset:8}]},
+      options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{
+        legend:{position:'bottom',labels:{color:'rgba(255,255,255,0.45)',font:{size:11,family:'Outfit'},usePointStyle:true,padding:12}},
+        datalabels:{color:'#fff',font:{size:12,family:SS_MF,weight:'700'},formatter:(v,ctx)=>{const t=ctx.dataset.data.reduce((a,b)=>a+b,0);return t?Math.round(v/t*100)+'%':'';}}
+      }}
+    });
   },300);
 }
 </script>
