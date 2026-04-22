@@ -494,8 +494,6 @@ async function loadCasetasMensual(){
     if(!res.ok)throw new Error('HTTP '+res.status);
     const txt=await res.text();
     if(txt.trim().startsWith('<'))throw new Error('Recibido HTML — URL no es CSV público');
-
-    // Parser por posicion — ignora nombres de columna con espacios/tildes raros
     const lineas=txt.trim().split('\n').filter(l=>l.trim());
     if(lineas.length<2)throw new Error('CSV vacío');
     function parseLine(line){
@@ -510,44 +508,47 @@ async function loadCasetasMensual(){
       return vals;
     }
     const hdr=parseLine(lineas[0]);
-    function findCol(...terms){
-      for(const t of terms){
-        const tl=t.toLowerCase().replace(/\s+/g,'');
-        const idx=hdr.findIndex(h=>h.toLowerCase().replace(/\s+/g,'').includes(tl));
-        if(idx>=0)return idx;
-      }
-      return -1;
+    // Buscar MES por nombre exacto
+    let iMes=hdr.findIndex(h=>h.trim().toUpperCase()==='MES');
+    if(iMes<0)iMes=hdr.findIndex(h=>h.trim().toUpperCase().includes('MES'));
+    if(iMes<0)iMes=1; // fallback: col 1 del Excel conocido
+    // Buscar años con regex word-boundary
+    function findYear(yr){
+      return hdr.findIndex(h=>new RegExp('\\b'+yr+'\\b').test(h));
     }
-    const iMes=findCol('mes');
-    const iC23=findCol('2023');
-    const iC24=findCol('2024');
-    const iC25=findCol('2025');
-    const iC26=findCol('2026');
-    const iEst=findCol('estatus','status');
+    let iC23=findYear('2023');
+    let iC24=findYear('2024');
+    let iC25=findYear('2025');
+    let iC26=findYear('2026');
+    // FALLBACK POR POSICION FIJA si Google Sheet parte el header por doble espacio
+    // Excel conocido: col0=No, col1=MES, col2=Casetas2023, col3=Casetas2024, col4=Casetas2025, col5=Casetas2026, col10=Estatus
+    if(iC24<0&&hdr.length>=5){
+      iC23=2; iC24=3; iC25=4; iC26=hdr.length>=6?5:-1;
+    }
+    let iEst=hdr.findIndex(h=>/estatus/i.test(h));
+    if(iEst<0)iEst=hdr.length-1; // ultima columna suele ser Estatus
     const debug={
       headers:hdr.join(' | '),
-      mesFila1:parseLine(lineas[1]||'').slice(0,4).join(' / '),
-      valoresFila1:`iMes=${iMes} iC23=${iC23} iC24=${iC24} iC25=${iC25} iC26=${iC26}`
+      mesFila1:parseLine(lineas[1]||'').join(' | '),
+      valoresFila1:'iMes='+iMes+' iC23='+iC23+' iC24='+iC24+' iC25='+iC25+' iC26='+iC26+' iEst='+iEst+' totalCols='+hdr.length
     };
     if(iMes<0)throw new Error('Columna MES no encontrada. Encabezados: '+hdr.join(' | '));
-    if(iC24<0)throw new Error('Columna 2024 no encontrada. Encabezados: '+hdr.join(' | '));
     const MESES_VALIDOS=['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE'];
     const rows=lineas.slice(1).map(linea=>{
       const v=parseLine(linea);
       const mes=(v[iMes]||'').trim().toUpperCase();
       if(!MESES_VALIDOS.includes(mes))return null;
-      const c23=iC23>=0?parseMoney(v[iC23]):0;
-      const c24=iC24>=0?parseMoney(v[iC24]):0;
-      const c25=iC25>=0?parseMoney(v[iC25]):0;
-      const c26=iC26>=0?parseMoney(v[iC26]):0;
-      const estatus=iEst>=0?parseEstatus(v[iEst]):(c26<=c25?'Ahorro':'Gasto');
+      const c23=parseMoney(v[iC23]||'0');
+      const c24=parseMoney(v[iC24]||'0');
+      const c25=parseMoney(v[iC25]||'0');
+      const c26=iC26>=0?parseMoney(v[iC26]||'0'):0;
+      const estatus=parseEstatus(v[iEst]||'');
       return{mes,c23,c24,c25,c26,dif2324:c24-c23,dif2425:c25-c24,dif2526:c26-c25,estatus};
     }).filter(Boolean);
-    if(!rows.length)throw new Error('Ningún mes válido encontrado. Revisá que la columna MES tenga ENERO, FEBRERO…');
+    if(!rows.length)throw new Error('Ningún mes válido. Col MES debe tener ENERO-DICIEMBRE. Encabezados: '+hdr.join(' | '));
     return{rows,error:null,debug};
   }catch(e){return{rows:[],error:e.message,debug:null};}
 }
-
 async function loadCasetasComparativo(){
   try{
     const res=await fetch(CASETAS_COMPARATIVO_URL+'&cb='+Date.now(),{cache:'no-store'});
