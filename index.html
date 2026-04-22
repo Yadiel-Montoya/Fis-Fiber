@@ -489,7 +489,45 @@ const VIAJES_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQXHv7eviqTW
 /* ══════════════════════════
    CASETAS — LOADERS
 ══════════════════════════ */
-function parseMoney(v){return parseFloat((v||'0').toString().replace(/[$,\s]/g,''))||0;}
+function parseMoney(v){
+  if(!v&&v!==0)return 0;
+  let s=(v||'0').toString().trim()
+    .replace(/[$\s]/g,'')   // quitar $ y espacios
+    .replace(/\r/g,'');
+  // Formato mexicano: $152.007,00 → punto=miles, coma=decimal
+  // Formato alternativo: $152,007.00 → coma=miles, punto=decimal
+  // Detectar cuál es cuál por la posición del último separador
+  const lastDot=s.lastIndexOf('.');
+  const lastComma=s.lastIndexOf(',');
+  if(lastDot>-1&&lastComma>-1){
+    if(lastComma>lastDot){
+      // coma es decimal → 152.007,00 → quitar puntos, cambiar coma por punto
+      s=s.replace(/\./g,'').replace(',','.');
+    } else {
+      // punto es decimal → 152,007.00 → quitar comas
+      s=s.replace(/,/g,'');
+    }
+  } else if(lastComma>-1){
+    // solo coma: puede ser decimal (8,5) o miles (152,007)
+    const afterComma=s.substring(lastComma+1);
+    if(afterComma.length===3&&!s.substring(0,lastComma).includes('.')){
+      // es separador de miles → quitar
+      s=s.replace(/,/g,'');
+    } else {
+      // es decimal → cambiar por punto
+      s=s.replace(',','.');
+    }
+  } else if(lastDot>-1){
+    // solo punto: puede ser decimal (8.5) o miles (152.007)
+    const afterDot=s.substring(lastDot+1);
+    if(afterDot.length===3&&s.replace(/[^.]/g,'').length===1){
+      // es separador de miles → quitar
+      s=s.replace('.','');
+    }
+    // si no, es decimal normal → dejar como está
+  }
+  return parseFloat(s)||0;
+}
 function parseEstatus(v){return/ahorro/i.test((v||'').toString())?'Ahorro':'Gasto';}
 
 /* Busca una columna por SUBSTRING — resuelve dobles espacios, tildes, mayúsculas */
@@ -751,8 +789,15 @@ function renderCasetasAnual(container,CM){
       const C23='rgba(148,163,184,0.5)',C24='rgba(59,130,246,0.7)',C25='rgba(251,191,36,0.75)';
       // ── Calcular máximo real para que el eje Y nunca quede en $0k ──
       const allVals=[...data.map(r=>r.c23),...data.map(r=>r.c24),...data.map(r=>r.c25),...data.map(r=>r.c26)].filter(v=>v>0);
-      const yMax=allVals.length?Math.ceil(Math.max(...allVals)*1.25):100000;
-      const yFmt=v=>v>=1000?'$'+Math.round(v/1000)+'k':'$'+v;
+      const yMax=allVals.length?Math.ceil(Math.max(...allVals)*1.25):300000;
+      // Formatter inteligente: valores reales están en pesos (ej: 152007)
+      const yFmt=v=>{
+        if(v===0)return '$0';
+        const abs=Math.abs(v);
+        if(abs>=1000000)return'$'+Math.round(abs/1000000)+'M';
+        if(abs>=1000)return'$'+Math.round(abs/1000)+'k';
+        return'$'+abs;
+      };
 
       // ── Gráfica 1: Comparativo 4 años ──
       DC('ca-bar-comp');
@@ -764,7 +809,7 @@ function renderCasetasAnual(container,CM){
           {label:'2026',data:data.map(r=>r.c26>0?r.c26:null),
            backgroundColor:data.map(r=>r.dif2526<0?'rgba(34,197,94,0.82)':'rgba(239,68,68,0.82)'),
            borderRadius:3,borderSkipped:false,
-           datalabels:{display:true,anchor:'end',align:'end',offset:2,
+           datalabels:{display:true,anchor:'end',align:'end',clamp:true,offset:2,
              color:data.map(r=>r.dif2526<0?'#15803d':'#b91c1c'),
              font:{size:9,family:mf,weight:'700'},
              formatter:(v)=>v!=null?'$'+Math.round(v/1000)+'k':''}}
