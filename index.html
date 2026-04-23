@@ -43,14 +43,14 @@ body{font-family:'Outfit',sans-serif;background:var(--off);color:var(--ink);min-
 .live-dot{width:6px;height:6px;border-radius:50%;background:#4ade80;box-shadow:0 0 6px #4ade80;animation:blink 1.8s ease-in-out infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 .clock-val{font-size:10px;color:rgba(255,255,255,0.35);margin-top:4px;font-family:'JetBrains Mono',monospace}
-.main{margin-left:var(--sidebar);flex:1;min-height:100vh;display:flex;flex-direction:column}
+.main{margin-left:var(--sidebar);flex:1;min-height:100vh;display:flex;flex-direction:column;overflow-x:hidden;min-width:0}
 .topbar{height:52px;background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 2rem;position:sticky;top:0;z-index:100}
 .topbar-bc{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink3)}
 .topbar-bc .sep{color:var(--border2)}
 .topbar-bc .cur{color:var(--ink);font-weight:600}
 .topbar-date{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--ink3);background:var(--off2);border:1px solid var(--border);border-radius:6px;padding:4px 10px}
-.page{display:none;flex:1;padding:2rem}
-.page.active{display:block}
+.page{display:none;flex:1;padding:2rem;width:100%;box-sizing:border-box}
+.page.active{display:block;width:100%}
 .page-eyebrow{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--red);font-family:'JetBrains Mono',monospace;margin-bottom:8px;display:flex;align-items:center;gap:8px}
 .page-eyebrow::after{content:'';flex:1;max-width:48px;height:1px;background:var(--red-mid)}
 .page-title{font-size:28px;font-weight:700;color:var(--ink);line-height:1.15;margin-bottom:6px}
@@ -1034,15 +1034,12 @@ async function renderColaboradores(container){
         <div class="ckpi" style="--ck-color:var(--blue)"><div class="lbl">Locales</div><div class="val">${k.local}</div><div class="sub">${k.total?Math.round(k.local/k.total*100):0}%</div></div>
         <div class="ckpi" style="--ck-color:var(--teal)"><div class="lbl">Foráneos</div><div class="val">${k.foraneo}</div><div class="sub">${k.total?Math.round(k.foraneo/k.total*100):0}%</div></div>
         <div class="ckpi" style="--ck-color:var(--green)"><div class="lbl">Meta mínima ✓</div><div class="val">${k.metaCump}</div><div class="sub">de ${k.n}</div></div>
-        <div class="ckpi" style="--ck-color:var(--red)"><div class="lbl">% Prom. viajes</div>
-          <div class="val">${k.pctPromedio.toFixed(1)}%</div>
-          <div class="sub">participación promedio</div>
-        </div>
+        <div class="ckpi" style="--ck-color:var(--red)"><div class="lbl">Prom. viajes/chofer</div><div class="val">${k.total&&k.n?(k.total/k.n).toFixed(1):0}</div><div class="sub">viajes promedio</div></div>
       </div>
       <div class="charts-grid">
-        <div class="chart-box"><div class="chart-title">Top colaboradores <span class="chart-badge">Top 5</span></div><div style="position:relative;width:100%;height:230px"><canvas id="cv-bar-top"></canvas></div></div>
+        <div class="chart-box"><div class="chart-title">Top colaboradores <span class="chart-badge">Top 8 · viajes</span></div><div style="position:relative;width:100%;height:280px"><canvas id="cv-bar-top"></canvas></div></div>
         <div class="chart-box"><div class="chart-title">Por unidad <span class="chart-badge">${uKeys.length} tipos</span></div><div style="position:relative;width:100%;height:230px"><canvas id="cv-dona-unidad"></canvas></div></div>
-        <div class="chart-box full"><div class="chart-title">% Participación por colaborador <span class="chart-badge">ordenado por % desc</span></div><div style="position:relative;width:100%;overflow-x:auto"><canvas id="cv-pct-bar" style="height:${Math.max(280,data.length*32)}px"></canvas></div></div>
+        <div class="chart-box full"><div class="chart-title">Viajes por colaborador <span class="chart-badge" style="background:var(--blue-bg);color:var(--blue);border-color:rgba(26,95,160,.2)">🔵 Local + 🟢 Foráneo · ordenado por total desc</span></div><div style="position:relative;width:100%;overflow-x:auto"><canvas id="cv-pct-bar" style="height:${Math.max(320,data.length*42)}px"></canvas></div></div>
       </div>
       <div class="table-wrap">
         <div class="table-head-bar">
@@ -1096,7 +1093,7 @@ async function renderColaboradores(container){
             <td class="num">${k.local}</td>
             <td class="num">${k.foraneo}</td>
             <td class="num">${k.total}</td>
-            <td class="num">${k.pctPromedio.toFixed(1)}%</td>
+            <td class="num">${k.total&&k.n?(k.total/k.n).toFixed(1):0}</td>
             <td class="num">—</td>
             <td class="center">${k.metaCump}/${k.n} ✓</td>
           </tr></tfoot>
@@ -1119,17 +1116,25 @@ async function renderColaboradores(container){
     setTimeout(()=>{
       const gc='rgba(0,0,0,0.05)',tc='#9A7078',mf='JetBrains Mono';
       DC('cv-bar-top');
+      const top8=[...data].sort((a,b)=>b.Total-a.Total).slice(0,8); // mostrar top 8
       CI['cv-bar-top']=new Chart(document.getElementById('cv-bar-top'),{type:'bar',
-        data:{labels:top5.map(r=>r.Colaborador.split(' ').slice(0,2).join(' ')),
+        data:{labels:top8.map(r=>r.Colaborador.split(' ').slice(0,2).join(' ')),
           datasets:[
-            {label:'Local',data:top5.map(r=>r.Local),backgroundColor:'rgba(26,58,112,0.85)',borderRadius:4,borderSkipped:false},
-            {label:'Foráneo',data:top5.map(r=>r.Foraneo),backgroundColor:'rgba(26,158,130,0.85)',borderRadius:4,borderSkipped:false}
+            {label:'Local',data:top8.map(r=>r.Local),backgroundColor:'rgba(26,58,112,0.85)',borderRadius:{topLeft:4,topRight:0,bottomLeft:4,bottomRight:0},borderSkipped:false,
+              datalabels:{anchor:'center',align:'center',color:'#fff',font:{size:10,family:mf,weight:'700'},formatter:v=>v>0?`${v}`:''}},
+            {label:'Foráneo',data:top8.map(r=>r.Foraneo),backgroundColor:'rgba(26,158,130,0.85)',borderRadius:{topLeft:0,topRight:4,bottomLeft:0,bottomRight:4},borderSkipped:false,
+              datalabels:{anchor:'end',align:'top',offset:2,color:'#1A0A0C',font:{size:11,family:mf,weight:'700'},
+                formatter:(v,ctx)=>{const tot=top8[ctx.dataIndex].Total;return tot>0?`${tot}`:''}}}
           ]},
         options:{responsive:true,maintainAspectRatio:false,
           plugins:{legend:{display:true,position:'bottom',labels:{color:'#5C3038',font:{size:11,family:'Outfit'},usePointStyle:true,padding:16}},
-            datalabels:{display:false}},
+            tooltip:{callbacks:{
+              label:c=>`${c.dataset.label}: ${c.parsed.y} viajes`,
+              afterBody:items=>{const r=top8[items[0].dataIndex];return[`Total: ${r.Total} viajes`];}
+            }},
+            datalabels:{}},
           scales:{x:{grid:{display:false},ticks:{color:tc,font:{size:10,family:mf},maxRotation:0},border:{color:'transparent'}},
-            y:{grid:{color:gc},ticks:{color:tc,font:{size:11}},border:{color:'transparent'},beginAtZero:true,grace:'15%'}}}
+            y:{grid:{color:gc},ticks:{color:tc,font:{size:11}},border:{color:'transparent'},beginAtZero:true,grace:'20%'}}}
       });
 
       DC('cv-dona-unidad');
@@ -1141,31 +1146,55 @@ async function renderColaboradores(container){
             datalabels:{color:'#fff',font:{size:11,family:mf,weight:'700'},formatter:(v,ctx)=>{const tot=ctx.dataset.data.reduce((a,b)=>a+b,0);return tot&&v?Math.round(v/tot*100)+'%':''}}}}
       });
 
-      // ── Gráfica % por colaborador — PctViajes ya es 0–100 ──
+      // ── Gráfica VIAJES por colaborador — Local + Foráneo apilados, TODOS los choferes ──
       DC('cv-pct-bar');
-      const sp=[...data].sort((a,b)=>b.PctViajes-a.PctViajes);
+      const sp=[...data].sort((a,b)=>b.Total-a.Total); // mayor viajes primero
       const pc=document.getElementById('cv-pct-bar');
-      const pH=Math.max(280,data.length*32);
+      const pH=Math.max(320,data.length*42); // 42px por chofer = barras más gruesas
       pc.style.height=pH+'px';pc.height=pH;
-      const maxPct=Math.max(...sp.map(r=>r.PctViajes),100);
+      const maxViajes=Math.max(...sp.map(r=>r.Total),1);
       CI['cv-pct-bar']=new Chart(pc,{type:'bar',
-        data:{labels:sp.map(r=>r.Colaborador.split(' ').slice(0,3).join(' ')),
-          datasets:[{label:'% de Viajes',
-            data:sp.map(r=>+r.PctViajes.toFixed(1)),
-            backgroundColor:sp.map(r=>{
-              if(r.PctViajes>=100)return'rgba(26,158,92,0.80)';
-              if(r.PctViajes>=70)return'rgba(184,122,16,0.80)';
-              return'rgba(192,21,42,0.80)';
-            }),
-            borderRadius:4,borderSkipped:false}]},
-        options:{indexAxis:'y',responsive:false,maintainAspectRatio:false,
-          plugins:{legend:{display:false},
-            tooltip:{callbacks:{label:c=>`${c.parsed.x.toFixed(1)}%`}},
-            datalabels:{anchor:'end',align:'end',offset:2,color:'#5C3038',font:{size:10,family:mf,weight:'600'},formatter:v=>`${v.toFixed(1)}%`}},
+        data:{
+          labels:sp.map(r=>r.Colaborador.split(' ').slice(0,3).join(' ')),
+          datasets:[
+            {label:'Local',
+              data:sp.map(r=>r.Local),
+              backgroundColor:'rgba(26,58,112,0.85)',
+              borderRadius:0,borderSkipped:false,
+              datalabels:{display:false}
+            },
+            {label:'Foráneo',
+              data:sp.map(r=>r.Foraneo),
+              backgroundColor:'rgba(26,158,130,0.85)',
+              borderRadius:{topRight:4,bottomRight:4,topLeft:0,bottomLeft:0},borderSkipped:false,
+              datalabels:{
+                anchor:'end',align:'end',offset:5,
+                color:'#1A0A0C',font:{size:11,family:mf,weight:'700'},
+                formatter:(v,ctx)=>{
+                  const tot=sp[ctx.dataIndex].Total;
+                  return tot>0?`${tot}`:'';
+                }
+              }
+            }
+          ]
+        },
+        options:{
+          indexAxis:'y',responsive:false,maintainAspectRatio:false,
+          plugins:{
+            legend:{display:true,position:'bottom',labels:{color:'#5C3038',font:{size:12,family:'Outfit'},usePointStyle:true,padding:16}},
+            tooltip:{callbacks:{
+              label:c=>`${c.dataset.label}: ${c.parsed.x} viajes`,
+              afterBody:items=>{const r=sp[items[0].dataIndex];return[`Total: ${r.Total} viajes`];}
+            }},
+            datalabels:{}
+          },
           scales:{
-            y:{grid:{display:false},ticks:{color:tc,font:{size:10,family:mf}},border:{color:'transparent'}},
-            x:{grid:{color:gc},ticks:{color:tc,font:{size:10},callback:v=>`${v}%`},border:{color:'transparent'},beginAtZero:true,
-               grace:'10%',max:Math.ceil(maxPct*1.15)||120}}}
+            y:{stacked:true,grid:{display:false},ticks:{color:tc,font:{size:11,family:mf}},border:{color:'transparent'}},
+            x:{stacked:true,grid:{color:gc},ticks:{color:tc,font:{size:10},callback:v=>`${v}`},
+               border:{color:'transparent'},beginAtZero:true,grace:'12%',
+               max:Math.ceil(maxViajes*1.2)}
+          }
+        }
       });
     },80);
   }
@@ -1365,9 +1394,9 @@ function abrirSlideshowColab(){
         <div class="ss-kpi" style="--sskpi-c:#fff"><div class="lbl">Total viajes</div><div class="val">${k.total}</div><div class="sub">${k.n} activos</div></div>
         <div class="ss-kpi" style="--sskpi-c:rgba(26,95,160,0.9)"><div class="lbl">Locales</div><div class="val">${k.local}</div><div class="sub">${k.total?Math.round(k.local/k.total*100):0}%</div></div>
         <div class="ss-kpi" style="--sskpi-c:rgba(26,158,130,0.9)"><div class="lbl">Foráneos</div><div class="val">${k.foraneo}</div><div class="sub">${k.total?Math.round(k.foraneo/k.total*100):0}%</div></div>
-        <div class="ss-kpi" style="--sskpi-c:rgba(74,222,128,0.9)"><div class="lbl">% Promedio</div>
-          <div class="val">${k.pctPromedio.toFixed(1)}%</div>
-          <div class="sub">participación</div>
+        <div class="ss-kpi" style="--sskpi-c:rgba(74,222,128,0.9)"><div class="lbl">Prom. viajes/chofer</div>
+          <div class="val">${k.total&&k.n?(k.total/k.n).toFixed(1):0}</div>
+          <div class="sub">viajes promedio</div>
         </div>
       </div>
       <div class="ss-two-col">
@@ -1378,14 +1407,12 @@ function abrirSlideshowColab(){
     `<div class="ss-slide" id="ss-slide-2">
       <div class="ss-slide-eyebrow">Ranking</div>
       <div class="ss-slide-heading">Productividad <span>colaboradores</span></div>
-      <div class="ss-filtro-badge">🗓 <b>${periodo}</b> · Top 12 por % participación</div>
-      <div class="ss-table-wrap"><table class="ss-table">
-        <thead><tr><th>#</th><th>Colaborador</th><th>Unidad</th><th class="r">Local</th><th class="r">Foráneo</th><th class="r">Total</th><th class="r">% Part.</th><th>Estatus</th></tr></thead>
-        <tbody>${[...data].sort((a,b)=>b.PctViajes-a.PctViajes).slice(0,12).map((r,i)=>{
-          // PctViajes ya es 0–100
-          const pct=r.PctViajes;
-          const color=pct>=100?'#4ade80':pct>=70?'#fbbf24':'#ff8896';
-          const label=pct>=100?'✓ Meta':'En proceso';
+      <div class="ss-filtro-badge">🗓 <b>${periodo}</b> · ${data.length} colaboradores · ordenado por viajes</div>
+      <div class="ss-table-wrap" style="overflow-y:auto;max-height:480px"><table class="ss-table">
+        <thead><tr><th>#</th><th>Colaborador</th><th>Unidad</th><th class="r">Local</th><th class="r">Foráneo</th><th class="r">Total</th><th>Estatus</th></tr></thead>
+        <tbody>${[...data].sort((a,b)=>b.Total-a.Total).map((r,i)=>{
+          const color=r.PctViajes>=100?'#4ade80':r.PctViajes>=70?'#fbbf24':'#ff8896';
+          const label=r.PctViajes>=100?'✓ Meta':'En proceso';
           const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':`${i+1}`;
           return`<tr>
             <td style="color:rgba(255,255,255,0.5);font-size:11px">${medal}</td>
@@ -1393,14 +1420,13 @@ function abrirSlideshowColab(){
             <td style="font-size:10px;color:rgba(255,255,255,0.4)">${r.Unidad}</td>
             <td class="r">${r.Local}</td><td class="r">${r.Foraneo}</td>
             <td class="r" style="color:#fff;font-weight:700">${r.Total}</td>
-            <td class="r" style="color:${color};font-weight:700">${pct.toFixed(1)}%</td>
             <td style="color:${color};font-size:11px;font-weight:700">${label}</td>
           </tr>`;}).join('')}
         </tbody>
-        <tfoot><tr><td colspan="3">TOTALES</td><td class="r">${k.local}</td><td class="r">${k.foraneo}</td><td class="r" style="color:#fff">${k.total}</td><td class="r">${k.pctPromedio.toFixed(1)}%</td><td>${k.metaCump}/${k.n} ✓</td></tr></tfoot>
+        <tfoot><tr><td colspan="3">TOTALES</td><td class="r">${k.local}</td><td class="r">${k.foraneo}</td><td class="r" style="color:#fff">${k.total}</td><td>${k.metaCump}/${k.n} meta ✓</td></tr></tfoot>
       </table></div>
     </div>`,
-    `<div class="ss-slide" id="ss-slide-3"><div class="ss-end"><div class="ss-end-badge">FIS FIBER · Logística</div><div class="ss-end-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div class="ss-end-title">Participación Colaboradores</div><div class="ss-end-stat"><div class="ss-end-stat-item"><div class="ss-end-stat-val">${k.total}</div><div class="ss-end-stat-lbl">Total viajes</div></div><div class="ss-end-stat-item"><div class="ss-end-stat-val" style="color:#4ade80">${k.metaCump}/${k.n}</div><div class="ss-end-stat-lbl">Meta ≥100%</div></div><div class="ss-end-stat-item"><div class="ss-end-stat-val">${k.pctPromedio.toFixed(1)}%</div><div class="ss-end-stat-lbl">% promedio</div></div></div><div class="ss-end-sub">${periodo}</div></div></div>`,
+    `<div class="ss-slide" id="ss-slide-3"><div class="ss-end"><div class="ss-end-badge">FIS FIBER · Logística</div><div class="ss-end-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div class="ss-end-title">Participación Colaboradores</div><div class="ss-end-stat"><div class="ss-end-stat-item"><div class="ss-end-stat-val">${k.total}</div><div class="ss-end-stat-lbl">Total viajes</div></div><div class="ss-end-stat-item"><div class="ss-end-stat-val" style="color:#4ade80">${k.metaCump}/${k.n}</div><div class="ss-end-stat-lbl">Meta cumplida</div></div><div class="ss-end-stat-item"><div class="ss-end-stat-val">${k.total&&k.n?(k.total/k.n).toFixed(1):0}</div><div class="ss-end-stat-lbl">Prom/chofer</div></div></div><div class="ss-end-sub">${periodo}</div></div></div>`,
   ];
   _abrirSS('FIS <span>FIBER</span> · Colaboradores');
   setTimeout(()=>{
