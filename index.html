@@ -133,7 +133,7 @@ thead th.sort-desc::after{content:' ▼';color:var(--red);font-size:9px}
 tbody tr{border-bottom:1px solid var(--border);transition:background .12s}
 tbody tr:last-child{border-bottom:none}
 tbody tr:hover{background:var(--off)}
-tbody td{font-size:13px;padding:10px 1.25rem;color:var(--ink2)}
+tbody td{font-size:13px;padding:14px 1.25rem;color:var(--ink2);vertical-align:middle}
 tbody td:first-child{color:var(--ink);font-weight:500}
 tbody td.num{text-align:right;font-family:'JetBrains Mono',monospace}
 tbody td.center{text-align:center}
@@ -156,17 +156,17 @@ tfoot td.num{text-align:right}
 .loading-state{text-align:center;padding:3rem;color:var(--ink3);font-size:13px;background:var(--white);border:1px solid var(--border);border-radius:12px}
 .spinner{width:26px;height:26px;border:2px solid var(--border2);border-top-color:var(--red);border-radius:50%;animation:spin .75s linear infinite;margin:0 auto 1rem}
 @keyframes spin{to{transform:rotate(360deg)}}
-.minibar-wrap{display:flex;align-items:center;gap:6px;min-width:120px}
-.minibar-track{flex:1;height:8px;background:var(--off2);border-radius:4px;overflow:hidden}
-.minibar-fill{height:100%;border-radius:4px;transition:width .6s ease}
-.minibar-fill.local{background:rgba(26,95,160,0.75)}
-.minibar-fill.foraneo{background:rgba(26,158,130,0.75)}
-.minibar-fill.total{background:rgba(26,158,92,0.75)}
-.minibar-val{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--ink2);min-width:22px;text-align:right}
+.minibar-wrap{display:flex;align-items:center;gap:8px;min-width:130px}
+.minibar-track{flex:1;height:18px;background:var(--off2);border-radius:6px;overflow:hidden}
+.minibar-fill{height:100%;border-radius:6px;transition:width .6s ease}
+.minibar-fill.local{background:rgba(26,58,112,0.82)}
+.minibar-fill.foraneo{background:rgba(26,158,130,0.82)}
+.minibar-fill.total{background:rgba(26,158,92,0.82)}
+.minibar-val{font-size:13px;font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--ink);min-width:28px;text-align:right}
 .pctbar-wrap{display:flex;align-items:center;gap:8px;min-width:160px}
-.pctbar-track{flex:1;height:10px;background:var(--off2);border-radius:5px;overflow:hidden}
-.pctbar-fill{height:100%;border-radius:5px;transition:width .7s ease}
-.pctbar-lbl{font-size:12px;font-family:'JetBrains Mono',monospace;font-weight:700;min-width:52px;text-align:right}
+.pctbar-track{flex:1;height:18px;background:var(--off2);border-radius:6px;overflow:hidden}
+.pctbar-fill{height:100%;border-radius:6px;transition:width .7s ease}
+.pctbar-lbl{font-size:13px;font-family:'JetBrains Mono',monospace;font-weight:700;min-width:52px;text-align:right}
 .unidad-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-family:'JetBrains Mono',monospace;font-weight:600;padding:2px 8px;border-radius:4px;text-transform:uppercase}
 .unidad-camion{background:rgba(26,95,160,0.1);color:#1A3A70;border:1px solid rgba(26,95,160,0.2)}
 .unidad-camioneta{background:rgba(26,158,130,0.1);color:#0f6a5a;border:1px solid rgba(26,158,130,0.2)}
@@ -1037,7 +1037,7 @@ async function renderColaboradores(container){
         <div class="ckpi" style="--ck-color:var(--red)"><div class="lbl">Prom. viajes/chofer</div><div class="val">${k.total&&k.n?(k.total/k.n).toFixed(1):0}</div><div class="sub">viajes promedio</div></div>
       </div>
       <div class="charts-grid">
-        <div class="chart-box"><div class="chart-title">Top colaboradores <span class="chart-badge">Top 8 · viajes</span></div><div style="position:relative;width:100%;height:280px"><canvas id="cv-bar-top"></canvas></div></div>
+        <div class="chart-box"><div class="chart-title">Top colaboradores <span class="chart-badge">Top 5 · viajes</span></div><div style="position:relative;width:100%;height:280px"><canvas id="cv-bar-top"></canvas></div></div>
         <div class="chart-box"><div class="chart-title">Por unidad <span class="chart-badge">${uKeys.length} tipos</span></div><div style="position:relative;width:100%;height:230px"><canvas id="cv-dona-unidad"></canvas></div></div>
         <div class="chart-box full"><div class="chart-title">Viajes por colaborador <span class="chart-badge" style="background:var(--blue-bg);color:var(--blue);border-color:rgba(26,95,160,.2)">🔵 Local + 🟢 Foráneo · ordenado por total desc</span></div><div style="position:relative;width:100%;overflow-x:auto"><canvas id="cv-pct-bar" style="height:${Math.max(320,data.length*42)}px"></canvas></div></div>
       </div>
@@ -1051,50 +1051,41 @@ async function renderColaboradores(container){
         </div>
         <div style="overflow-x:auto"><table>
           <thead><tr>
-            <th style="width:36px">#</th>
-            ${thSort('Mes','Mes')}
+            <th style="width:42px">#</th>
             ${thSort('Colaborador','Colaborador')}
             ${thSort('Unidad','Unidad')}
-            ${thSort('NoViajMin','Mín.','num')}
             ${thSort('Local','Local','num')}
             ${thSort('Foraneo','Foráneo','num')}
             ${thSort('Total','Total','num')}
             ${thSort('PctViajes','% Viajes','num')}
-            ${thSort('Meta','Meta 100%','num')}
             <th class="center">Estatus</th>
           </tr></thead>
           <tbody>${data.map((r,i)=>{
             const color=getColor(r.PctViajes);
-            // PctViajes ya está en 0–100, mostrar con 1 decimal
             const pctDisplay=r.PctViajes.toFixed(1)+'%';
             const lPct=r.Total>0?Math.round(r.Local/r.Total*100):0;
             const fPct=r.Total>0?Math.round(r.Foraneo/r.Total*100):0;
             const tPct=maxTotal>0?Math.round(r.Total/maxTotal*100):0;
-            // Barra de progreso vs meta mínima, capped a 100%
             const bPct=Math.min(100,Math.round(r.PctViajes));
             const rCl=i===0?'rank-1':i===1?'rank-2':i===2?'rank-3':'rank-n';
             return`<tr>
               <td><span class="rank-num ${rCl}">${i+1}</span></td>
-              <td style="font-size:11px;color:var(--ink3)">${mesLabel(r.Mes)}</td>
-              <td style="font-weight:600">${r.Colaborador}</td>
+              <td style="font-weight:700;font-size:14px;letter-spacing:-.01em">${r.Colaborador}</td>
               <td><span class="unidad-badge ${r.Unidad==='CAMION'?'unidad-camion':r.Unidad==='CAMIONETA'?'unidad-camioneta':'unidad-quinta'}">${r.Unidad}</span></td>
-              <td class="num"><span class="pill pill-amber">${r.NoViajMin}</span></td>
               <td><div class="minibar-wrap"><div class="minibar-track"><div class="minibar-fill local" style="width:${lPct}%"></div></div><span class="minibar-val">${r.Local}</span></div></td>
               <td><div class="minibar-wrap"><div class="minibar-track"><div class="minibar-fill foraneo" style="width:${fPct}%"></div></div><span class="minibar-val">${r.Foraneo}</span></div></td>
-              <td class="num"><div class="minibar-wrap" style="justify-content:flex-end"><div class="minibar-track"><div class="minibar-fill total" style="width:${tPct}%"></div></div><span class="minibar-val">${r.Total}</span></div></td>
+              <td><div class="minibar-wrap"><div class="minibar-track"><div class="minibar-fill total" style="width:${tPct}%"></div></div><span class="minibar-val" style="font-size:15px;font-weight:900;color:var(--ink)">${r.Total}</span></div></td>
               <td><div class="pctbar-wrap"><div class="pctbar-track"><div class="pctbar-fill" style="width:${bPct}%;background:${color.fill}"></div></div><span class="pctbar-lbl ${r.PctViajes>=100?'pct-ok':r.PctViajes>=70?'pct-warn':'pct-low'}">${pctDisplay}</span></div></td>
-              <td class="num"><span class="pill pill-green">${r.Meta}</span></td>
-              <td class="center"><span class="${color.cls}" style="font-size:11px">${color.label}</span></td>
+              <td class="center"><span class="${color.cls}" style="font-size:12px;font-weight:700">${color.label}</span></td>
             </tr>`;}).join('')}
           </tbody>
           <tfoot><tr>
-            <td colspan="4">TOTALES</td>
-            <td class="num">—</td>
+            <td colspan="2">TOTALES</td>
+            <td></td>
             <td class="num">${k.local}</td>
             <td class="num">${k.foraneo}</td>
             <td class="num">${k.total}</td>
-            <td class="num">${k.total&&k.n?(k.total/k.n).toFixed(1):0}</td>
-            <td class="num">—</td>
+            <td class="num">${k.pctPromedio.toFixed(1)}%</td>
             <td class="center">${k.metaCump}/${k.n} ✓</td>
           </tr></tfoot>
         </table></div>
@@ -1116,25 +1107,25 @@ async function renderColaboradores(container){
     setTimeout(()=>{
       const gc='rgba(0,0,0,0.05)',tc='#9A7078',mf='JetBrains Mono';
       DC('cv-bar-top');
-      const top8=[...data].sort((a,b)=>b.Total-a.Total).slice(0,8); // mostrar top 8
+      const top8=[...data].sort((a,b)=>b.Total-a.Total).slice(0,5);
       CI['cv-bar-top']=new Chart(document.getElementById('cv-bar-top'),{type:'bar',
         data:{labels:top8.map(r=>r.Colaborador.split(' ').slice(0,2).join(' ')),
           datasets:[
-            {label:'Local',data:top8.map(r=>r.Local),backgroundColor:'rgba(26,58,112,0.85)',borderRadius:{topLeft:4,topRight:0,bottomLeft:4,bottomRight:0},borderSkipped:false,
-              datalabels:{anchor:'center',align:'center',color:'#fff',font:{size:10,family:mf,weight:'700'},formatter:v=>v>0?`${v}`:''}},
-            {label:'Foráneo',data:top8.map(r=>r.Foraneo),backgroundColor:'rgba(26,158,130,0.85)',borderRadius:{topLeft:0,topRight:4,bottomLeft:0,bottomRight:4},borderSkipped:false,
-              datalabels:{anchor:'end',align:'top',offset:2,color:'#1A0A0C',font:{size:11,family:mf,weight:'700'},
-                formatter:(v,ctx)=>{const tot=top8[ctx.dataIndex].Total;return tot>0?`${tot}`:''}}}
+            {label:'Local',data:top8.map(r=>r.Local),backgroundColor:'rgba(26,58,112,0.88)',borderRadius:{topLeft:4,topRight:0,bottomLeft:4,bottomRight:0},borderSkipped:false,
+              datalabels:{anchor:'center',align:'center',color:'#fff',font:{size:12,family:mf,weight:'700'},formatter:v=>v>0?`${v}`:''}},
+            {label:'Foráneo',data:top8.map(r=>r.Foraneo),backgroundColor:'rgba(26,158,130,0.88)',borderRadius:{topLeft:0,topRight:4,bottomLeft:0,bottomRight:4},borderSkipped:false,
+              datalabels:{anchor:'end',align:'top',offset:4,color:'#1A0A0C',font:{size:14,family:mf,weight:'900'},
+                formatter:(v,ctx)=>{return `${top8[ctx.dataIndex].Total}`;}}}
           ]},
         options:{responsive:true,maintainAspectRatio:false,
-          plugins:{legend:{display:true,position:'bottom',labels:{color:'#5C3038',font:{size:11,family:'Outfit'},usePointStyle:true,padding:16}},
+          plugins:{legend:{display:true,position:'bottom',labels:{color:'#5C3038',font:{size:12,family:'Outfit'},usePointStyle:true,padding:16}},
             tooltip:{callbacks:{
               label:c=>`${c.dataset.label}: ${c.parsed.y} viajes`,
               afterBody:items=>{const r=top8[items[0].dataIndex];return[`Total: ${r.Total} viajes`];}
             }},
             datalabels:{}},
-          scales:{x:{grid:{display:false},ticks:{color:tc,font:{size:10,family:mf},maxRotation:0},border:{color:'transparent'}},
-            y:{grid:{color:gc},ticks:{color:tc,font:{size:11}},border:{color:'transparent'},beginAtZero:true,grace:'20%'}}}
+          scales:{x:{grid:{display:false},ticks:{color:tc,font:{size:11,family:mf},maxRotation:0},border:{color:'transparent'}},
+            y:{grid:{color:gc},ticks:{color:tc,font:{size:11}},border:{color:'transparent'},beginAtZero:true,grace:'25%'}}}
       });
 
       DC('cv-dona-unidad');
@@ -1146,33 +1137,37 @@ async function renderColaboradores(container){
             datalabels:{color:'#fff',font:{size:11,family:mf,weight:'700'},formatter:(v,ctx)=>{const tot=ctx.dataset.data.reduce((a,b)=>a+b,0);return tot&&v?Math.round(v/tot*100)+'%':''}}}}
       });
 
-      // ── Gráfica VIAJES por colaborador — Local + Foráneo apilados, TODOS los choferes ──
+      // ── Gráfica VIAJES por colaborador — todos los choferes, barras gruesas, responsive ──
       DC('cv-pct-bar');
-      const sp=[...data].sort((a,b)=>b.Total-a.Total); // mayor viajes primero
+      const sp=[...data].sort((a,b)=>b.Total-a.Total);
       const pc=document.getElementById('cv-pct-bar');
-      const pH=Math.max(320,data.length*42); // 42px por chofer = barras más gruesas
+      const pH=Math.max(360,data.length*46);
       pc.style.height=pH+'px';pc.height=pH;
+      // ancho = 100% del contenedor
+      const pcParent=pc.parentElement;
+      const pcW=pcParent?pcParent.clientWidth||800:800;
+      pc.style.width=pcW+'px';pc.width=pcW;
       const maxViajes=Math.max(...sp.map(r=>r.Total),1);
       CI['cv-pct-bar']=new Chart(pc,{type:'bar',
         data:{
-          labels:sp.map(r=>r.Colaborador.split(' ').slice(0,3).join(' ')),
+          labels:sp.map(r=>r.Colaborador),
           datasets:[
             {label:'Local',
               data:sp.map(r=>r.Local),
-              backgroundColor:'rgba(26,58,112,0.85)',
+              backgroundColor:'rgba(26,58,112,0.88)',
               borderRadius:0,borderSkipped:false,
-              datalabels:{display:false}
+              datalabels:{anchor:'center',align:'center',color:'#fff',font:{size:11,family:mf,weight:'700'},formatter:v=>v>0?`${v}`:''}
             },
             {label:'Foráneo',
               data:sp.map(r=>r.Foraneo),
-              backgroundColor:'rgba(26,158,130,0.85)',
-              borderRadius:{topRight:4,bottomRight:4,topLeft:0,bottomLeft:0},borderSkipped:false,
+              backgroundColor:'rgba(26,158,130,0.88)',
+              borderRadius:{topRight:5,bottomRight:5,topLeft:0,bottomLeft:0},borderSkipped:false,
               datalabels:{
-                anchor:'end',align:'end',offset:5,
-                color:'#1A0A0C',font:{size:11,family:mf,weight:'700'},
+                anchor:'end',align:'end',offset:6,
+                color:'#1A0A0C',font:{size:12,family:mf,weight:'900'},
                 formatter:(v,ctx)=>{
-                  const tot=sp[ctx.dataIndex].Total;
-                  return tot>0?`${tot}`:'';
+                  const r=sp[ctx.dataIndex];
+                  return `${r.Total}  (${r.PctViajes.toFixed(1)}%)`;
                 }
               }
             }
@@ -1184,15 +1179,15 @@ async function renderColaboradores(container){
             legend:{display:true,position:'bottom',labels:{color:'#5C3038',font:{size:12,family:'Outfit'},usePointStyle:true,padding:16}},
             tooltip:{callbacks:{
               label:c=>`${c.dataset.label}: ${c.parsed.x} viajes`,
-              afterBody:items=>{const r=sp[items[0].dataIndex];return[`Total: ${r.Total} viajes`];}
+              afterBody:items=>{const r=sp[items[0].dataIndex];return[`Total: ${r.Total}  |  % viajes: ${r.PctViajes.toFixed(1)}%`];}
             }},
             datalabels:{}
           },
           scales:{
-            y:{stacked:true,grid:{display:false},ticks:{color:tc,font:{size:11,family:mf}},border:{color:'transparent'}},
-            x:{stacked:true,grid:{color:gc},ticks:{color:tc,font:{size:10},callback:v=>`${v}`},
-               border:{color:'transparent'},beginAtZero:true,grace:'12%',
-               max:Math.ceil(maxViajes*1.2)}
+            y:{stacked:true,grid:{display:false},ticks:{color:tc,font:{size:12,family:mf},padding:4},border:{color:'transparent'}},
+            x:{stacked:true,grid:{color:gc},ticks:{color:tc,font:{size:11},callback:v=>`${v}`},
+               border:{color:'transparent'},beginAtZero:true,grace:'18%',
+               max:Math.ceil(maxViajes*1.25)}
           }
         }
       });
