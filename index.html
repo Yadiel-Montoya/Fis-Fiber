@@ -125,6 +125,11 @@ table{width:100%;border-collapse:collapse}
 thead th{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);padding:10px 1.25rem;text-align:left;border-bottom:1px solid var(--border);font-weight:700;background:var(--off)}
 thead th.num{text-align:right}
 thead th.center{text-align:center}
+/* Sortable columns */
+thead th.sortable{cursor:pointer;user-select:none;transition:color .15s}
+thead th.sortable:hover{color:var(--red)}
+thead th.sort-asc::after{content:' ▲';color:var(--red);font-size:9px}
+thead th.sort-desc::after{content:' ▼';color:var(--red);font-size:9px}
 tbody tr{border-bottom:1px solid var(--border);transition:background .12s}
 tbody tr:last-child{border-bottom:none}
 tbody tr:hover{background:var(--off)}
@@ -158,10 +163,10 @@ tfoot td.num{text-align:right}
 .minibar-fill.foraneo{background:rgba(26,158,130,0.75)}
 .minibar-fill.total{background:rgba(26,158,92,0.75)}
 .minibar-val{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--ink2);min-width:22px;text-align:right}
-.pctbar-wrap{display:flex;align-items:center;gap:8px;min-width:140px}
+.pctbar-wrap{display:flex;align-items:center;gap:8px;min-width:160px}
 .pctbar-track{flex:1;height:10px;background:var(--off2);border-radius:5px;overflow:hidden}
 .pctbar-fill{height:100%;border-radius:5px;transition:width .7s ease}
-.pctbar-lbl{font-size:11px;font-family:'JetBrains Mono',monospace;font-weight:600;min-width:38px;text-align:right}
+.pctbar-lbl{font-size:12px;font-family:'JetBrains Mono',monospace;font-weight:700;min-width:52px;text-align:right}
 .unidad-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-family:'JetBrains Mono',monospace;font-weight:600;padding:2px 8px;border-radius:4px;text-transform:uppercase}
 .unidad-camion{background:rgba(26,95,160,0.1);color:#1A3A70;border:1px solid rgba(26,95,160,0.2)}
 .unidad-camioneta{background:rgba(26,158,130,0.1);color:#0f6a5a;border:1px solid rgba(26,158,130,0.2)}
@@ -198,6 +203,8 @@ tfoot td.num{text-align:right}
   .filter-select,.filter-input{min-width:unset;width:100%}.overview-grid{grid-template-columns:1fr}
   .minibar-wrap{min-width:80px}.pctbar-wrap{min-width:100px}.casetas-summary-grid{grid-template-columns:1fr}
 }
+/* Sort hint tooltip */
+.sort-hint{font-size:10px;color:var(--ink3);font-family:'JetBrains Mono',monospace;padding:4px 10px;background:var(--off2);border:1px solid var(--border);border-radius:6px;margin-left:8px}
 /* SLIDESHOW */
 .btn-presentar{display:inline-flex;align-items:center;gap:8px;background:var(--ink);border:none;border-radius:10px;padding:9px 20px;font-size:13px;font-weight:600;color:#fff;font-family:'Outfit',sans-serif;cursor:pointer;transition:all .2s;box-shadow:0 3px 12px rgba(0,0,0,0.18)}
 .btn-presentar:hover{background:#000;transform:translateY(-1px);box-shadow:0 5px 16px rgba(0,0,0,0.25)}
@@ -225,7 +232,6 @@ tfoot td.num{text-align:right}
 .ss-slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:2.25rem 3rem;opacity:0;transform:translateX(36px);transition:opacity .38s cubic-bezier(.4,0,.2,1),transform .38s cubic-bezier(.4,0,.2,1);pointer-events:none;overflow-y:auto}
 .ss-slide.active{opacity:1;transform:translateX(0);pointer-events:all}
 .ss-slide.exit-left{opacity:0;transform:translateX(-36px)}
-/* COVER */
 .ss-cover{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;height:100%;gap:1.25rem;position:relative}
 .ss-cover::before{content:'FIS FIBER';position:absolute;font-size:clamp(80px,12vw,180px);font-weight:900;color:rgba(255,255,255,0.018);letter-spacing:-.02em;white-space:nowrap;pointer-events:none;user-select:none}
 .ss-cover-eyebrow{font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:rgba(192,21,42,0.9);font-family:'JetBrains Mono',monospace;background:rgba(192,21,42,0.08);border:1px solid rgba(192,21,42,0.2);border-radius:20px;padding:4px 14px}
@@ -234,15 +240,12 @@ tfoot td.num{text-align:right}
 .ss-cover-sub{font-size:15px;color:rgba(255,255,255,0.38);max-width:480px;line-height:1.65;letter-spacing:.01em}
 .ss-cover-period{font-size:12px;font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,0.45);background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09);border-radius:8px;padding:7px 18px}
 .ss-cover-line{width:40px;height:2px;background:linear-gradient(90deg,#C0152A,rgba(192,21,42,0));border-radius:2px}
-/* SLIDE HEADER */
 .ss-slide-eyebrow{font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:rgba(192,21,42,0.8);font-family:'JetBrains Mono',monospace;margin-bottom:.5rem;display:flex;align-items:center;gap:10px}
 .ss-slide-eyebrow::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(192,21,42,0.3),transparent)}
 .ss-slide-heading{font-size:clamp(20px,2.8vw,30px);font-weight:700;color:#fff;margin-bottom:1.5rem;line-height:1.2;letter-spacing:-.01em}
 .ss-slide-heading span{color:#E8192F}
-/* Filtro badge en slide */
 .ss-filtro-badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,0.55);background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:4px 12px;margin-bottom:1.25rem}
 .ss-filtro-badge b{color:rgba(255,255,255,0.85)}
-/* KPIs */
 .ss-kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:1.5rem}
 .ss-kpi{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:1.25rem 1.5rem;position:relative;overflow:hidden;transition:border-color .2s}
 .ss-kpi:hover{border-color:rgba(255,255,255,0.14)}
@@ -253,13 +256,11 @@ tfoot td.num{text-align:right}
 .ss-kpi .sub{font-size:11px;color:rgba(255,255,255,0.3);margin-top:6px;line-height:1.4}
 .ss-kpi .trend{font-size:11px;font-weight:700;margin-top:5px;font-family:'JetBrains Mono',monospace}
 .trend-up{color:#ff7a8a}.trend-down{color:#4ade80}.trend-neu{color:rgba(255,255,255,0.35)}
-/* Charts */
 .ss-chart-wrap{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:1.25rem 1.5rem;flex:1;display:flex;flex-direction:column}
 .ss-chart-title{font-size:11px;font-weight:700;color:rgba(255,255,255,0.5);margin-bottom:1rem;text-transform:uppercase;letter-spacing:.1em}
 .ss-chart-inner{flex:1;position:relative;min-height:180px}
 .ss-two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;flex:1}
 .ss-full-col{display:flex;flex-direction:column;flex:1;gap:14px}
-/* Table */
 .ss-table-wrap{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:12px;overflow:hidden}
 .ss-table{width:100%;border-collapse:collapse}
 .ss-table thead th{font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,0.3);padding:10px 14px;text-align:left;border-bottom:1px solid rgba(255,255,255,0.07);font-weight:700;background:rgba(255,255,255,0.02)}
@@ -272,7 +273,6 @@ tfoot td.num{text-align:right}
 .ss-table tbody td.r{text-align:right;font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,0.8)}
 .ss-table tfoot td{font-size:11px;padding:10px 14px;font-weight:700;border-top:1px solid rgba(255,255,255,0.12);font-family:'JetBrains Mono',monospace;color:#fff;background:rgba(255,255,255,0.05)}
 .ss-table tfoot td.r{text-align:right}
-/* End slide */
 .ss-end{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;height:100%;gap:1.25rem}
 .ss-end-icon{width:80px;height:80px;border-radius:24px;background:rgba(192,21,42,0.1);border:1px solid rgba(192,21,42,0.25);display:flex;align-items:center;justify-content:center;margin-bottom:.5rem}
 .ss-end-icon svg{width:36px;height:36px;stroke:rgba(192,21,42,0.9)}
@@ -283,6 +283,8 @@ tfoot td.num{text-align:right}
 .ss-end-stat-val{font-size:24px;font-weight:700;font-family:'JetBrains Mono',monospace;color:#fff}
 .ss-end-stat-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,0.3);margin-top:3px}
 .ss-end-sub{font-size:14px;color:rgba(255,255,255,0.3);max-width:420px;line-height:1.6}
+/* % bar colores para presentación */
+.pct-ok{color:var(--green)}.pct-warn{color:var(--amber)}.pct-low{color:var(--red)}
 @media(max-width:700px){.ss-slide{padding:1.25rem 1rem}.ss-two-col{grid-template-columns:1fr}.ss-kpi .val{font-size:24px}}
 </style>
 </head>
@@ -423,7 +425,6 @@ const CI={};
 function DC(id){if(CI[id]){CI[id].destroy();delete CI[id];}}
 function fmtDif(n){
   if(n===0)return'<span style="color:var(--ink3)">$0</span>';
-  // En gastos: positivo = gastó MÁS (malo=rojo), negativo = gastó MENOS (bueno=verde)
   const cls=n>0?'dif-positive':'dif-negative';
   const sign=n>0?'+':'-';
   return`<span class="${cls}">${sign}$${Math.abs(n).toLocaleString('es-MX')}</span>`;
@@ -482,7 +483,6 @@ document.addEventListener('keydown',e=>{
   if(e.key==='ArrowLeft'||e.key==='ArrowUp')ssNav(-1);
   if(e.key==='Escape')cerrarSlideshow();
 });
-const SS_BTN=`<button class="btn-presentar" onclick="FNNAME()" style="margin-left:auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>Presentar</button>`;
 
 /* ══════════════════════════
    URLS GOOGLE SHEETS
@@ -493,59 +493,25 @@ const SHEETS_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSoLF8K76RuG
 const VIAJES_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQXHv7eviqTWjlZLJLhnvKtACyFtBMYT2LbnahX5qzju4y_5rB0crQB1LC6QfpCWw/pub?gid=1801163127&single=true&output=csv';
 
 /* ══════════════════════════
-   CASETAS — LOADERS
+   CASETAS — HELPERS
 ══════════════════════════ */
 function parseMoney(v){
   if(!v&&v!==0)return 0;
-  let s=(v||'0').toString().trim()
-    .replace(/[$\s]/g,'')   // quitar $ y espacios
-    .replace(/\r/g,'');
-  // Formato mexicano: $152.007,00 → punto=miles, coma=decimal
-  // Formato alternativo: $152,007.00 → coma=miles, punto=decimal
-  // Detectar cuál es cuál por la posición del último separador
-  const lastDot=s.lastIndexOf('.');
-  const lastComma=s.lastIndexOf(',');
-  if(lastDot>-1&&lastComma>-1){
-    if(lastComma>lastDot){
-      // coma es decimal → 152.007,00 → quitar puntos, cambiar coma por punto
-      s=s.replace(/\./g,'').replace(',','.');
-    } else {
-      // punto es decimal → 152,007.00 → quitar comas
-      s=s.replace(/,/g,'');
-    }
-  } else if(lastComma>-1){
-    // solo coma: puede ser decimal (8,5) o miles (152,007)
-    const afterComma=s.substring(lastComma+1);
-    if(afterComma.length===3&&!s.substring(0,lastComma).includes('.')){
-      // es separador de miles → quitar
-      s=s.replace(/,/g,'');
-    } else {
-      // es decimal → cambiar por punto
-      s=s.replace(',','.');
-    }
-  } else if(lastDot>-1){
-    // solo punto: puede ser decimal (8.5) o miles (152.007)
-    const afterDot=s.substring(lastDot+1);
-    if(afterDot.length===3&&s.replace(/[^.]/g,'').length===1){
-      // es separador de miles → quitar
-      s=s.replace('.','');
-    }
-    // si no, es decimal normal → dejar como está
-  }
+  let s=(v||'0').toString().trim().replace(/[$\s]/g,'').replace(/\r/g,'');
+  const lastDot=s.lastIndexOf('.');const lastComma=s.lastIndexOf(',');
+  if(lastDot>-1&&lastComma>-1){if(lastComma>lastDot){s=s.replace(/\./g,'').replace(',','.');}else{s=s.replace(/,/g,'');}}
+  else if(lastComma>-1){const afterComma=s.substring(lastComma+1);if(afterComma.length===3&&!s.substring(0,lastComma).includes('.')){s=s.replace(/,/g,'');}else{s=s.replace(',','.');}}
+  else if(lastDot>-1){const afterDot=s.substring(lastDot+1);if(afterDot.length===3&&s.replace(/[^.]/g,'').length===1){s=s.replace('.','');}}
   return parseFloat(s)||0;
 }
 function parseEstatus(v){return/ahorro/i.test((v||'').toString())?'Ahorro':'Gasto';}
-
-/* Busca una columna por SUBSTRING — resuelve dobles espacios, tildes, mayúsculas */
 function makeGet(r){
   const keys=Object.keys(r);
   return function get(...terms){
     for(const term of terms){
       const tl=term.trim().toLowerCase().replace(/\s+/g,' ');
-      // 1. exact match normalizado
       const exact=keys.find(h=>h.trim().toLowerCase().replace(/\s+/g,' ')===tl);
       if(exact!==undefined&&r[exact]!==undefined&&r[exact]!=='')return r[exact];
-      // 2. substring — el encabezado CONTIENE el término
       const sub=keys.find(h=>h.trim().toLowerCase().replace(/\s+/g,' ').includes(tl));
       if(sub!==undefined&&r[sub]!==undefined&&r[sub]!=='')return r[sub];
     }
@@ -561,64 +527,26 @@ async function loadCasetasMensual(){
     if(txt.trim().startsWith('<'))throw new Error('Recibido HTML — URL no es CSV público');
     const lineas=txt.trim().split('\n').filter(l=>l.trim());
     if(lineas.length<2)throw new Error('CSV vacío');
-
     function parseLine(line){
       const vals=[];let cur='',inQ=false;
-      for(let i=0;i<line.length;i++){
-        const c=line[i];
-        if(c==='"'){inQ=!inQ;}
-        else if(c===','&&!inQ){vals.push(cur.trim().replace(/^"|"$/g,'').replace(/\r/g,''));cur='';}
-        else cur+=c;
-      }
-      vals.push(cur.trim().replace(/^"|"$/g,'').replace(/\r/g,''));
-      return vals;
+      for(let i=0;i<line.length;i++){const c=line[i];if(c==='"'){inQ=!inQ;}else if(c===','&&!inQ){vals.push(cur.trim().replace(/^"|"$/g,'').replace(/\r/g,''));cur='';}else cur+=c;}
+      vals.push(cur.trim().replace(/^"|"$/g,'').replace(/\r/g,''));return vals;
     }
-
-    // La hoja tiene encabezados en 2 filas combinadas.
-    // Google Sheets exporta solo la primera fila como header → "No,MES,Casetas,Casetas,Casetas,Casetas,..."
-    // Posiciones FIJAS conocidas del Excel:
-    // col0=No  col1=MES  col2=Casetas2023  col3=Casetas2024  col4=Casetas2025  col5=Casetas2026
-    // col6=Dif2023vs2024  col7=Dif2024vs2025  col8=Dif2025vs2026  col9=%  col10=Estatus
-
-    const hdr=parseLine(lineas[0]);
-    const totalCols=hdr.length;
-
-    // Confirmar que col1 es MES leyendo primera fila de datos
+    const hdr=parseLine(lineas[0]);const totalCols=hdr.length;
     const primeraFila=parseLine(lineas[1]||'');
-    const MESES_VALIDOS=['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO',
-                         'SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE'];
-
-    // Detectar columna MES buscando en la primera fila de datos
-    let iMes=1; // default conocido
-    for(let i=0;i<primeraFila.length;i++){
-      if(MESES_VALIDOS.includes((primeraFila[i]||'').trim().toUpperCase())){iMes=i;break;}
-    }
-
-    // Columnas de años: siempre las 4 siguientes a MES
-    const iC23=iMes+1;
-    const iC24=iMes+2;
-    const iC25=iMes+3;
-    const iC26=iMes+4;
-    const iEst=totalCols-1; // ultima columna = Estatus
-
-    const debug={
-      headers: hdr.join(' | '),
-      mesFila1: primeraFila.join(' | '),
-      valoresFila1: 'iMes='+iMes+' iC23='+iC23+' iC24='+iC24+' iC25='+iC25+' iC26='+iC26+' iEst='+iEst+' totalCols='+totalCols
-    };
-
+    const MESES_VALIDOS=['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE'];
+    let iMes=1;
+    for(let i=0;i<primeraFila.length;i++){if(MESES_VALIDOS.includes((primeraFila[i]||'').trim().toUpperCase())){iMes=i;break;}}
+    const iC23=iMes+1,iC24=iMes+2,iC25=iMes+3,iC26=iMes+4,iEst=totalCols-1;
+    const debug={headers:hdr.join(' | '),mesFila1:primeraFila.join(' | '),valoresFila1:'iMes='+iMes+' iC23='+iC23+' iC24='+iC24+' iC25='+iC25+' iC26='+iC26+' iEst='+iEst+' totalCols='+totalCols};
     const rows=lineas.slice(1).map(linea=>{
       const v=parseLine(linea);
       const mes=(v[iMes]||'').trim().toUpperCase().replace(/[^A-ZÁÉÍÓÚ]/g,'');
       if(!MESES_VALIDOS.includes(mes))return null;
-      const c23=parseMoney(v[iC23]||'0');
-      const c24=parseMoney(v[iC24]||'0');
-      const c25=parseMoney(v[iC25]||'0');
-      const c26=parseMoney(v[iC26]||'0');
+      const c23=parseMoney(v[iC23]||'0'),c24=parseMoney(v[iC24]||'0'),c25=parseMoney(v[iC25]||'0'),c26=parseMoney(v[iC26]||'0');
       const estatus=v[iEst]&&/ahorro/i.test(v[iEst])?'Ahorro':v[iEst]&&/gasto/i.test(v[iEst])?'Gasto':(c26>0&&c26<c25?'Ahorro':c26>0&&c26>=c25?'Gasto':'Sin dato');
       return{mes,c23,c24,c25,c26,dif2324:c24-c23,dif2425:c25-c24,dif2526:c26-c25,estatus};
     }).filter(Boolean);
-
     if(!rows.length)throw new Error('Ningún mes válido leído. Primera fila datos: '+primeraFila.join(' | '));
     return{rows,error:null,debug};
   }catch(e){return{rows:[],error:e.message,debug:null};}
@@ -633,10 +561,7 @@ async function loadCasetasComparativo(){
     if(!raw.length)throw new Error('CSV vacío o sin filas');
     const headersList=Object.keys(raw[0]||{});
     const fila1=raw[0]||{};
-    const debug={
-      headers: headersList.join(' | '),
-      unidadFila1: Object.values(fila1).slice(0,6).join(' / ')
-    };
+    const debug={headers:headersList.join(' | '),unidadFila1:Object.values(fila1).slice(0,6).join(' / ')};
     const MESES_VALIDOS=['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE'];
     let ord=0;
     const rows=raw.map(r=>{
@@ -664,44 +589,23 @@ async function loadCasetasComparativo(){
 async function renderCasetas(container){
   container.innerHTML=`<div class="loading-state"><div class="spinner"></div>Cargando datos de casetas…</div>`;
   const[{rows:mensual,error:e1,debug:d1},{rows:comparativo,error:e2,debug:d2}]=await Promise.all([loadCasetasMensual(),loadCasetasComparativo()]);
-
-  // Siempre mostrar diagnóstico si hay algún problema
-  const sinDatosMensual = !mensual.length || !mensual.some(r=>r.c23>0||r.c24>0||r.c25>0||r.c26>0);
-  const sinDatosComp = !comparativo.length;
-
+  const sinDatosMensual=!mensual.length||!mensual.some(r=>r.c23>0||r.c24>0||r.c25>0||r.c26>0);
+  const sinDatosComp=!comparativo.length;
   if(e1||e2||sinDatosMensual||sinDatosComp){
-    container.innerHTML=`
-      <div style="max-width:680px;margin:0 auto;padding:2rem">
-        <div style="font-size:16px;font-weight:700;color:var(--ink);margin-bottom:1.25rem">⚠ Diagnóstico de conexión — Casetas</div>
-
-        <div style="background:var(--off);border:1px solid ${e1||sinDatosMensual?'var(--red)':'rgba(26,158,92,0.3)'};border-radius:10px;padding:1rem;margin-bottom:1rem;font-family:'JetBrains Mono',monospace;font-size:11px;line-height:2">
-          <b>📋 HOJA MENSUAL</b><br>
-          Estado: <span style="color:${e1?'var(--red)':sinDatosMensual?'var(--amber)':'var(--green)'}">${e1?'❌ ERROR':sinDatosMensual?'⚠ CONECTADA PERO VALORES EN 0':'✓ OK'}</span><br>
-          ${e1?`Error: <b style="color:var(--red)">${e1}</b><br>`:''}
-          Filas cargadas: <b>${mensual.length}</b><br>
-          ${d1?`Encabezados detectados: <span style="color:var(--blue);word-break:break-all">${d1.headers}</span><br>Posiciones columnas: <span style="color:var(--amber)">${d1.valoresFila1}</span>`:''}
-          ${sinDatosMensual&&mensual.length?`<br>⚠ El parser encontró las filas pero los índices de columnas 2023/2024/2025/2026 están en -1 (no encontrados)`:''}
-        </div>
-
-        <div style="background:var(--off);border:1px solid ${e2?'var(--red)':'rgba(26,158,92,0.3)'};border-radius:10px;padding:1rem;margin-bottom:1rem;font-family:'JetBrains Mono',monospace;font-size:11px;line-height:2">
-          <b>📋 HOJA COMPARATIVO</b><br>
-          Estado: <span style="color:${e2?'var(--red)':'var(--green)'}">${e2?'❌ ERROR':'✓ OK'}</span><br>
-          ${e2==='Failed to fetch'?`<span style="color:var(--red)">❌ La hoja Comparativo NO está publicada como CSV.</span><br>`:e2?`Error: <b style="color:var(--red)">${e2}</b><br>`:''}
-          Filas cargadas: <b>${comparativo.length}</b><br>
-          ${d2?`Encabezados: <span style="color:var(--blue);word-break:break-all">${d2.headers}</span>`:''}
-        </div>
-
-        <div style="background:#fff3cd;border:1px solid #ffc107;border-radius:10px;padding:1rem;font-size:12px;line-height:1.9;margin-bottom:1rem">
-          <b>📌 Acción necesaria — Hoja Comparativo no publicada:</b><br>
-          1. Abre tu Google Sheets<br>
-          2. <b>Archivo → Compartir → Publicar en la web</b><br>
-          3. En el desplegable izquierdo selecciona <b>"Comparativo"</b> (no "Todo el documento")<br>
-          4. En el desplegable derecho selecciona <b>"Valores separados por comas (.csv)"</b><br>
-          5. Clic en <b>Publicar</b> → copia la URL → pégala en el código como <b>CASETAS_COMPARATIVO_URL</b>
-        </div>
-
-        <button id="btn-reintentar-casetas" style="background:var(--red);color:#fff;border:none;border-radius:8px;padding:9px 22px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif">🔄 Reintentar conexión</button>
-      </div>`;
+    container.innerHTML=`<div style="max-width:680px;margin:0 auto;padding:2rem">
+      <div style="font-size:16px;font-weight:700;color:var(--ink);margin-bottom:1.25rem">⚠ Diagnóstico de conexión — Casetas</div>
+      <div style="background:var(--off);border:1px solid ${e1||sinDatosMensual?'var(--red)':'rgba(26,158,92,0.3)'};border-radius:10px;padding:1rem;margin-bottom:1rem;font-family:'JetBrains Mono',monospace;font-size:11px;line-height:2">
+        <b>📋 HOJA MENSUAL</b><br>Estado: <span style="color:${e1?'var(--red)':sinDatosMensual?'var(--amber)':'var(--green)'}">${e1?'❌ ERROR':sinDatosMensual?'⚠ CONECTADA PERO VALORES EN 0':'✓ OK'}</span><br>
+        ${e1?`Error: <b style="color:var(--red)">${e1}</b><br>`:''}Filas: <b>${mensual.length}</b><br>
+        ${d1?`Encabezados: <span style="color:var(--blue);word-break:break-all">${d1.headers}</span><br>Posiciones: <span style="color:var(--amber)">${d1.valoresFila1}</span>`:''}
+      </div>
+      <div style="background:var(--off);border:1px solid ${e2?'var(--red)':'rgba(26,158,92,0.3)'};border-radius:10px;padding:1rem;margin-bottom:1rem;font-family:'JetBrains Mono',monospace;font-size:11px;line-height:2">
+        <b>📋 HOJA COMPARATIVO</b><br>Estado: <span style="color:${e2?'var(--red)':'var(--green)'}">${e2?'❌ ERROR':'✓ OK'}</span><br>
+        ${e2?`Error: <b style="color:var(--red)">${e2}</b><br>`:''}Filas: <b>${comparativo.length}</b><br>
+        ${d2?`Encabezados: <span style="color:var(--blue);word-break:break-all">${d2.headers}</span>`:''}
+      </div>
+      <button id="btn-reintentar-casetas" style="background:var(--red);color:#fff;border:none;border-radius:8px;padding:9px 22px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif">🔄 Reintentar</button>
+    </div>`;
     document.getElementById('btn-reintentar-casetas').onclick=()=>renderCasetas(container);
     return;
   }
@@ -761,7 +665,7 @@ function renderCasetasAnual(container,CM){
         <div class="chart-box full"><div class="chart-title">Comparativo de Gastos por Mes <span class="chart-badge">2023–2026</span></div><div style="position:relative;width:100%;height:320px"><canvas id="ca-bar-comp"></canvas></div></div>
         <div class="chart-box"><div class="chart-title">Tendencia anual <span class="chart-badge">líneas</span></div><div style="position:relative;width:100%;height:260px"><canvas id="ca-line-trend"></canvas></div></div>
         <div class="chart-box"><div class="chart-title">Diferencia 2025 vs 2026 <span class="chart-badge">ahorro/gasto</span></div><div style="position:relative;width:100%;height:260px"><canvas id="ca-bar-dif"></canvas></div></div>
-        <div class="chart-box"><div class="chart-title">Comparativo 2025 vs 2026 <span class="chart-badge">${mesesCon26} meses · ${mesesCon26>0?'▼ Ahorro':'—'}</span></div><div style="position:relative;width:100%;height:260px"><canvas id="ca-dona-estatus"></canvas></div></div>
+        <div class="chart-box"><div class="chart-title">Comparativo 2025 vs 2026 <span class="chart-badge">${mesesCon26} meses</span></div><div style="position:relative;width:100%;height:260px"><canvas id="ca-dona-estatus"></canvas></div></div>
         <div class="chart-box"><div class="chart-title">% Variación 2025→2026</div><div style="position:relative;width:100%;height:260px"><canvas id="ca-pct-var"></canvas></div></div>
       </div>
       <div class="table-wrap">
@@ -778,168 +682,50 @@ function renderCasetasAnual(container,CM){
             <td class="num">${fmtDif(r.dif2324)}</td>
             <td class="num">${fmtDif(r.dif2425)}</td>
             <td class="num">${r.c26>0?fmtDif(r.dif2526):'<span style="color:var(--ink3)">—</span>'}</td>
-            <td class="center">${(()=>{
-              if(!r.c26||r.c26===0)return'<span style="color:var(--ink3)">—</span>';
-              const esAhorro=r.c26<r.c25;
-              const cls=esAhorro?'estatus-ahorro':'estatus-gasto';
-              const lbl=esAhorro?'Ahorro':'Gasto';
-              return`<span class="estatus-pill ${cls}">${lbl}</span>`;
-            })()}</td>
+            <td class="center">${(()=>{if(!r.c26||r.c26===0)return'<span style="color:var(--ink3)">—</span>';const esAhorro=r.c26<r.c25;return`<span class="estatus-pill ${esAhorro?'estatus-ahorro':'estatus-gasto'}">${esAhorro?'Ahorro':'Gasto'}</span>`;})()}</td>
           </tr>`).join('')}</tbody>
           <tfoot><tr><td colspan="2">TOTALES</td><td class="num">$${ft23.toLocaleString('es-MX')}</td><td class="num">$${ft24.toLocaleString('es-MX')}</td><td class="num">$${ft25.toLocaleString('es-MX')}</td><td class="num">$${ft26.toLocaleString('es-MX')}</td><td class="num">${fmtDif(ft24-ft23)}</td><td class="num">${fmtDif(ft25-ft24)}</td><td class="num">${fmtDif(ft26-ft25)}</td><td class="center">${ahorroCount}/${mesesCon26} Ahorro</td></tr></tfoot>
         </table></div>
       </div>`;
     window.applyFiltroAnual=()=>{filtroMes=document.getElementById('ca-mes').value;['ca-bar-comp','ca-line-trend','ca-bar-dif','ca-dona-estatus','ca-pct-var'].forEach(DC);render();};
     window.clearFiltroAnual=()=>{filtroMes='todos';['ca-bar-comp','ca-line-trend','ca-bar-dif','ca-dona-estatus','ca-pct-var'].forEach(DC);render();};
-    // Guardar estado para slideshow
     window._ssDataCasetas=data;
     window._ssPeriodoCasetas=filtroMes==='todos'?'Acumulado anual':filtroMes.charAt(0)+filtroMes.slice(1).toLowerCase();
     setTimeout(()=>{
       const gc='rgba(0,0,0,0.05)',tc='#9A7078',mf='JetBrains Mono';
       const labels=data.map(r=>r.mes.substring(0,3));
-      // ── Colores vibrantes ──
       const C23='rgba(148,163,184,0.5)',C24='rgba(59,130,246,0.7)',C25='rgba(251,191,36,0.75)';
-      // ── Calcular máximo real para que el eje Y nunca quede en $0k ──
       const allVals=[...data.map(r=>r.c23),...data.map(r=>r.c24),...data.map(r=>r.c25),...data.map(r=>r.c26)].filter(v=>v>0);
       const yMax=allVals.length?Math.ceil(Math.max(...allVals)*1.25):300000;
-      // Formatter inteligente: valores reales están en pesos (ej: 152007)
-      const yFmt=v=>{
-        if(v===0)return '$0';
-        const abs=Math.abs(v);
-        if(abs>=1000000)return'$'+Math.round(abs/1000000)+'M';
-        if(abs>=1000)return'$'+Math.round(abs/1000)+'k';
-        return'$'+abs;
-      };
-
-      // ── Gráfica 1: Comparativo 4 años — etiquetas en TODOS los años ──
+      const yFmt=v=>{if(v===0)return'$0';const abs=Math.abs(v);if(abs>=1000000)return'$'+Math.round(abs/1000000)+'M';if(abs>=1000)return'$'+Math.round(abs/1000)+'k';return'$'+abs;};
       DC('ca-bar-comp');
-      CI['ca-bar-comp']=new Chart(document.getElementById('ca-bar-comp'),{type:'bar',
-        data:{labels,datasets:[
-          {label:'2023',data:data.map(r=>r.c23),backgroundColor:C23,borderRadius:3,borderSkipped:false,
-           datalabels:{display:true,anchor:'end',align:'end',clamp:true,offset:1,color:'rgba(107,114,128,0.8)',font:{size:8,family:mf,weight:'600'},formatter:v=>v>0?'$'+Math.round(v/1000)+'k':''}},
-          {label:'2024',data:data.map(r=>r.c24),backgroundColor:C24,borderRadius:3,borderSkipped:false,
-           datalabels:{display:true,anchor:'end',align:'end',clamp:true,offset:1,color:'rgba(59,130,246,0.9)',font:{size:8,family:mf,weight:'600'},formatter:v=>v>0?'$'+Math.round(v/1000)+'k':''}},
-          {label:'2025',data:data.map(r=>r.c25),backgroundColor:C25,borderRadius:3,borderSkipped:false,
-           datalabels:{display:true,anchor:'end',align:'end',clamp:true,offset:1,color:'rgba(251,191,36,0.95)',font:{size:8,family:mf,weight:'600'},formatter:v=>v>0?'$'+Math.round(v/1000)+'k':''}},
-          {label:'2026',data:data.map(r=>r.c26>0?r.c26:null),
-           backgroundColor:data.map(r=>r.dif2526<0?'rgba(34,197,94,0.82)':'rgba(239,68,68,0.82)'),
-           borderRadius:3,borderSkipped:false,
-           datalabels:{display:true,anchor:'end',align:'end',clamp:true,offset:1,
-             color:data.map(r=>r.dif2526<0?'#15803d':'#b91c1c'),
-             font:{size:8,family:mf,weight:'700'},
-             formatter:(v)=>v!=null?'$'+Math.round(v/1000)+'k':''}}
-        ]},
-        options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
-          plugins:{legend:{display:true,position:'bottom',labels:{color:'#5C3038',font:{size:12,family:'Outfit'},usePointStyle:true,pointStyleWidth:14,padding:18}},
-            tooltip:{callbacks:{label:c=>`${c.dataset.label}: $${(c.parsed.y||0).toLocaleString('es-MX')}`}},datalabels:{}},
-          scales:{x:{grid:{display:false},ticks:{color:tc,font:{size:11,family:mf}},border:{color:'transparent'}},
-            y:{grid:{color:gc},ticks:{color:tc,font:{size:11},callback:yFmt},border:{color:'transparent'},beginAtZero:true,max:yMax}}}
-      });
-
-      // ── Gráfica 2: Tendencia — 2026 en verde ──
+      CI['ca-bar-comp']=new Chart(document.getElementById('ca-bar-comp'),{type:'bar',data:{labels,datasets:[
+        {label:'2023',data:data.map(r=>r.c23),backgroundColor:C23,borderRadius:3,borderSkipped:false,datalabels:{display:true,anchor:'end',align:'end',clamp:true,offset:1,color:'rgba(107,114,128,0.8)',font:{size:8,family:mf,weight:'600'},formatter:v=>v>0?'$'+Math.round(v/1000)+'k':''}},
+        {label:'2024',data:data.map(r=>r.c24),backgroundColor:C24,borderRadius:3,borderSkipped:false,datalabels:{display:true,anchor:'end',align:'end',clamp:true,offset:1,color:'rgba(59,130,246,0.9)',font:{size:8,family:mf,weight:'600'},formatter:v=>v>0?'$'+Math.round(v/1000)+'k':''}},
+        {label:'2025',data:data.map(r=>r.c25),backgroundColor:C25,borderRadius:3,borderSkipped:false,datalabels:{display:true,anchor:'end',align:'end',clamp:true,offset:1,color:'rgba(251,191,36,0.95)',font:{size:8,family:mf,weight:'600'},formatter:v=>v>0?'$'+Math.round(v/1000)+'k':''}},
+        {label:'2026',data:data.map(r=>r.c26>0?r.c26:null),backgroundColor:data.map(r=>r.dif2526<0?'rgba(34,197,94,0.82)':'rgba(239,68,68,0.82)'),borderRadius:3,borderSkipped:false,datalabels:{display:true,anchor:'end',align:'end',clamp:true,offset:1,color:data.map(r=>r.dif2526<0?'#15803d':'#b91c1c'),font:{size:8,family:mf,weight:'700'},formatter:(v)=>v!=null?'$'+Math.round(v/1000)+'k':''}}
+      ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:true,position:'bottom',labels:{color:'#5C3038',font:{size:12,family:'Outfit'},usePointStyle:true,pointStyleWidth:14,padding:18}},tooltip:{callbacks:{label:c=>`${c.dataset.label}: $${(c.parsed.y||0).toLocaleString('es-MX')}`}},datalabels:{}},scales:{x:{grid:{display:false},ticks:{color:tc,font:{size:11,family:mf}},border:{color:'transparent'}},y:{grid:{color:gc},ticks:{color:tc,font:{size:11},callback:yFmt},border:{color:'transparent'},beginAtZero:true,max:yMax}}}});
       DC('ca-line-trend');
-      CI['ca-line-trend']=new Chart(document.getElementById('ca-line-trend'),{type:'line',
-        data:{labels,datasets:[
-          {label:'2023',data:data.map(r=>r.c23),borderColor:'rgba(148,163,184,0.55)',backgroundColor:'transparent',borderWidth:1.5,pointRadius:3,tension:0.35,datalabels:{display:false}},
-          {label:'2024',data:data.map(r=>r.c24),borderColor:'rgba(59,130,246,0.8)',backgroundColor:'transparent',borderWidth:2,pointRadius:3,tension:0.35,datalabels:{display:false}},
-          {label:'2025',data:data.map(r=>r.c25),borderColor:'rgba(251,191,36,0.9)',backgroundColor:'transparent',borderWidth:2,pointRadius:3,tension:0.35,datalabels:{display:false}},
-          {label:'2026',data:data.map(r=>r.c26>0?r.c26:null),borderColor:'#22c55e',backgroundColor:'rgba(34,197,94,0.07)',borderWidth:2.5,pointRadius:5,pointBackgroundColor:'#22c55e',pointBorderColor:'#fff',pointBorderWidth:1.5,fill:false,tension:0.35,
-           datalabels:{display:true,anchor:'end',align:'top',offset:4,color:'#15803d',font:{size:9,family:mf,weight:'700'},formatter:v=>v?'$'+Math.round(v/1000)+'k':''}}
-        ]},
-        options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
-          plugins:{legend:{display:true,position:'bottom',labels:{color:'#5C3038',font:{size:11,family:'Outfit'},usePointStyle:true,padding:12}},
-            tooltip:{callbacks:{label:c=>`${c.dataset.label}: $${(c.parsed.y||0).toLocaleString('es-MX')}`}},datalabels:{}},
-          scales:{x:{grid:{display:false},ticks:{color:tc,font:{size:10,family:mf}},border:{color:'transparent'}},
-            y:{grid:{color:gc},ticks:{color:tc,font:{size:10},callback:yFmt},border:{color:'transparent'},beginAtZero:true,max:yMax}}}
-      });
-
-      // ── Gráfica 3: Diferencia $ — etiquetas siempre visibles con flecha ──
+      CI['ca-line-trend']=new Chart(document.getElementById('ca-line-trend'),{type:'line',data:{labels,datasets:[
+        {label:'2023',data:data.map(r=>r.c23),borderColor:'rgba(148,163,184,0.55)',backgroundColor:'transparent',borderWidth:1.5,pointRadius:3,tension:0.35,datalabels:{display:false}},
+        {label:'2024',data:data.map(r=>r.c24),borderColor:'rgba(59,130,246,0.8)',backgroundColor:'transparent',borderWidth:2,pointRadius:3,tension:0.35,datalabels:{display:false}},
+        {label:'2025',data:data.map(r=>r.c25),borderColor:'rgba(251,191,36,0.9)',backgroundColor:'transparent',borderWidth:2,pointRadius:3,tension:0.35,datalabels:{display:false}},
+        {label:'2026',data:data.map(r=>r.c26>0?r.c26:null),borderColor:'#22c55e',backgroundColor:'rgba(34,197,94,0.07)',borderWidth:2.5,pointRadius:5,pointBackgroundColor:'#22c55e',pointBorderColor:'#fff',pointBorderWidth:1.5,fill:false,tension:0.35,datalabels:{display:true,anchor:'end',align:'top',offset:4,color:'#15803d',font:{size:9,family:mf,weight:'700'},formatter:v=>v?'$'+Math.round(v/1000)+'k':''}}
+      ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:true,position:'bottom',labels:{color:'#5C3038',font:{size:11,family:'Outfit'},usePointStyle:true,padding:12}},tooltip:{callbacks:{label:c=>`${c.dataset.label}: $${(c.parsed.y||0).toLocaleString('es-MX')}`}},datalabels:{}},scales:{x:{grid:{display:false},ticks:{color:tc,font:{size:10,family:mf}},border:{color:'transparent'}},y:{grid:{color:gc},ticks:{color:tc,font:{size:10},callback:yFmt},border:{color:'transparent'},beginAtZero:true,max:yMax}}}});
       const difVals=difData.map(r=>Math.abs(r.dif2526)).filter(v=>v>0);
       const difMax=difVals.length?Math.ceil(Math.max(...difVals)*1.35):50000;
       DC('ca-bar-dif');
-      CI['ca-bar-dif']=new Chart(document.getElementById('ca-bar-dif'),{type:'bar',
-        data:{labels:difData.map(r=>r.mes.substring(0,3)),
-          datasets:[{label:'Diferencia 2025→2026',
-            data:difData.map(r=>r.dif2526),
-            backgroundColor:difData.map(r=>r.dif2526>0?'rgba(239,68,68,0.78)':'rgba(34,197,94,0.78)'),
-            borderRadius:4,borderSkipped:false,
-            datalabels:{display:true,anchor:'end',align:'end',offset:3,
-              color:difData.map(r=>r.dif2526>0?'#b91c1c':'#15803d'),
-              font:{size:10,family:mf,weight:'700'},
-              formatter:v=>(v>0?'▲ +':'▼ ')+'$'+Math.abs(Math.round(v/1000))+'k'}}
-        ]},
-        options:{responsive:true,maintainAspectRatio:false,
-          plugins:{legend:{display:false},
-            tooltip:{callbacks:{label:c=>`${c.parsed.y>0?'Gasto extra':'Ahorro'}: $${Math.abs(c.parsed.y).toLocaleString('es-MX')}`}},datalabels:{}},
-          scales:{x:{grid:{display:false},ticks:{color:tc,font:{size:11,family:mf}},border:{color:'transparent'}},
-            y:{grid:{color:gc},ticks:{color:tc,font:{size:10},callback:yFmt},border:{color:'transparent'},max:difMax,min:-difMax}}}
-      });
-
-      // ── Gráfica 4: Barras comparativo 2025 vs 2026 por mes — monto + % ──
+      CI['ca-bar-dif']=new Chart(document.getElementById('ca-bar-dif'),{type:'bar',data:{labels:difData.map(r=>r.mes.substring(0,3)),datasets:[{label:'Diferencia 2025→2026',data:difData.map(r=>r.dif2526),backgroundColor:difData.map(r=>r.dif2526>0?'rgba(239,68,68,0.78)':'rgba(34,197,94,0.78)'),borderRadius:4,borderSkipped:false,datalabels:{display:true,anchor:'end',align:'end',offset:3,color:difData.map(r=>r.dif2526>0?'#b91c1c':'#15803d'),font:{size:10,family:mf,weight:'700'},formatter:v=>(v>0?'▲ +':'▼ ')+'$'+Math.abs(Math.round(v/1000))+'k'}}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.parsed.y>0?'Gasto extra':'Ahorro'}: $${Math.abs(c.parsed.y).toLocaleString('es-MX')}`}},datalabels:{}},scales:{x:{grid:{display:false},ticks:{color:tc,font:{size:11,family:mf}},border:{color:'transparent'}},y:{grid:{color:gc},ticks:{color:tc,font:{size:10},callback:yFmt},border:{color:'transparent'},max:difMax,min:-difMax}}}});
       const conDato=data.filter(r=>r.c26>0);
-      const tot26real=conDato.reduce((s,r)=>s+r.c26,0);
-      const tot25enMismosMeses=conDato.reduce((s,r)=>s+r.c25,0);
-      const difTotal=tot26real-tot25enMismosMeses;
-      const pctTotal=tot25enMismosMeses>0?((difTotal/tot25enMismosMeses)*100).toFixed(1):0;
       DC('ca-dona-estatus');
-      CI['ca-dona-estatus']=new Chart(document.getElementById('ca-dona-estatus'),{type:'bar',
-        data:{labels:conDato.map(r=>r.mes.substring(0,3)),
-          datasets:[
-            {label:'2025',data:conDato.map(r=>r.c25),backgroundColor:'rgba(251,191,36,0.72)',borderRadius:4,borderSkipped:false,
-             datalabels:{display:true,anchor:'end',align:'end',clamp:true,offset:1,color:'rgba(180,130,0,0.9)',font:{size:8,family:mf,weight:'600'},formatter:v=>'$'+Math.round(v/1000)+'k'}},
-            {label:'2026',data:conDato.map(r=>r.c26),
-             backgroundColor:conDato.map(r=>r.dif2526<0?'rgba(34,197,94,0.82)':'rgba(239,68,68,0.82)'),
-             borderRadius:4,borderSkipped:false,
-             datalabels:{display:true,anchor:'end',align:'end',clamp:true,offset:1,
-               color:conDato.map(r=>r.dif2526<0?'#15803d':'#b91c1c'),
-               font:{size:8,family:mf,weight:'700'},
-               formatter:(v,ctx)=>{
-                 const r=conDato[ctx.dataIndex];
-                 const pct=r.c25>0?((r.dif2526/r.c25)*100).toFixed(0):0;
-                 return '$'+Math.round(v/1000)+'k\n'+(pct>0?'+':'')+pct+'%';
-               }}}
-          ]},
-        options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
-          plugins:{
-            legend:{display:true,position:'bottom',labels:{color:'#5C3038',font:{size:11,family:'Outfit'},usePointStyle:true,padding:12}},
-            tooltip:{callbacks:{
-              label:c=>`${c.dataset.label}: $${c.parsed.y.toLocaleString('es-MX')}`,
-              afterBody:items=>{
-                const r=conDato[items[0]?.dataIndex];
-                if(!r)return[];
-                const pct=r.c25>0?((r.dif2526/r.c25)*100).toFixed(1):0;
-                return[`Variación: ${pct>0?'+':''}${pct}% ($${Math.abs(r.dif2526).toLocaleString('es-MX')})`];
-              }
-            }},
-            datalabels:{}
-          },
-          scales:{
-            x:{grid:{display:false},ticks:{color:tc,font:{size:10,family:mf}},border:{color:'transparent'}},
-            y:{grid:{color:gc},ticks:{color:tc,font:{size:10},callback:yFmt},border:{color:'transparent'},beginAtZero:true,
-               max:Math.ceil(Math.max(...conDato.map(r=>Math.max(r.c25,r.c26)))*1.3)||100000}
-          }}
-      });
-
-      // ── Gráfica 5: % Variación — etiquetas siempre visibles ──
+      CI['ca-dona-estatus']=new Chart(document.getElementById('ca-dona-estatus'),{type:'bar',data:{labels:conDato.map(r=>r.mes.substring(0,3)),datasets:[
+        {label:'2025',data:conDato.map(r=>r.c25),backgroundColor:'rgba(251,191,36,0.72)',borderRadius:4,borderSkipped:false,datalabels:{display:true,anchor:'end',align:'end',clamp:true,offset:1,color:'rgba(180,130,0,0.9)',font:{size:8,family:mf,weight:'600'},formatter:v=>'$'+Math.round(v/1000)+'k'}},
+        {label:'2026',data:conDato.map(r=>r.c26),backgroundColor:conDato.map(r=>r.dif2526<0?'rgba(34,197,94,0.82)':'rgba(239,68,68,0.82)'),borderRadius:4,borderSkipped:false,datalabels:{display:true,anchor:'end',align:'end',clamp:true,offset:1,color:conDato.map(r=>r.dif2526<0?'#15803d':'#b91c1c'),font:{size:8,family:mf,weight:'700'},formatter:(v,ctx)=>{const r=conDato[ctx.dataIndex];const pct=r.c25>0?((r.dif2526/r.c25)*100).toFixed(0):0;return'$'+Math.round(v/1000)+'k\n'+(pct>0?'+':'')+pct+'%';}}}
+      ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:true,position:'bottom',labels:{color:'#5C3038',font:{size:11,family:'Outfit'},usePointStyle:true,padding:12}},tooltip:{callbacks:{label:c=>`${c.dataset.label}: $${c.parsed.y.toLocaleString('es-MX')}`,afterBody:items=>{const r=conDato[items[0]?.dataIndex];if(!r)return[];const pct=r.c25>0?((r.dif2526/r.c25)*100).toFixed(1):0;return[`Variación: ${pct>0?'+':''}${pct}% ($${Math.abs(r.dif2526).toLocaleString('es-MX')})`];}}},datalabels:{}},scales:{x:{grid:{display:false},ticks:{color:tc,font:{size:10,family:mf}},border:{color:'transparent'}},y:{grid:{color:gc},ticks:{color:tc,font:{size:10},callback:yFmt},border:{color:'transparent'},beginAtZero:true,max:Math.ceil(Math.max(...conDato.map(r=>Math.max(r.c25,r.c26)))*1.3)||100000}}}});
       const pctVals=difData.map(r=>r.c25>0?Math.abs((r.dif2526/r.c25)*100):0).filter(v=>v>0);
       const pctMax=pctVals.length?Math.ceil(Math.max(...pctVals)*1.4):50;
       DC('ca-pct-var');
-      CI['ca-pct-var']=new Chart(document.getElementById('ca-pct-var'),{type:'bar',
-        data:{labels:difData.map(r=>r.mes.substring(0,3)),
-          datasets:[{label:'% vs 2025',
-            data:difData.map(r=>r.c25>0?+((r.dif2526/r.c25)*100).toFixed(1):0),
-            backgroundColor:difData.map(r=>r.dif2526>0?'rgba(239,68,68,0.75)':'rgba(34,197,94,0.75)'),
-            borderRadius:4,borderSkipped:false,
-            datalabels:{display:true,anchor:'end',align:'end',offset:3,
-              color:difData.map(r=>r.dif2526>0?'#b91c1c':'#15803d'),
-              font:{size:10,family:mf,weight:'700'},
-              formatter:v=>(v>0?'+':'')+v+'%'}}
-        ]},
-        options:{responsive:true,maintainAspectRatio:false,
-          plugins:{legend:{display:false},datalabels:{}},
-          scales:{x:{grid:{display:false},ticks:{color:tc,font:{size:11,family:mf}},border:{color:'transparent'}},
-            y:{grid:{color:gc},ticks:{color:tc,font:{size:10},callback:v=>v+'%'},border:{color:'transparent'},max:pctMax,min:-pctMax}}}
-      });
+      CI['ca-pct-var']=new Chart(document.getElementById('ca-pct-var'),{type:'bar',data:{labels:difData.map(r=>r.mes.substring(0,3)),datasets:[{label:'% vs 2025',data:difData.map(r=>r.c25>0?+((r.dif2526/r.c25)*100).toFixed(1):0),backgroundColor:difData.map(r=>r.dif2526>0?'rgba(239,68,68,0.75)':'rgba(34,197,94,0.75)'),borderRadius:4,borderSkipped:false,datalabels:{display:true,anchor:'end',align:'end',offset:3,color:difData.map(r=>r.dif2526>0?'#b91c1c':'#15803d'),font:{size:10,family:mf,weight:'700'},formatter:v=>(v>0?'+':'')+v+'%'}}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},datalabels:{}},scales:{x:{grid:{display:false},ticks:{color:tc,font:{size:11,family:mf}},border:{color:'transparent'}},y:{grid:{color:gc},ticks:{color:tc,font:{size:10},callback:v=>v+'%'},border:{color:'transparent'},max:pctMax,min:-pctMax}}}});
     },80);
   }
   render();
@@ -1104,7 +890,7 @@ async function renderCargas(container){
 }
 
 /* ══════════════════════════
-   MÓDULO COLABORADORES
+   MÓDULO COLABORADORES — FIXED
 ══════════════════════════ */
 function parseMes(raw){
   const s=(raw||'').toString().trim().replace(/["'\r]/g,'');if(!s)return'';
@@ -1117,6 +903,25 @@ function parseMes(raw){
   if(m&&mMap[m[1]])return`${m[2]}-${mMap[m[1]]}`;
   const d=new Date(s);if(!isNaN(d))return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;return'';
 }
+
+/* ─── FIX PRINCIPAL: parsePct ───────────────────────────────────────────
+   La BD puede guardar el % de varias formas:
+   · "45.0"   → ya es porcentaje directo (45%)   → devolvemos 45.0
+   · "0.45"   → está en decimal (0–1)             → devolvemos 45.0
+   · "4500.8" → bug previo en BD (dividir /100)   → devolvemos 45.008
+   Regla: si el valor > 100, dividir /100 una vez; si 0–1, multiplicar ×100;
+   si 1–100, usar directo. Siempre devolvemos el % como número 0–100.
+──────────────────────────────────────────────────────────────────────── */
+function parsePct(raw){
+  if(!raw&&raw!==0)return 0;
+  const s=(raw||'0').toString().replace(/[%\s\r]/g,'').replace(',','.');
+  const n=parseFloat(s)||0;
+  if(n===0)return 0;
+  if(n>100)return parseFloat((n/100).toFixed(4));   // 4500.8 → 45.008
+  if(n>0&&n<1)return parseFloat((n*100).toFixed(4)); // 0.45   → 45.0
+  return parseFloat(n.toFixed(4));                   // 45.0   → 45.0 ✓
+}
+
 async function renderColaboradores(container){
   container.innerHTML=`<div class="loading-state"><div class="spinner"></div>Conectando con Google Sheets…</div>`;
   let VD=[];
@@ -1126,17 +931,71 @@ async function renderColaboradores(container){
     const txt=await res.text();
     if(txt.trim().startsWith('<'))throw new Error('HTML recibido');
     const raw=parseCSV(txt);if(!raw.length)throw new Error('CSV vacío');
-    VD=raw.map(r=>({Mes:parseMes(r.Mes||r.mes||r.MES||r['Mes ']||''),Colaborador:(r.Colaborador||r.Nombre||'').toString().trim().toUpperCase(),Unidad:(r.Unidad||'').toString().trim().toUpperCase(),Local:parseInt((r.Local||'0').toString().replace(/[^\d]/g,''))||0,Foraneo:parseInt((r.Foraneo||'0').toString().replace(/[^\d]/g,''))||0,Total:parseInt((r['Total de viajes']||r.Total||'0').toString().replace(/[^\d]/g,''))||0,NoViajMin:parseInt((r['No viajes minimos']||'50').toString().replace(/[^\d]/g,''))||50,Meta:parseInt((r['Meta 100%']||'60').toString().replace(/[^\d]/g,''))||60,PctViajes:(()=>{const v=(r['% DE VIAJES']||'0').toString().replace(/[^0-9.]/g,'');const n=parseFloat(v)||0;return n>=1?n/100:n;})()})).filter(r=>r.Colaborador&&r.Colaborador.length>2&&r.Colaborador!=='COLABORADOR');
+    VD=raw.map(r=>({
+      Mes:parseMes(r.Mes||r.mes||r.MES||r['Mes ']||''),
+      Colaborador:(r.Colaborador||r.Nombre||'').toString().trim().toUpperCase(),
+      Unidad:(r.Unidad||'').toString().trim().toUpperCase(),
+      Local:parseInt((r.Local||'0').toString().replace(/[^\d]/g,''))||0,
+      Foraneo:parseInt((r.Foraneo||'0').toString().replace(/[^\d]/g,''))||0,
+      Total:parseInt((r['Total de viajes']||r.Total||'0').toString().replace(/[^\d]/g,''))||0,
+      NoViajMin:parseInt((r['No viajes minimos']||'50').toString().replace(/[^\d]/g,''))||50,
+      Meta:parseInt((r['Meta 100%']||'60').toString().replace(/[^\d]/g,''))||60,
+      // ── FIX: usar parsePct que devuelve 0–100 directamente ──
+      PctViajes: parsePct(r['% DE VIAJES']||r['%viajes']||r['% viajes']||'0')
+    })).filter(r=>r.Colaborador&&r.Colaborador.length>2&&r.Colaborador!=='COLABORADOR');
     VD.forEach(r=>{if(!r.Mes||r.Mes.length<7)r.Mes='2026-04';});
     if(!VD.length)throw new Error('Sin registros válidos');
-  }catch(e){container.innerHTML=`<div class="empty-state"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="1.8" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div class="empty-title">Error al cargar datos</div><div class="empty-desc">⚠ ${e.message}</div></div>`;return;}
+  }catch(e){
+    container.innerHTML=`<div class="empty-state"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="1.8" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div class="empty-title">Error al cargar datos</div><div class="empty-desc">⚠ ${e.message}</div></div>`;
+    return;
+  }
   const mesesSet=new Set(VD.map(r=>r.Mes)),unidadesSet=new Set(VD.map(r=>r.Unidad));
   const mesesList=[...mesesSet].sort().reverse(),unidadesList=[...unidadesSet].sort();
+
+  // ── Estado de ordenamiento de la tabla ──
+  let sortCol='Total',sortDir='desc'; // default: ordenar por total desc
+
   let filtroMes=mesesList[0]||'todos',filtroUnidad='todos',filtroColab='';
   function mesLabel(m){const[y,mm]=m.split('-');return`${MESES[+mm-1]} ${y}`;}
-  function filtrar(){return VD.filter(r=>(filtroMes==='todos'||r.Mes===filtroMes)).filter(r=>(filtroUnidad==='todos'||r.Unidad===filtroUnidad)).filter(r=>(!filtroColab||r.Colaborador.toLowerCase().includes(filtroColab.toLowerCase()))).sort((a,b)=>b.Total-a.Total);}
-  function getColor(total,min){const ratio=min>0?total/min:0;if(ratio>=1)return{fill:'#1A9E5C',cls:'status-ok',label:'Meta cumplida'};if(ratio>=0.7)return{fill:'#B87A10',cls:'status-warn',label:'En proceso'};return{fill:'#C0152A',cls:'status-low',label:'Bajo meta'};}
-  function kpisGlobal(data){const total=data.reduce((s,r)=>s+r.Total,0),local=data.reduce((s,r)=>s+r.Local,0),foraneo=data.reduce((s,r)=>s+r.Foraneo,0),metaCump=data.filter(r=>r.Total>=r.NoViajMin).length,pctPromedio=data.length?data.reduce((s,r)=>s+r.PctViajes,0)/data.length:0;return{total,local,foraneo,metaCump,pctPromedio,n:data.length};}
+
+  function filtrar(){
+    return VD
+      .filter(r=>(filtroMes==='todos'||r.Mes===filtroMes))
+      .filter(r=>(filtroUnidad==='todos'||r.Unidad===filtroUnidad))
+      .filter(r=>(!filtroColab||r.Colaborador.toLowerCase().includes(filtroColab.toLowerCase())))
+      .sort((a,b)=>{
+        let va=a[sortCol]??0,vb=b[sortCol]??0;
+        if(typeof va==='string')va=va.toLowerCase(),vb=(vb+'').toLowerCase();
+        if(va<vb)return sortDir==='asc'?-1:1;
+        if(va>vb)return sortDir==='asc'?1:-1;
+        return 0;
+      });
+  }
+
+  function getColor(pct){
+    // pct es 0–100
+    if(pct>=100)return{fill:'#1A9E5C',cls:'status-ok',label:'Meta cumplida'};
+    if(pct>=70)return{fill:'#B87A10',cls:'status-warn',label:'En proceso'};
+    return{fill:'#C0152A',cls:'status-low',label:'Bajo meta'};
+  }
+
+  function kpisGlobal(data){
+    const total=data.reduce((s,r)=>s+r.Total,0),
+          local=data.reduce((s,r)=>s+r.Local,0),
+          foraneo=data.reduce((s,r)=>s+r.Foraneo,0),
+          // Meta cumplida: PctViajes >= 100 (ya está en escala 0–100)
+          metaCump=data.filter(r=>r.PctViajes>=100).length,
+          pctPromedio=data.length?data.reduce((s,r)=>s+r.PctViajes,0)/data.length:0;
+    return{total,local,foraneo,metaCump,pctPromedio,n:data.length};
+  }
+
+  function sortTable(col){
+    if(sortCol===col){sortDir=sortDir==='asc'?'desc':'asc';}
+    else{sortCol=col;sortDir=col==='Colaborador'?'asc':'desc';}
+    ['cv-bar-top','cv-dona-unidad','cv-pct-bar'].forEach(DC);
+    render();
+  }
+
   function render(){
     const data=filtrar(),k=kpisGlobal(data);
     const maxTotal=data.length?Math.max(...data.map(r=>r.Total),1):1;
@@ -1144,9 +1003,21 @@ async function renderColaboradores(container){
     const uTot={};data.forEach(r=>{uTot[r.Unidad]=(uTot[r.Unidad]||0)+r.Total;});
     const uKeys=Object.keys(uTot);
     const uColors={'CAMION':'rgba(26,58,112,0.82)','CAMIONETA':'rgba(26,158,130,0.82)','QUINTA':'rgba(184,122,16,0.82)'};
-    window._ssColabData=data;window._ssColabKpis=k;window._ssColabPeriodo=filtroMes==='todos'?'Todos los períodos':mesLabel(filtroMes);
+
+    window._ssColabData=data;
+    window._ssColabKpis=k;
+    window._ssColabPeriodo=filtroMes==='todos'?'Todos los períodos':mesLabel(filtroMes);
+
+    // ── Indicador de columna activa para el header ──
+    function thSort(col,label,align=''){
+      const isActive=sortCol===col;
+      const arrow=isActive?(sortDir==='asc'?' ▲':' ▼'):'';
+      const numCls=align==='num'?' class="num sortable'+(isActive?' sort-'+sortDir:'')+ '"':' class="sortable'+(isActive?' sort-'+sortDir:'')+ '"';
+      return`<th${numCls} ondblclick="sortTable('${col}')" title="Doble clic para ordenar por ${label}">${label}${isActive?`<span style="color:var(--red);font-size:9px">${arrow}</span>`:' <span style="color:var(--border2);font-size:9px">⇅</span>'}</th>`;
+    }
+
     container.innerHTML=`
-      <div class="banner ok">✓ Google Sheets conectado · ${VD.length} colaboradores · Auto-refresco cada 5 min</div>
+      <div class="banner ok">✓ Google Sheets conectado · ${VD.length} colaboradores · Auto-refresco cada 5 min · <b>Doble clic</b> en columna para ordenar</div>
       <div class="filters-bar">
         <div class="filter-group"><span class="filter-label">Mes</span><select class="filter-select" id="cv-mes"><option value="todos">Todos</option>${mesesList.map(m=>`<option value="${m}"${filtroMes===m?' selected':''}>${mesLabel(m)}</option>`).join('')}</select></div>
         <div class="filter-group"><span class="filter-label">Unidad</span><select class="filter-select" id="cv-unidad"><option value="todos">Todas</option>${unidadesList.map(u=>`<option value="${u}"${filtroUnidad===u?' selected':''}>${u}</option>`).join('')}</select></div>
@@ -1163,48 +1034,139 @@ async function renderColaboradores(container){
         <div class="ckpi" style="--ck-color:var(--blue)"><div class="lbl">Locales</div><div class="val">${k.local}</div><div class="sub">${k.total?Math.round(k.local/k.total*100):0}%</div></div>
         <div class="ckpi" style="--ck-color:var(--teal)"><div class="lbl">Foráneos</div><div class="val">${k.foraneo}</div><div class="sub">${k.total?Math.round(k.foraneo/k.total*100):0}%</div></div>
         <div class="ckpi" style="--ck-color:var(--green)"><div class="lbl">Meta mínima ✓</div><div class="val">${k.metaCump}</div><div class="sub">de ${k.n}</div></div>
-        <div class="ckpi" style="--ck-color:var(--red)"><div class="lbl">% Prom. viajes</div><div class="val">${(k.pctPromedio*100).toFixed(1)}%</div><div class="sub">participación</div></div>
+        <div class="ckpi" style="--ck-color:var(--red)"><div class="lbl">% Prom. viajes</div>
+          <div class="val">${k.pctPromedio.toFixed(1)}%</div>
+          <div class="sub">participación promedio</div>
+        </div>
       </div>
       <div class="charts-grid">
         <div class="chart-box"><div class="chart-title">Top colaboradores <span class="chart-badge">Top 5</span></div><div style="position:relative;width:100%;height:230px"><canvas id="cv-bar-top"></canvas></div></div>
         <div class="chart-box"><div class="chart-title">Por unidad <span class="chart-badge">${uKeys.length} tipos</span></div><div style="position:relative;width:100%;height:230px"><canvas id="cv-dona-unidad"></canvas></div></div>
-        <div class="chart-box full"><div class="chart-title">% Participación por colaborador</div><div style="position:relative;width:100%;overflow-x:auto"><canvas id="cv-pct-bar" style="height:${Math.max(280,data.length*32)}px"></canvas></div></div>
+        <div class="chart-box full"><div class="chart-title">% Participación por colaborador <span class="chart-badge">ordenado por % desc</span></div><div style="position:relative;width:100%;overflow-x:auto"><canvas id="cv-pct-bar" style="height:${Math.max(280,data.length*32)}px"></canvas></div></div>
       </div>
-      <div class="table-wrap"><div class="table-head-bar"><span class="ttl">Productividades por colaborador</span><span class="meta">${data.length} registros</span></div>
-      <div style="overflow-x:auto"><table>
-        <thead><tr><th>#</th><th>Mes</th><th>Colaborador</th><th>Unidad</th><th class="num">Mín.</th><th>Local</th><th>Foráneo</th><th class="num">Total</th><th>% Viajes</th><th class="num">Meta 100%</th><th class="center">Estatus</th></tr></thead>
-        <tbody>${data.map((r,i)=>{
-          const color=getColor(r.Total,r.NoViajMin);
-          const pctDisplay=(r.PctViajes*100).toFixed(1)+'%';
-          const lPct=r.Total>0?Math.round(r.Local/r.Total*100):0;
-          const fPct=r.Total>0?Math.round(r.Foraneo/r.Total*100):0;
-          const tPct=maxTotal>0?Math.round(r.Total/maxTotal*100):0;
-          const bPct=Math.min(100,Math.round(r.Total/r.NoViajMin*100));
-          const rCl=i===0?'rank-1':i===1?'rank-2':i===2?'rank-3':'rank-n';
-          return`<tr>
-            <td><span class="rank-num ${rCl}">${i+1}</span></td>
-            <td style="font-size:11px;color:var(--ink3)">${mesLabel(r.Mes)}</td>
-            <td style="font-weight:600">${r.Colaborador}</td>
-            <td><span class="unidad-badge ${r.Unidad==='CAMION'?'unidad-camion':r.Unidad==='CAMIONETA'?'unidad-camioneta':'unidad-quinta'}">${r.Unidad}</span></td>
-            <td class="num"><span class="pill pill-amber">${r.NoViajMin}</span></td>
-            <td><div class="minibar-wrap"><div class="minibar-track"><div class="minibar-fill local" style="width:${lPct}%"></div></div><span class="minibar-val">${r.Local}</span></div></td>
-            <td><div class="minibar-wrap"><div class="minibar-track"><div class="minibar-fill foraneo" style="width:${fPct}%"></div></div><span class="minibar-val">${r.Foraneo}</span></div></td>
-            <td class="num"><div class="minibar-wrap" style="justify-content:flex-end"><div class="minibar-track"><div class="minibar-fill total" style="width:${tPct}%"></div></div><span class="minibar-val">${r.Total}</span></div></td>
-            <td><div class="pctbar-wrap"><div class="pctbar-track"><div class="pctbar-fill" style="width:${bPct}%;background:${color.fill}"></div></div><span class="pctbar-lbl" style="color:${color.fill}">${pctDisplay}</span></div></td>
-            <td class="num"><span class="pill pill-green">${r.Meta}</span></td>
-            <td class="center"><span class="${color.cls}" style="font-size:11px">${color.label}</span></td>
-          </tr>`;}).join('')}
-        </tbody>
-        <tfoot><tr><td colspan="4">TOTALES</td><td class="num">—</td><td class="num">${k.local}</td><td class="num">${k.foraneo}</td><td class="num">${k.total}</td><td class="num">${(k.pctPromedio*100).toFixed(1)}%</td><td class="num">—</td><td class="center">${k.metaCump}/${k.n} ✓</td></tr></tfoot>
-      </table></div></div>`;
-    window.applyFiltersColab=()=>{filtroMes=document.getElementById('cv-mes').value;filtroUnidad=document.getElementById('cv-unidad').value;filtroColab=document.getElementById('cv-colab').value.trim();['cv-bar-top','cv-dona-unidad','cv-pct-bar'].forEach(DC);render();};
-    window.clearFiltersColab=()=>{filtroMes=mesesList[0]||'todos';filtroUnidad='todos';filtroColab='';['cv-bar-top','cv-dona-unidad','cv-pct-bar'].forEach(DC);render();};
+      <div class="table-wrap">
+        <div class="table-head-bar">
+          <span class="ttl">Productividades por colaborador</span>
+          <span class="meta" style="display:flex;align-items:center;gap:8px">
+            ${data.length} registros
+            <span class="sort-hint">⇅ Doble clic en columna para ordenar</span>
+          </span>
+        </div>
+        <div style="overflow-x:auto"><table>
+          <thead><tr>
+            <th style="width:36px">#</th>
+            ${thSort('Mes','Mes')}
+            ${thSort('Colaborador','Colaborador')}
+            ${thSort('Unidad','Unidad')}
+            ${thSort('NoViajMin','Mín.','num')}
+            ${thSort('Local','Local','num')}
+            ${thSort('Foraneo','Foráneo','num')}
+            ${thSort('Total','Total','num')}
+            ${thSort('PctViajes','% Viajes','num')}
+            ${thSort('Meta','Meta 100%','num')}
+            <th class="center">Estatus</th>
+          </tr></thead>
+          <tbody>${data.map((r,i)=>{
+            const color=getColor(r.PctViajes);
+            // PctViajes ya está en 0–100, mostrar con 1 decimal
+            const pctDisplay=r.PctViajes.toFixed(1)+'%';
+            const lPct=r.Total>0?Math.round(r.Local/r.Total*100):0;
+            const fPct=r.Total>0?Math.round(r.Foraneo/r.Total*100):0;
+            const tPct=maxTotal>0?Math.round(r.Total/maxTotal*100):0;
+            // Barra de progreso vs meta mínima, capped a 100%
+            const bPct=Math.min(100,Math.round(r.PctViajes));
+            const rCl=i===0?'rank-1':i===1?'rank-2':i===2?'rank-3':'rank-n';
+            return`<tr>
+              <td><span class="rank-num ${rCl}">${i+1}</span></td>
+              <td style="font-size:11px;color:var(--ink3)">${mesLabel(r.Mes)}</td>
+              <td style="font-weight:600">${r.Colaborador}</td>
+              <td><span class="unidad-badge ${r.Unidad==='CAMION'?'unidad-camion':r.Unidad==='CAMIONETA'?'unidad-camioneta':'unidad-quinta'}">${r.Unidad}</span></td>
+              <td class="num"><span class="pill pill-amber">${r.NoViajMin}</span></td>
+              <td><div class="minibar-wrap"><div class="minibar-track"><div class="minibar-fill local" style="width:${lPct}%"></div></div><span class="minibar-val">${r.Local}</span></div></td>
+              <td><div class="minibar-wrap"><div class="minibar-track"><div class="minibar-fill foraneo" style="width:${fPct}%"></div></div><span class="minibar-val">${r.Foraneo}</span></div></td>
+              <td class="num"><div class="minibar-wrap" style="justify-content:flex-end"><div class="minibar-track"><div class="minibar-fill total" style="width:${tPct}%"></div></div><span class="minibar-val">${r.Total}</span></div></td>
+              <td><div class="pctbar-wrap"><div class="pctbar-track"><div class="pctbar-fill" style="width:${bPct}%;background:${color.fill}"></div></div><span class="pctbar-lbl ${r.PctViajes>=100?'pct-ok':r.PctViajes>=70?'pct-warn':'pct-low'}">${pctDisplay}</span></div></td>
+              <td class="num"><span class="pill pill-green">${r.Meta}</span></td>
+              <td class="center"><span class="${color.cls}" style="font-size:11px">${color.label}</span></td>
+            </tr>`;}).join('')}
+          </tbody>
+          <tfoot><tr>
+            <td colspan="4">TOTALES</td>
+            <td class="num">—</td>
+            <td class="num">${k.local}</td>
+            <td class="num">${k.foraneo}</td>
+            <td class="num">${k.total}</td>
+            <td class="num">${k.pctPromedio.toFixed(1)}%</td>
+            <td class="num">—</td>
+            <td class="center">${k.metaCump}/${k.n} ✓</td>
+          </tr></tfoot>
+        </table></div>
+      </div>`;
+
+    window.sortTable=sortTable;
+    window.applyFiltersColab=()=>{
+      filtroMes=document.getElementById('cv-mes').value;
+      filtroUnidad=document.getElementById('cv-unidad').value;
+      filtroColab=document.getElementById('cv-colab').value.trim();
+      ['cv-bar-top','cv-dona-unidad','cv-pct-bar'].forEach(DC);
+      render();
+    };
+    window.clearFiltersColab=()=>{
+      filtroMes=mesesList[0]||'todos';filtroUnidad='todos';filtroColab='';
+      ['cv-bar-top','cv-dona-unidad','cv-pct-bar'].forEach(DC);render();
+    };
+
     setTimeout(()=>{
       const gc='rgba(0,0,0,0.05)',tc='#9A7078',mf='JetBrains Mono';
-      DC('cv-bar-top');CI['cv-bar-top']=new Chart(document.getElementById('cv-bar-top'),{type:'bar',data:{labels:top5.map(r=>r.Colaborador.split(' ').slice(0,2).join(' ')),datasets:[{label:'Local',data:top5.map(r=>r.Local),backgroundColor:'rgba(26,58,112,0.85)',borderRadius:4,borderSkipped:false},{label:'Foráneo',data:top5.map(r=>r.Foraneo),backgroundColor:'rgba(26,158,130,0.85)',borderRadius:4,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{color:'#5C3038',font:{size:11,family:'Outfit'},usePointStyle:true,padding:16}},datalabels:{display:false}},scales:{x:{grid:{display:false},ticks:{color:tc,font:{size:10,family:mf},maxRotation:0},border:{color:'transparent'}},y:{grid:{color:gc},ticks:{color:tc,font:{size:11}},border:{color:'transparent'},beginAtZero:true,grace:'15%'}}}});
-      DC('cv-dona-unidad');CI['cv-dona-unidad']=new Chart(document.getElementById('cv-dona-unidad'),{type:'doughnut',data:{labels:uKeys,datasets:[{data:uKeys.map(u=>uTot[u]),backgroundColor:uKeys.map(u=>uColors[u]||'rgba(150,150,150,0.75)'),borderWidth:0,hoverOffset:8}]},options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{position:'bottom',labels:{color:'#5C3038',font:{size:12,family:'Outfit'},usePointStyle:true,padding:14}},tooltip:{callbacks:{label:c=>{const tot=c.dataset.data.reduce((a,b)=>a+b,0);return`${c.label}: ${c.parsed} (${Math.round(c.parsed/tot*100)}%)`}}},datalabels:{color:'#fff',font:{size:11,family:mf,weight:'700'},formatter:(v,ctx)=>{const tot=ctx.dataset.data.reduce((a,b)=>a+b,0);return tot&&v?Math.round(v/tot*100)+'%':''}}}}});
-      DC('cv-pct-bar');const sp=[...data].sort((a,b)=>b.PctViajes-a.PctViajes);const pc=document.getElementById('cv-pct-bar');const pH=Math.max(280,data.length*32);pc.style.height=pH+'px';pc.height=pH;
-      CI['cv-pct-bar']=new Chart(pc,{type:'bar',data:{labels:sp.map(r=>r.Colaborador.split(' ').slice(0,3).join(' ')),datasets:[{label:'% de Viajes',data:sp.map(r=>+(r.PctViajes*100).toFixed(2)),backgroundColor:sp.map(r=>{const ratio=r.NoViajMin>0?r.Total/r.NoViajMin:0;return ratio>=1?'rgba(26,158,92,0.80)':ratio>=0.7?'rgba(184,122,16,0.80)':'rgba(192,21,42,0.80)';}),borderRadius:4,borderSkipped:false}]},options:{indexAxis:'y',responsive:false,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.parsed.x.toFixed(1)}%`}},datalabels:{anchor:'end',align:'end',offset:2,color:'#5C3038',font:{size:10,family:mf,weight:'600'},formatter:v=>`${v.toFixed(1)}%`}},scales:{y:{grid:{display:false},ticks:{color:tc,font:{size:10,family:mf}},border:{color:'transparent'}},x:{grid:{color:gc},ticks:{color:tc,font:{size:10},callback:v=>`${v}%`},border:{color:'transparent'},beginAtZero:true,grace:'10%',max:Math.ceil(Math.max(...data.map(r=>r.PctViajes*100))*1.15)||30}}}});
+      DC('cv-bar-top');
+      CI['cv-bar-top']=new Chart(document.getElementById('cv-bar-top'),{type:'bar',
+        data:{labels:top5.map(r=>r.Colaborador.split(' ').slice(0,2).join(' ')),
+          datasets:[
+            {label:'Local',data:top5.map(r=>r.Local),backgroundColor:'rgba(26,58,112,0.85)',borderRadius:4,borderSkipped:false},
+            {label:'Foráneo',data:top5.map(r=>r.Foraneo),backgroundColor:'rgba(26,158,130,0.85)',borderRadius:4,borderSkipped:false}
+          ]},
+        options:{responsive:true,maintainAspectRatio:false,
+          plugins:{legend:{display:true,position:'bottom',labels:{color:'#5C3038',font:{size:11,family:'Outfit'},usePointStyle:true,padding:16}},
+            datalabels:{display:false}},
+          scales:{x:{grid:{display:false},ticks:{color:tc,font:{size:10,family:mf},maxRotation:0},border:{color:'transparent'}},
+            y:{grid:{color:gc},ticks:{color:tc,font:{size:11}},border:{color:'transparent'},beginAtZero:true,grace:'15%'}}}
+      });
+
+      DC('cv-dona-unidad');
+      CI['cv-dona-unidad']=new Chart(document.getElementById('cv-dona-unidad'),{type:'doughnut',
+        data:{labels:uKeys,datasets:[{data:uKeys.map(u=>uTot[u]),backgroundColor:uKeys.map(u=>uColors[u]||'rgba(150,150,150,0.75)'),borderWidth:0,hoverOffset:8}]},
+        options:{responsive:true,maintainAspectRatio:false,cutout:'62%',
+          plugins:{legend:{position:'bottom',labels:{color:'#5C3038',font:{size:12,family:'Outfit'},usePointStyle:true,padding:14}},
+            tooltip:{callbacks:{label:c=>{const tot=c.dataset.data.reduce((a,b)=>a+b,0);return`${c.label}: ${c.parsed} (${Math.round(c.parsed/tot*100)}%)`}}},
+            datalabels:{color:'#fff',font:{size:11,family:mf,weight:'700'},formatter:(v,ctx)=>{const tot=ctx.dataset.data.reduce((a,b)=>a+b,0);return tot&&v?Math.round(v/tot*100)+'%':''}}}}
+      });
+
+      // ── Gráfica % por colaborador — PctViajes ya es 0–100 ──
+      DC('cv-pct-bar');
+      const sp=[...data].sort((a,b)=>b.PctViajes-a.PctViajes);
+      const pc=document.getElementById('cv-pct-bar');
+      const pH=Math.max(280,data.length*32);
+      pc.style.height=pH+'px';pc.height=pH;
+      const maxPct=Math.max(...sp.map(r=>r.PctViajes),100);
+      CI['cv-pct-bar']=new Chart(pc,{type:'bar',
+        data:{labels:sp.map(r=>r.Colaborador.split(' ').slice(0,3).join(' ')),
+          datasets:[{label:'% de Viajes',
+            data:sp.map(r=>+r.PctViajes.toFixed(1)),
+            backgroundColor:sp.map(r=>{
+              if(r.PctViajes>=100)return'rgba(26,158,92,0.80)';
+              if(r.PctViajes>=70)return'rgba(184,122,16,0.80)';
+              return'rgba(192,21,42,0.80)';
+            }),
+            borderRadius:4,borderSkipped:false}]},
+        options:{indexAxis:'y',responsive:false,maintainAspectRatio:false,
+          plugins:{legend:{display:false},
+            tooltip:{callbacks:{label:c=>`${c.parsed.x.toFixed(1)}%`}},
+            datalabels:{anchor:'end',align:'end',offset:2,color:'#5C3038',font:{size:10,family:mf,weight:'600'},formatter:v=>`${v.toFixed(1)}%`}},
+          scales:{
+            y:{grid:{display:false},ticks:{color:tc,font:{size:10,family:mf}},border:{color:'transparent'}},
+            x:{grid:{color:gc},ticks:{color:tc,font:{size:10},callback:v=>`${v}%`},border:{color:'transparent'},beginAtZero:true,
+               grace:'10%',max:Math.ceil(maxPct*1.15)||120}}}
+      });
     },80);
   }
   render();
@@ -1251,19 +1213,16 @@ function switchTab(areaKey,subId,btn){
 /* ══════════════════════════
    SLIDESHOWS
 ══════════════════════════ */
-
-/* Helpers de formato */
 function ss$(n){if(!n&&n!==0)return'—';return'$'+Math.abs(n).toLocaleString('es-MX');}
-function ssTrend(n){if(!n)return`<span class="trend-neu">—</span>`;const pct=n>0?'+'+Math.abs(n).toLocaleString('es-MX'):'-'+Math.abs(n).toLocaleString('es-MX');return`<span class="${n>0?'trend-up':'trend-down'}">${n>0?'▲':'▼'} $${Math.abs(n).toLocaleString('es-MX')}</span>`;}
+function ssTrend(n){if(!n)return`<span class="trend-neu">—</span>`;return`<span class="${n>0?'trend-up':'trend-down'}">${n>0?'▲':'▼'} $${Math.abs(n).toLocaleString('es-MX')}</span>`;}
 function ssPct(a,b){if(!b)return'';const p=((a-b)/b*100);return`<span class="${p>0?'trend-up':'trend-down'}">${p>0?'+':''}${p.toFixed(1)}%</span>`;}
 const SS_MF='JetBrains Mono',SS_GC='rgba(255,255,255,0.06)',SS_TC='rgba(255,255,255,0.28)';
 function ssChartDefaults(){return{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false}};}
 
-/* ── CASETAS ── */
+/* ── CASETAS SLIDESHOW ── */
 function abrirSlideshowCasetas(){
   const CM=window._casetasMensual||[],CC=window._casetasComparativo||[];
   if(!CM.length){alert('Carga los datos primero desde el módulo de Casetas.');return;}
-  // Usar datos del filtro activo (guardados en _ssData)
   const data=window._ssDataCasetas||CM;
   const tot23=data.reduce((s,r)=>s+r.c23,0),tot24=data.reduce((s,r)=>s+r.c24,0);
   const tot25=data.reduce((s,r)=>s+r.c25,0),tot26=data.reduce((s,r)=>s+r.c26,0);
@@ -1275,7 +1234,6 @@ function abrirSlideshowCasetas(){
   const pct2425=tot24>0?((dif2425/tot24)*100).toFixed(1):'—';
 
   ssSlides=[
-    /* 0 — Portada */
     `<div class="ss-slide active" id="ss-slide-0"><div class="ss-cover">
       <div class="ss-cover-line"></div>
       <div class="ss-cover-eyebrow">Logística · FIS FIBER</div>
@@ -1284,87 +1242,52 @@ function abrirSlideshowCasetas(){
       <div class="ss-cover-period">📅 ${periodo} · ${new Date().toLocaleDateString('es-MX',{day:'numeric',month:'long',year:'numeric'})}</div>
       <div class="ss-cover-line"></div>
     </div></div>`,
-
-    /* 1 — KPIs acumulados */
     `<div class="ss-slide" id="ss-slide-1">
       <div class="ss-slide-eyebrow">Resumen ejecutivo</div>
       <div class="ss-slide-heading">Gasto acumulado <span>${periodo}</span></div>
       <div class="ss-filtro-badge">🗓 Período: <b>${periodo}</b> · ${data.length} meses · ${mesesCon26.length} con dato 2026</div>
       <div class="ss-kpi-grid">
-        <div class="ss-kpi" style="--sskpi-c:rgba(107,114,128,0.9)">
-          <div class="lbl">Casetas 2023</div><div class="val">${ss$(tot23)}</div>
-          <div class="sub">Año base de referencia</div>
-        </div>
-        <div class="ss-kpi" style="--sskpi-c:rgba(26,95,160,0.9)">
-          <div class="lbl">Casetas 2024</div><div class="val">${ss$(tot24)}</div>
-          <div class="sub">vs 2023</div><div class="trend">${ssTrend(tot24-tot23)} ${tot23>0?'('+((tot24-tot23)/tot23*100).toFixed(1)+'%)':''}</div>
-        </div>
-        <div class="ss-kpi" style="--sskpi-c:rgba(184,122,16,0.9)">
-          <div class="lbl">Casetas 2025</div><div class="val">${ss$(tot25)}</div>
-          <div class="sub">vs 2024</div><div class="trend">${ssTrend(dif2425)} ${pct2425!=='—'?'('+pct2425+'%)':''}</div>
-        </div>
-        <div class="ss-kpi" style="--sskpi-c:rgba(192,21,42,0.9)">
-          <div class="lbl">Casetas 2026</div><div class="val">${ss$(tot26)}</div>
-          <div class="sub">vs 2025 · ${mesesCon26.length} meses</div><div class="trend">${ssTrend(dif2526)} ${pct2526!=='—'?'('+pct2526+'%)':''}</div>
-        </div>
+        <div class="ss-kpi" style="--sskpi-c:rgba(107,114,128,0.9)"><div class="lbl">Casetas 2023</div><div class="val">${ss$(tot23)}</div><div class="sub">Año base</div></div>
+        <div class="ss-kpi" style="--sskpi-c:rgba(26,95,160,0.9)"><div class="lbl">Casetas 2024</div><div class="val">${ss$(tot24)}</div><div class="sub">vs 2023</div><div class="trend">${ssTrend(tot24-tot23)}</div></div>
+        <div class="ss-kpi" style="--sskpi-c:rgba(184,122,16,0.9)"><div class="lbl">Casetas 2025</div><div class="val">${ss$(tot25)}</div><div class="sub">vs 2024</div><div class="trend">${ssTrend(dif2425)} ${pct2425!=='—'?'('+pct2425+'%)':''}</div></div>
+        <div class="ss-kpi" style="--sskpi-c:rgba(192,21,42,0.9)"><div class="lbl">Casetas 2026</div><div class="val">${ss$(tot26)}</div><div class="sub">vs 2025 · ${mesesCon26.length} meses</div><div class="trend">${ssTrend(dif2526)} ${pct2526!=='—'?'('+pct2526+'%)':''}</div></div>
       </div>
       <div class="ss-two-col">
         <div class="ss-chart-wrap"><div class="ss-chart-title">Comparativo mensual 2023–2026</div><div class="ss-chart-inner"><canvas id="ss-bar-comp"></canvas></div></div>
-        <div class="ss-chart-wrap"><div class="ss-chart-title">2025 vs 2026 por mes · $ y %</div><div class="ss-chart-inner"><canvas id="ss-dona-est"></canvas></div></div>
+        <div class="ss-chart-wrap"><div class="ss-chart-title">2025 vs 2026 por mes</div><div class="ss-chart-inner"><canvas id="ss-dona-est"></canvas></div></div>
       </div>
     </div>`,
-
-    /* 2 — Tabla comparativa */
     `<div class="ss-slide" id="ss-slide-2">
       <div class="ss-slide-eyebrow">Comparativo anual</div>
       <div class="ss-slide-heading">Detalle por <span>mes</span></div>
-      <div class="ss-filtro-badge">🗓 <b>${periodo}</b> · ${data.length} meses mostrados</div>
+      <div class="ss-filtro-badge">🗓 <b>${periodo}</b> · ${data.length} meses</div>
       <div class="ss-table-wrap"><table class="ss-table">
-        <thead><tr><th>Mes</th><th class="r">2023</th><th class="r">2024</th><th class="r">2025</th><th class="r">2026</th><th class="r">Dif $ 25→26</th><th class="r">Dif % 25→26</th><th>Estatus</th></tr></thead>
-        <tbody>${data.map(r=>{
-          const difAmt=r.dif2526;
-          const difPct=r.c25>0?((difAmt/r.c25)*100).toFixed(1)+'%':'—';
-          const color=r.c26>0&&difAmt>0?'#ff8896':r.c26>0?'#4ade80':'rgba(255,255,255,0.2)';
-          const bg=r.c26>0&&difAmt>0?'rgba(192,21,42,0.15)':r.c26>0?'rgba(26,158,92,0.12)':'transparent';
-          return`<tr>
-            <td><b>${r.mes.charAt(0)+r.mes.slice(1).toLowerCase()}</b></td>
-            <td class="r" style="color:rgba(255,255,255,0.45)">${ss$(r.c23)}</td>
-            <td class="r" style="color:rgba(255,255,255,0.55)">${ss$(r.c24)}</td>
-            <td class="r" style="color:rgba(255,255,255,0.75)">${ss$(r.c25)}</td>
-            <td class="r" style="color:#fff;font-weight:700">${r.c26>0?ss$(r.c26):'<span style="color:rgba(255,255,255,0.2)">—</span>'}</td>
-            <td class="r" style="color:${color};font-weight:700">${r.c26>0?(difAmt>0?'▲ ':'▼ ')+ss$(Math.abs(difAmt)):'—'}</td>
-            <td class="r" style="color:${color};font-weight:700">${r.c26>0?difPct:'—'}</td>
-            <td><span style="padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;background:${bg};color:${color};border:1px solid ${color}20">${r.estatus}</span></td>
-          </tr>`;}).join('')}
+        <thead><tr><th>Mes</th><th class="r">2023</th><th class="r">2024</th><th class="r">2025</th><th class="r">2026</th><th class="r">Dif $</th><th class="r">Dif %</th><th>Estatus</th></tr></thead>
+        <tbody>${data.map(r=>{const difAmt=r.dif2526;const difPct=r.c25>0?((difAmt/r.c25)*100).toFixed(1)+'%':'—';const color=r.c26>0&&difAmt>0?'#ff8896':r.c26>0?'#4ade80':'rgba(255,255,255,0.2)';return`<tr>
+          <td><b>${r.mes.charAt(0)+r.mes.slice(1).toLowerCase()}</b></td>
+          <td class="r" style="color:rgba(255,255,255,0.45)">${ss$(r.c23)}</td>
+          <td class="r" style="color:rgba(255,255,255,0.55)">${ss$(r.c24)}</td>
+          <td class="r" style="color:rgba(255,255,255,0.75)">${ss$(r.c25)}</td>
+          <td class="r" style="color:#fff;font-weight:700">${r.c26>0?ss$(r.c26):'—'}</td>
+          <td class="r" style="color:${color};font-weight:700">${r.c26>0?(difAmt>0?'▲ ':'▼ ')+ss$(Math.abs(difAmt)):'—'}</td>
+          <td class="r" style="color:${color};font-weight:700">${r.c26>0?difPct:'—'}</td>
+          <td>${r.c26>0?`<span style="padding:3px 8px;border-radius:20px;font-size:10px;font-weight:700;background:${r.estatus==='Ahorro'?'rgba(26,158,92,0.15)':'rgba(192,21,42,0.15)'};color:${color}">${r.estatus}</span>`:'—'}</td>
+        </tr>`;}).join('')}
         </tbody>
-        <tfoot><tr>
-          <td>TOTAL</td>
-          <td class="r">${ss$(tot23)}</td><td class="r">${ss$(tot24)}</td><td class="r">${ss$(tot25)}</td>
-          <td class="r" style="color:#fff">${ss$(tot26)}</td>
-          <td class="r" style="color:${dif2526>0?'#ff8896':'#4ade80'};font-weight:700">${dif2526>0?'▲ ':'▼ '}${ss$(Math.abs(dif2526))}</td>
-          <td class="r" style="color:${dif2526>0?'#ff8896':'#4ade80'};font-weight:700">${pct2526!=='—'?(dif2526>0?'+':'')+pct2526+'%':'—'}</td>
-          <td>${ahorros}/${mesesCon26.length} Ahorro</td>
-        </tr></tfoot>
+        <tfoot><tr><td>TOTAL</td><td class="r">${ss$(tot23)}</td><td class="r">${ss$(tot24)}</td><td class="r">${ss$(tot25)}</td><td class="r" style="color:#fff">${ss$(tot26)}</td><td class="r" style="color:${dif2526>0?'#ff8896':'#4ade80'};font-weight:700">${dif2526>0?'▲ ':'▼ '}${ss$(Math.abs(dif2526))}</td><td class="r" style="color:${dif2526>0?'#ff8896':'#4ade80'};font-weight:700">${pct2526!=='—'?(dif2526>0?'+':'')+pct2526+'%':'—'}</td><td>${ahorros}/${mesesCon26.length} Ahorro</td></tr></tfoot>
       </table></div>
     </div>`,
-
-    /* 3 — Por unidad */
     `<div class="ss-slide" id="ss-slide-3">
-      <div class="ss-slide-eyebrow">Análisis por unidad</div>
+      <div class="ss-slide-eyebrow">Por unidad</div>
       <div class="ss-slide-heading">Gasto por <span>unidad 2026</span></div>
       <div class="ss-kpi-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:1.25rem">
         ${(()=>{const t24=CC.reduce((s,r)=>s+r.c24,0),t25=CC.reduce((s,r)=>s+r.c25,0),t26=CC.reduce((s,r)=>s+r.c26,0);const d=t26-t25;const p=t25>0?((d/t25)*100).toFixed(1):'—';return`
           <div class="ss-kpi" style="--sskpi-c:rgba(26,95,160,0.9)"><div class="lbl">Total 2024</div><div class="val">${ss$(t24)}</div></div>
           <div class="ss-kpi" style="--sskpi-c:rgba(184,122,16,0.9)"><div class="lbl">Total 2025</div><div class="val">${ss$(t25)}</div></div>
-          <div class="ss-kpi" style="--sskpi-c:rgba(192,21,42,0.9)"><div class="lbl">Total 2026</div><div class="val">${ss$(t26)}</div>
-            <div class="sub">${CC.filter(r=>r.estatus==='Ahorro').length}/${CC.length} unidades en ahorro</div>
-            <div class="trend">${ssTrend(d)} ${p!=='—'?'('+p+'%)':''}</div>
-          </div>`;})()}
+          <div class="ss-kpi" style="--sskpi-c:rgba(192,21,42,0.9)"><div class="lbl">Total 2026</div><div class="val">${ss$(t26)}</div><div class="sub">${CC.filter(r=>r.estatus==='Ahorro').length}/${CC.length} en ahorro</div><div class="trend">${ssTrend(d)} ${p!=='—'?'('+p+'%)':''}</div></div>`;})()}
       </div>
-      <div class="ss-full-col"><div class="ss-chart-wrap" style="flex:1"><div class="ss-chart-title">Top unidades · gasto 2025 vs 2026 (monto + % variación)</div><div class="ss-chart-inner"><canvas id="ss-top-unidades"></canvas></div></div></div>
+      <div class="ss-full-col"><div class="ss-chart-wrap" style="flex:1"><div class="ss-chart-title">Top unidades · 2025 vs 2026</div><div class="ss-chart-inner"><canvas id="ss-top-unidades"></canvas></div></div></div>
     </div>`,
-
-    /* 4 — Cierre */
     `<div class="ss-slide" id="ss-slide-4"><div class="ss-end">
       <div class="ss-end-badge">FIS FIBER · Logística</div>
       <div class="ss-end-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 20l-5.447-2.724A1 1 0 0 1 3 16.382V5.618a1 1 0 0 1 1.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0 0 21 18.382V7.618a1 1 0 0 0-.553-.894L15 4m0 13V4m0 0L9 7"/></svg></div>
@@ -1374,226 +1297,95 @@ function abrirSlideshowCasetas(){
         <div class="ss-end-stat-item"><div class="ss-end-stat-val" style="color:${dif2526>0?'#ff8896':'#4ade80'}">${dif2526>0?'▲':'▼'} ${ss$(Math.abs(dif2526))}</div><div class="ss-end-stat-lbl">vs 2025</div></div>
         <div class="ss-end-stat-item"><div class="ss-end-stat-val">${ahorros}/${mesesCon26.length}</div><div class="ss-end-stat-lbl">Meses en ahorro</div></div>
       </div>
-      <div class="ss-end-sub">${periodo} · Período: ${new Date().toLocaleDateString('es-MX',{month:'long',year:'numeric'})}</div>
+      <div class="ss-end-sub">${periodo}</div>
     </div></div>`,
   ];
-
   _abrirSS('FIS <span>FIBER</span> · Casetas');
   setTimeout(()=>{
     const labels=data.map(r=>r.mes.substring(0,3));
     DC('ss-bar-comp');
-    CI['ss-bar-comp']=new Chart(document.getElementById('ss-bar-comp'),{type:'bar',
-      data:{labels,datasets:[
-        {label:'2023',data:data.map(r=>r.c23),backgroundColor:'rgba(107,114,128,0.35)',borderRadius:3,borderSkipped:false,
-         datalabels:{display:true,anchor:'end',align:'end',clamp:true,offset:1,color:'rgba(148,163,184,0.75)',font:{size:8,family:SS_MF,weight:'600'},formatter:v=>v>0?'$'+Math.round(v/1000)+'k':''}},
-        {label:'2024',data:data.map(r=>r.c24),backgroundColor:'rgba(26,95,160,0.5)',borderRadius:3,borderSkipped:false,
-         datalabels:{display:true,anchor:'end',align:'end',clamp:true,offset:1,color:'rgba(96,165,250,0.85)',font:{size:8,family:SS_MF,weight:'600'},formatter:v=>v>0?'$'+Math.round(v/1000)+'k':''}},
-        {label:'2025',data:data.map(r=>r.c25),backgroundColor:'rgba(184,122,16,0.55)',borderRadius:3,borderSkipped:false,
-         datalabels:{display:true,anchor:'end',align:'end',clamp:true,offset:1,color:'rgba(251,191,36,0.9)',font:{size:8,family:SS_MF,weight:'600'},formatter:v=>v>0?'$'+Math.round(v/1000)+'k':''}},
-        {label:'2026',data:data.map(r=>r.c26>0?r.c26:null),
-         backgroundColor:data.map(r=>r.c26>0&&r.dif2526<0?'rgba(74,222,128,0.82)':'rgba(255,120,138,0.82)'),
-         borderRadius:3,borderSkipped:false,
-         datalabels:{display:true,anchor:'end',align:'end',clamp:true,offset:1,
-           color:data.map(r=>r.c26>0&&r.dif2526<0?'#4ade80':'#ff8896'),
-           font:{size:8,family:SS_MF,weight:'700'},formatter:v=>v!=null?'$'+Math.round(v/1000)+'k':''}},
-      ]},
-      options:{...ssChartDefaults(),plugins:{
-        legend:{display:true,position:'bottom',labels:{color:'rgba(255,255,255,0.4)',font:{size:10,family:'Outfit'},usePointStyle:true,padding:10}},
-        datalabels:{},tooltip:{callbacks:{label:c=>`${c.dataset.label}: $${(c.parsed.y||0).toLocaleString('es-MX')}`}}
-      },scales:{
-        x:{grid:{display:false},ticks:{color:SS_TC,font:{size:9,family:SS_MF}},border:{color:'transparent'}},
-        y:{grid:{color:SS_GC},ticks:{color:SS_TC,font:{size:9},callback:v=>{const a=Math.abs(v);return a>=1000?'$'+Math.round(a/1000)+'k':'$'+a;}},border:{color:'transparent'},beginAtZero:true,
-           max:Math.ceil(Math.max(...data.map(r=>Math.max(r.c23,r.c24,r.c25,r.c26||0)))*1.28)||300000}
-      }}
-    });
-    // ── Reemplazar dona por barras 2025 vs 2026 con etiqueta monto+% ──
+    CI['ss-bar-comp']=new Chart(document.getElementById('ss-bar-comp'),{type:'bar',data:{labels,datasets:[
+      {label:'2023',data:data.map(r=>r.c23),backgroundColor:'rgba(107,114,128,0.35)',borderRadius:3,borderSkipped:false,datalabels:{display:true,anchor:'end',align:'end',clamp:true,offset:1,color:'rgba(148,163,184,0.75)',font:{size:8,family:SS_MF,weight:'600'},formatter:v=>v>0?'$'+Math.round(v/1000)+'k':''}},
+      {label:'2024',data:data.map(r=>r.c24),backgroundColor:'rgba(26,95,160,0.5)',borderRadius:3,borderSkipped:false,datalabels:{display:true,anchor:'end',align:'end',clamp:true,offset:1,color:'rgba(96,165,250,0.85)',font:{size:8,family:SS_MF,weight:'600'},formatter:v=>v>0?'$'+Math.round(v/1000)+'k':''}},
+      {label:'2025',data:data.map(r=>r.c25),backgroundColor:'rgba(184,122,16,0.55)',borderRadius:3,borderSkipped:false,datalabels:{display:true,anchor:'end',align:'end',clamp:true,offset:1,color:'rgba(251,191,36,0.9)',font:{size:8,family:SS_MF,weight:'600'},formatter:v=>v>0?'$'+Math.round(v/1000)+'k':''}},
+      {label:'2026',data:data.map(r=>r.c26>0?r.c26:null),backgroundColor:data.map(r=>r.c26>0&&r.dif2526<0?'rgba(74,222,128,0.82)':'rgba(255,120,138,0.82)'),borderRadius:3,borderSkipped:false,datalabels:{display:true,anchor:'end',align:'end',clamp:true,offset:1,color:data.map(r=>r.c26>0&&r.dif2526<0?'#4ade80':'#ff8896'),font:{size:8,family:SS_MF,weight:'700'},formatter:v=>v!=null?'$'+Math.round(v/1000)+'k':''}},
+    ]},options:{...ssChartDefaults(),plugins:{legend:{display:true,position:'bottom',labels:{color:'rgba(255,255,255,0.4)',font:{size:10,family:'Outfit'},usePointStyle:true,padding:10}},datalabels:{},tooltip:{callbacks:{label:c=>`${c.dataset.label}: $${(c.parsed.y||0).toLocaleString('es-MX')}`}}},scales:{x:{grid:{display:false},ticks:{color:SS_TC,font:{size:9,family:SS_MF}},border:{color:'transparent'}},y:{grid:{color:SS_GC},ticks:{color:SS_TC,font:{size:9},callback:v=>{const a=Math.abs(v);return a>=1000?'$'+Math.round(a/1000)+'k':'$'+a;}},border:{color:'transparent'},beginAtZero:true,max:Math.ceil(Math.max(...data.map(r=>Math.max(r.c23,r.c24,r.c25,r.c26||0)))*1.28)||300000}}}});
     DC('ss-dona-est');
     const conDatoSS=data.filter(r=>r.c26>0);
-    CI['ss-dona-est']=new Chart(document.getElementById('ss-dona-est'),{type:'bar',
-      data:{labels:conDatoSS.map(r=>r.mes.substring(0,3)),datasets:[
-        {label:'2025',data:conDatoSS.map(r=>r.c25),backgroundColor:'rgba(251,191,36,0.6)',borderRadius:4,borderSkipped:false,
-         datalabels:{display:true,anchor:'end',align:'end',clamp:true,offset:1,color:'rgba(251,191,36,0.85)',font:{size:8,family:SS_MF,weight:'600'},formatter:v=>'$'+Math.round(v/1000)+'k'}},
-        {label:'2026',data:conDatoSS.map(r=>r.c26),
-         backgroundColor:conDatoSS.map(r=>r.dif2526<0?'rgba(74,222,128,0.82)':'rgba(255,120,138,0.82)'),
-         borderRadius:4,borderSkipped:false,
-         datalabels:{display:true,anchor:'end',align:'end',clamp:true,offset:1,
-           color:conDatoSS.map(r=>r.dif2526<0?'#4ade80':'#ff8896'),
-           font:{size:8,family:SS_MF,weight:'700'},
-           formatter:(v,ctx)=>{
-             const r=conDatoSS[ctx.dataIndex];
-             const pct=r.c25>0?((r.dif2526/r.c25)*100).toFixed(0):0;
-             return '$'+Math.round(v/1000)+'k\n'+(pct>0?'+':'')+pct+'%';
-           }}}
-      ]},
-      options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{
-        legend:{display:true,position:'bottom',labels:{color:'rgba(255,255,255,0.4)',font:{size:10,family:'Outfit'},usePointStyle:true,padding:10}},
-        datalabels:{},
-        tooltip:{callbacks:{label:c=>`${c.dataset.label}: $${c.parsed.y.toLocaleString('es-MX')}`,
-          afterBody:items=>{const r=conDatoSS[items[0]?.dataIndex];if(!r)return[];const p=r.c25>0?((r.dif2526/r.c25)*100).toFixed(1):0;return[`Var: ${p>0?'+':''}${p}% ($${Math.abs(r.dif2526).toLocaleString('es-MX')})`];}}}
-      },scales:{
-        x:{grid:{display:false},ticks:{color:SS_TC,font:{size:9,family:SS_MF}},border:{color:'transparent'}},
-        y:{grid:{color:SS_GC},ticks:{color:SS_TC,font:{size:9},callback:v=>{const a=Math.abs(v);return a>=1000?'$'+Math.round(a/1000)+'k':'$'+a;}},border:{color:'transparent'},beginAtZero:true,
-           max:Math.ceil(Math.max(...conDatoSS.map(r=>Math.max(r.c25,r.c26)))*1.35)||100000}
-      }}
-    });
+    CI['ss-dona-est']=new Chart(document.getElementById('ss-dona-est'),{type:'bar',data:{labels:conDatoSS.map(r=>r.mes.substring(0,3)),datasets:[
+      {label:'2025',data:conDatoSS.map(r=>r.c25),backgroundColor:'rgba(251,191,36,0.6)',borderRadius:4,borderSkipped:false,datalabels:{display:true,anchor:'end',align:'end',clamp:true,offset:1,color:'rgba(251,191,36,0.85)',font:{size:8,family:SS_MF,weight:'600'},formatter:v=>'$'+Math.round(v/1000)+'k'}},
+      {label:'2026',data:conDatoSS.map(r=>r.c26),backgroundColor:conDatoSS.map(r=>r.dif2526<0?'rgba(74,222,128,0.82)':'rgba(255,120,138,0.82)'),borderRadius:4,borderSkipped:false,datalabels:{display:true,anchor:'end',align:'end',clamp:true,offset:1,color:conDatoSS.map(r=>r.dif2526<0?'#4ade80':'#ff8896'),font:{size:8,family:SS_MF,weight:'700'},formatter:(v,ctx)=>{const r=conDatoSS[ctx.dataIndex];const pct=r.c25>0?((r.dif2526/r.c25)*100).toFixed(0):0;return'$'+Math.round(v/1000)+'k\n'+(pct>0?'+':'')+pct+'%';}}}
+    ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:true,position:'bottom',labels:{color:'rgba(255,255,255,0.4)',font:{size:10,family:'Outfit'},usePointStyle:true,padding:10}},datalabels:{},tooltip:{callbacks:{label:c=>`${c.dataset.label}: $${c.parsed.y.toLocaleString('es-MX')}`}}},scales:{x:{grid:{display:false},ticks:{color:SS_TC,font:{size:9,family:SS_MF}},border:{color:'transparent'}},y:{grid:{color:SS_GC},ticks:{color:SS_TC,font:{size:9},callback:v=>{const a=Math.abs(v);return a>=1000?'$'+Math.round(a/1000)+'k':'$'+a;}},border:{color:'transparent'},beginAtZero:true,max:Math.ceil(Math.max(...conDatoSS.map(r=>Math.max(r.c25,r.c26)))*1.35)||100000}}}});
     DC('ss-top-unidades');
     const topU=[...CC].filter(r=>r.c26>0).sort((a,b)=>b.c26-a.c26).slice(0,10);
-    CI['ss-top-unidades']=new Chart(document.getElementById('ss-top-unidades'),{type:'bar',
-      data:{labels:topU.map(r=>r.unidad),datasets:[
-        {label:'2025',data:topU.map(r=>r.c25),backgroundColor:'rgba(184,122,16,0.45)',borderRadius:3,borderSkipped:false,datalabels:{display:false}},
-        {label:'2026',data:topU.map(r=>r.c26),backgroundColor:topU.map(r=>r.estatus==='Gasto'?'rgba(255,120,138,0.82)':'rgba(74,222,128,0.72)'),borderRadius:3,borderSkipped:false,
-          datalabels:{anchor:'end',align:'end',offset:1,color:'rgba(255,255,255,0.8)',font:{size:9,family:SS_MF,weight:'700'},
-            formatter:(v,ctx)=>{const r25=topU[ctx.dataIndex].c25;const pct=r25>0?((v-r25)/r25*100).toFixed(0):'—';return'$'+Math.round(v/1000)+'k'+(pct!=='—'?'\n'+(pct>0?'+':'')+pct+'%':'');}}}
-      ]},
-      options:{...ssChartDefaults(),plugins:{
-        legend:{display:true,position:'bottom',labels:{color:'rgba(255,255,255,0.4)',font:{size:10,family:'Outfit'},usePointStyle:true,padding:10}},
-        datalabels:{},tooltip:{callbacks:{label:c=>{const r=topU[c.dataIndex];const yr=c.dataset.label;const v=yr==='2025'?r.c25:r.c26;const d=yr==='2026'?r.c26-r.c25:null;const p=d!==null&&r.c25>0?(d/r.c25*100).toFixed(1):null;return[`${yr}: $${v.toLocaleString('es-MX')}`,d!==null?`Dif: ${d>0?'+':''}$${Math.abs(d).toLocaleString('es-MX')} (${p}%)`:''].filter(Boolean);}}}
-      },scales:{
-        x:{grid:{display:false},ticks:{color:SS_TC,font:{size:9,family:SS_MF}},border:{color:'transparent'}},
-        y:{grid:{color:SS_GC},ticks:{color:SS_TC,font:{size:9},callback:v=>'$'+Math.round(v/1000)+'k'},border:{color:'transparent'},beginAtZero:true,grace:'18%'}
-      }}
-    });
+    CI['ss-top-unidades']=new Chart(document.getElementById('ss-top-unidades'),{type:'bar',data:{labels:topU.map(r=>r.unidad),datasets:[
+      {label:'2025',data:topU.map(r=>r.c25),backgroundColor:'rgba(184,122,16,0.45)',borderRadius:3,borderSkipped:false,datalabels:{display:false}},
+      {label:'2026',data:topU.map(r=>r.c26),backgroundColor:topU.map(r=>r.estatus==='Gasto'?'rgba(255,120,138,0.82)':'rgba(74,222,128,0.72)'),borderRadius:3,borderSkipped:false,datalabels:{anchor:'end',align:'end',offset:1,color:'rgba(255,255,255,0.8)',font:{size:9,family:SS_MF,weight:'700'},formatter:(v,ctx)=>{const r25=topU[ctx.dataIndex].c25;const pct=r25>0?((v-r25)/r25*100).toFixed(0):'—';return'$'+Math.round(v/1000)+'k'+(pct!=='—'?'\n'+(pct>0?'+':'')+pct+'%':'');}}}
+    ]},options:{...ssChartDefaults(),plugins:{legend:{display:true,position:'bottom',labels:{color:'rgba(255,255,255,0.4)',font:{size:10,family:'Outfit'},usePointStyle:true,padding:10}},datalabels:{},tooltip:{callbacks:{label:c=>{const r=topU[c.dataIndex];const yr=c.dataset.label;const v=yr==='2025'?r.c25:r.c26;return`${yr}: $${v.toLocaleString('es-MX')}`;}}}},scales:{x:{grid:{display:false},ticks:{color:SS_TC,font:{size:9,family:SS_MF}},border:{color:'transparent'}},y:{grid:{color:SS_GC},ticks:{color:SS_TC,font:{size:9},callback:v=>'$'+Math.round(v/1000)+'k'},border:{color:'transparent'},beginAtZero:true,grace:'18%'}}}});
   },300);
 }
 
-/* ── CARGAS ── */
+/* ── CARGAS SLIDESHOW ── */
 function abrirSlideshowCargas(){
   const data=window._cargasData||[],k=window._cargasKpis||{tot:0,ant:0,noc:0,pct:0,prom:0,dias:0},periodo=window._cargasPeriodo||'Sin período';
   if(!data.length){alert('Sin datos de cargas disponibles.');return;}
   const bD=[0,0,0,0,0,0,0],bN=[0,0,0,0,0,0,0],bC=[0,0,0,0,0,0,0];
   data.forEach(r=>{const dow=new Date(r.Fecha+'T12:00:00').getDay();bD[dow]+=r.Anticipadas;bN[dow]+=r.Nocturnas;bC[dow]++;});
-
   ssSlides=[
-    `<div class="ss-slide active" id="ss-slide-0"><div class="ss-cover">
-      <div class="ss-cover-line"></div>
-      <div class="ss-cover-eyebrow">Logística · FIS FIBER</div>
-      <div class="ss-cover-title">Cargas <span>Anticipadas</span></div>
-      <div class="ss-cover-sub">Análisis de cargas anticipadas y nocturnas por período</div>
-      <div class="ss-cover-period">📅 ${periodo} · ${data.length} días registrados</div>
-      <div class="ss-cover-line"></div>
-    </div></div>`,
-
-    `<div class="ss-slide" id="ss-slide-1">
-      <div class="ss-slide-eyebrow">Resumen ejecutivo</div>
-      <div class="ss-slide-heading">KPIs del <span>período</span></div>
-      <div class="ss-filtro-badge">🗓 Período: <b>${periodo}</b> · ${k.dias} días registrados</div>
-      <div class="ss-kpi-grid">
-        <div class="ss-kpi" style="--sskpi-c:#fff"><div class="lbl">Total cargas</div><div class="val">${k.tot}</div><div class="sub">${k.dias} días · prom ${k.prom}/día</div></div>
-        <div class="ss-kpi" style="--sskpi-c:rgba(26,95,160,0.9)"><div class="lbl">Anticipadas</div><div class="val">${k.ant}</div><div class="sub">${k.pct}% del total</div></div>
-        <div class="ss-kpi" style="--sskpi-c:rgba(26,158,130,0.9)"><div class="lbl">Nocturnas</div><div class="val">${k.noc}</div><div class="sub">${100-k.pct}% del total</div></div>
-        <div class="ss-kpi" style="--sskpi-c:rgba(26,158,92,0.9)"><div class="lbl">Promedio/día</div><div class="val">${k.prom}</div><div class="sub">cargas por día hábil</div></div>
-      </div>
-      <div class="ss-two-col">
-        <div class="ss-chart-wrap"><div class="ss-chart-title">Anticipadas vs Nocturnas</div><div class="ss-chart-inner"><canvas id="ss-c-dona"></canvas></div></div>
-        <div class="ss-chart-wrap"><div class="ss-chart-title">Promedio por día de semana</div><div class="ss-chart-inner"><canvas id="ss-c-dow"></canvas></div></div>
-      </div>
-    </div>`,
-
-    `<div class="ss-slide" id="ss-slide-2">
-      <div class="ss-slide-eyebrow">Evolución temporal</div>
-      <div class="ss-slide-heading">Tendencia <span>acumulada</span></div>
-      <div class="ss-filtro-badge">🗓 <b>${periodo}</b> · Total acumulado: <b>${k.tot} cargas</b></div>
-      <div class="ss-full-col"><div class="ss-chart-wrap" style="flex:1"><div class="ss-chart-title">Acumulado total de cargas · ${periodo}</div><div class="ss-chart-inner"><canvas id="ss-c-acum"></canvas></div></div></div>
-    </div>`,
-
-    `<div class="ss-slide" id="ss-slide-3"><div class="ss-end">
-      <div class="ss-end-badge">FIS FIBER · Logística</div>
-      <div class="ss-end-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>
-      <div class="ss-end-title">Cargas Anticipadas</div>
-      <div class="ss-end-stat">
-        <div class="ss-end-stat-item"><div class="ss-end-stat-val">${k.tot}</div><div class="ss-end-stat-lbl">Total cargas</div></div>
-        <div class="ss-end-stat-item"><div class="ss-end-stat-val">${k.pct}%</div><div class="ss-end-stat-lbl">Anticipadas</div></div>
-        <div class="ss-end-stat-item"><div class="ss-end-stat-val">${k.prom}</div><div class="ss-end-stat-lbl">Prom. diario</div></div>
-      </div>
-      <div class="ss-end-sub">${periodo} · ${k.dias} días registrados</div>
-    </div></div>`,
+    `<div class="ss-slide active" id="ss-slide-0"><div class="ss-cover"><div class="ss-cover-line"></div><div class="ss-cover-eyebrow">Logística · FIS FIBER</div><div class="ss-cover-title">Cargas <span>Anticipadas</span></div><div class="ss-cover-sub">Análisis de cargas anticipadas y nocturnas</div><div class="ss-cover-period">📅 ${periodo} · ${data.length} días registrados</div><div class="ss-cover-line"></div></div></div>`,
+    `<div class="ss-slide" id="ss-slide-1"><div class="ss-slide-eyebrow">Resumen ejecutivo</div><div class="ss-slide-heading">KPIs del <span>período</span></div><div class="ss-filtro-badge">🗓 <b>${periodo}</b> · ${k.dias} días</div><div class="ss-kpi-grid"><div class="ss-kpi" style="--sskpi-c:#fff"><div class="lbl">Total cargas</div><div class="val">${k.tot}</div><div class="sub">prom ${k.prom}/día</div></div><div class="ss-kpi" style="--sskpi-c:rgba(26,95,160,0.9)"><div class="lbl">Anticipadas</div><div class="val">${k.ant}</div><div class="sub">${k.pct}%</div></div><div class="ss-kpi" style="--sskpi-c:rgba(26,158,130,0.9)"><div class="lbl">Nocturnas</div><div class="val">${k.noc}</div><div class="sub">${100-k.pct}%</div></div><div class="ss-kpi" style="--sskpi-c:rgba(26,158,92,0.9)"><div class="lbl">Promedio/día</div><div class="val">${k.prom}</div></div></div><div class="ss-two-col"><div class="ss-chart-wrap"><div class="ss-chart-title">Anticipadas vs Nocturnas</div><div class="ss-chart-inner"><canvas id="ss-c-dona"></canvas></div></div><div class="ss-chart-wrap"><div class="ss-chart-title">Promedio por día</div><div class="ss-chart-inner"><canvas id="ss-c-dow"></canvas></div></div></div></div>`,
+    `<div class="ss-slide" id="ss-slide-2"><div class="ss-slide-eyebrow">Tendencia</div><div class="ss-slide-heading">Acumulado <span>${periodo}</span></div><div class="ss-full-col"><div class="ss-chart-wrap" style="flex:1"><div class="ss-chart-title">Total acumulado · ${periodo}</div><div class="ss-chart-inner"><canvas id="ss-c-acum"></canvas></div></div></div></div>`,
+    `<div class="ss-slide" id="ss-slide-3"><div class="ss-end"><div class="ss-end-badge">FIS FIBER · Logística</div><div class="ss-end-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div><div class="ss-end-title">Cargas Anticipadas</div><div class="ss-end-stat"><div class="ss-end-stat-item"><div class="ss-end-stat-val">${k.tot}</div><div class="ss-end-stat-lbl">Total</div></div><div class="ss-end-stat-item"><div class="ss-end-stat-val">${k.pct}%</div><div class="ss-end-stat-lbl">Anticipadas</div></div><div class="ss-end-stat-item"><div class="ss-end-stat-val">${k.prom}</div><div class="ss-end-stat-lbl">Prom. diario</div></div></div><div class="ss-end-sub">${periodo}</div></div></div>`,
   ];
-
   _abrirSS('FIS <span>FIBER</span> · Cargas');
   setTimeout(()=>{
-    DC('ss-c-dona');
-    CI['ss-c-dona']=new Chart(document.getElementById('ss-c-dona'),{type:'doughnut',
-      data:{labels:['Anticipadas','Nocturnas'],datasets:[{data:[k.ant,k.noc],backgroundColor:['rgba(26,95,160,0.82)','rgba(26,158,130,0.82)'],borderWidth:0,hoverOffset:6}]},
-      options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{
-        legend:{position:'bottom',labels:{color:'rgba(255,255,255,0.45)',font:{size:11,family:'Outfit'},usePointStyle:true,padding:12}},
-        datalabels:{color:'#fff',font:{size:13,family:SS_MF,weight:'700'},formatter:(v,ctx)=>{const t=ctx.dataset.data.reduce((a,b)=>a+b,0);return t?Math.round(v/t*100)+'%':'';}},
-        tooltip:{callbacks:{label:c=>`${c.label}: ${c.parsed} (${Math.round(c.parsed/(k.ant+k.noc)*100)}%)`}}
-      }}
-    });
-    DC('ss-c-dow');
-    CI['ss-c-dow']=new Chart(document.getElementById('ss-c-dow'),{type:'bar',
-      data:{labels:DIAS,datasets:[
-        {label:'Anticipadas',data:bD.map((v,i)=>bC[i]?+(v/bC[i]).toFixed(1):0),backgroundColor:'rgba(26,95,160,0.7)',borderRadius:4,borderSkipped:false},
-        {label:'Nocturnas',data:bN.map((v,i)=>bC[i]?+(v/bC[i]).toFixed(1):0),backgroundColor:'rgba(26,158,130,0.7)',borderRadius:4,borderSkipped:false}
-      ]},
-      options:{responsive:true,maintainAspectRatio:false,plugins:{
-        legend:{display:true,position:'bottom',labels:{color:'rgba(255,255,255,0.4)',font:{size:10,family:'Outfit'},usePointStyle:true,padding:10}},
-        datalabels:{anchor:'end',align:'end',offset:1,color:'rgba(255,255,255,0.6)',font:{size:9,family:SS_MF,weight:'600'},formatter:v=>v||''}
-      },scales:{
-        x:{grid:{display:false},ticks:{color:SS_TC,font:{size:10,family:SS_MF}},border:{color:'transparent'}},
-        y:{grid:{color:SS_GC},ticks:{color:SS_TC,font:{size:9}},border:{color:'transparent'},beginAtZero:true}
-      }}
-    });
-    DC('ss-c-acum');
-    let ac2=0;const acL2=data.map(r=>{const d=new Date(r.Fecha+'T12:00:00');return`${d.getDate()}/${d.getMonth()+1}`;});
-    const acD2=data.map(r=>{ac2+=r.Anticipadas+r.Nocturnas;return ac2;});
-    CI['ss-c-acum']=new Chart(document.getElementById('ss-c-acum'),{type:'line',
-      data:{labels:acL2,datasets:[{label:'Acumulado',data:acD2,borderColor:'#C0152A',backgroundColor:'rgba(192,21,42,0.08)',borderWidth:2.5,pointRadius:1.5,fill:true,tension:0.4}]},
-      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},datalabels:{display:false},
-        tooltip:{callbacks:{label:c=>`Acumulado: ${c.parsed.y} cargas`}}},
-      scales:{
-        x:{grid:{display:false},ticks:{color:SS_TC,font:{size:9,family:SS_MF},maxTicksLimit:14,autoSkip:true},border:{color:'transparent'}},
-        y:{grid:{color:SS_GC},ticks:{color:SS_TC,font:{size:9}},border:{color:'transparent'},beginAtZero:true}
-      }}
-    });
+    DC('ss-c-dona');CI['ss-c-dona']=new Chart(document.getElementById('ss-c-dona'),{type:'doughnut',data:{labels:['Anticipadas','Nocturnas'],datasets:[{data:[k.ant,k.noc],backgroundColor:['rgba(26,95,160,0.82)','rgba(26,158,130,0.82)'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{position:'bottom',labels:{color:'rgba(255,255,255,0.45)',font:{size:11,family:'Outfit'},usePointStyle:true,padding:12}},datalabels:{color:'#fff',font:{size:13,family:SS_MF,weight:'700'},formatter:(v,ctx)=>{const t=ctx.dataset.data.reduce((a,b)=>a+b,0);return t?Math.round(v/t*100)+'%':'';}}}}});
+    DC('ss-c-dow');CI['ss-c-dow']=new Chart(document.getElementById('ss-c-dow'),{type:'bar',data:{labels:DIAS,datasets:[{label:'Ant.',data:bD.map((v,i)=>bC[i]?+(v/bC[i]).toFixed(1):0),backgroundColor:'rgba(26,95,160,0.7)',borderRadius:4,borderSkipped:false},{label:'Noc.',data:bN.map((v,i)=>bC[i]?+(v/bC[i]).toFixed(1):0),backgroundColor:'rgba(26,158,130,0.7)',borderRadius:4,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{color:'rgba(255,255,255,0.4)',font:{size:10,family:'Outfit'},usePointStyle:true,padding:10}},datalabels:{anchor:'end',align:'end',offset:1,color:'rgba(255,255,255,0.6)',font:{size:9,family:SS_MF,weight:'600'},formatter:v=>v||''}},scales:{x:{grid:{display:false},ticks:{color:SS_TC,font:{size:10,family:SS_MF}},border:{color:'transparent'}},y:{grid:{color:SS_GC},ticks:{color:SS_TC,font:{size:9}},border:{color:'transparent'},beginAtZero:true}}}});
+    DC('ss-c-acum');let ac2=0;const acL2=data.map(r=>{const d=new Date(r.Fecha+'T12:00:00');return`${d.getDate()}/${d.getMonth()+1}`;});const acD2=data.map(r=>{ac2+=r.Anticipadas+r.Nocturnas;return ac2;});
+    CI['ss-c-acum']=new Chart(document.getElementById('ss-c-acum'),{type:'line',data:{labels:acL2,datasets:[{label:'Acumulado',data:acD2,borderColor:'#C0152A',backgroundColor:'rgba(192,21,42,0.08)',borderWidth:2.5,pointRadius:1.5,fill:true,tension:0.4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},datalabels:{display:false}},scales:{x:{grid:{display:false},ticks:{color:SS_TC,font:{size:9,family:SS_MF},maxTicksLimit:14,autoSkip:true},border:{color:'transparent'}},y:{grid:{color:SS_GC},ticks:{color:SS_TC,font:{size:9}},border:{color:'transparent'},beginAtZero:true}}}});
   },300);
 }
 
-/* ── COLABORADORES ── */
+/* ── COLABORADORES SLIDESHOW — FIXED ── */
 function abrirSlideshowColab(){
   const data=window._ssColabData||[],k=window._ssColabKpis||{total:0,local:0,foraneo:0,metaCump:0,pctPromedio:0,n:0},periodo=window._ssColabPeriodo||'Sin período';
-  if(!data.length){alert('Sin datos de colaboradores disponibles.');return;}
+  if(!data.length){alert('Sin datos disponibles.');return;}
   const top5=[...data].sort((a,b)=>b.Total-a.Total).slice(0,5);
   const uTot={};data.forEach(r=>{uTot[r.Unidad]=(uTot[r.Unidad]||0)+r.Total;});
   const uKeys=Object.keys(uTot);
   const uColors={'CAMION':'rgba(26,58,112,0.85)','CAMIONETA':'rgba(26,158,130,0.85)','QUINTA':'rgba(184,122,16,0.85)'};
 
   ssSlides=[
-    `<div class="ss-slide active" id="ss-slide-0"><div class="ss-cover">
-      <div class="ss-cover-line"></div>
-      <div class="ss-cover-eyebrow">Logística · FIS FIBER</div>
-      <div class="ss-cover-title">Participación <span>Colaboradores</span></div>
-      <div class="ss-cover-sub">Productividad · viajes locales y foráneos · cumplimiento de metas</div>
-      <div class="ss-cover-period">📅 ${periodo} · ${k.n} colaboradores</div>
-      <div class="ss-cover-line"></div>
-    </div></div>`,
-
+    `<div class="ss-slide active" id="ss-slide-0"><div class="ss-cover"><div class="ss-cover-line"></div><div class="ss-cover-eyebrow">Logística · FIS FIBER</div><div class="ss-cover-title">Participación <span>Colaboradores</span></div><div class="ss-cover-sub">Productividad · viajes locales y foráneos · cumplimiento de metas</div><div class="ss-cover-period">📅 ${periodo} · ${k.n} colaboradores</div><div class="ss-cover-line"></div></div></div>`,
     `<div class="ss-slide" id="ss-slide-1">
       <div class="ss-slide-eyebrow">Resumen ejecutivo</div>
       <div class="ss-slide-heading">KPIs <span>${periodo}</span></div>
       <div class="ss-filtro-badge">🗓 <b>${periodo}</b> · ${k.n} colaboradores · ${k.metaCump} con meta cumplida</div>
       <div class="ss-kpi-grid">
-        <div class="ss-kpi" style="--sskpi-c:#fff"><div class="lbl">Total viajes</div><div class="val">${k.total}</div><div class="sub">${k.n} colaboradores activos</div></div>
-        <div class="ss-kpi" style="--sskpi-c:rgba(26,95,160,0.9)"><div class="lbl">Locales</div><div class="val">${k.local}</div><div class="sub">${k.total?Math.round(k.local/k.total*100):0}% del total</div></div>
-        <div class="ss-kpi" style="--sskpi-c:rgba(26,158,130,0.9)"><div class="lbl">Foráneos</div><div class="val">${k.foraneo}</div><div class="sub">${k.total?Math.round(k.foraneo/k.total*100):0}% del total</div></div>
-        <div class="ss-kpi" style="--sskpi-c:rgba(74,222,128,0.9)"><div class="lbl">Meta cumplida</div><div class="val">${k.metaCump}</div><div class="sub">de ${k.n} · ${k.n>0?Math.round(k.metaCump/k.n*100):0}% del equipo</div></div>
+        <div class="ss-kpi" style="--sskpi-c:#fff"><div class="lbl">Total viajes</div><div class="val">${k.total}</div><div class="sub">${k.n} activos</div></div>
+        <div class="ss-kpi" style="--sskpi-c:rgba(26,95,160,0.9)"><div class="lbl">Locales</div><div class="val">${k.local}</div><div class="sub">${k.total?Math.round(k.local/k.total*100):0}%</div></div>
+        <div class="ss-kpi" style="--sskpi-c:rgba(26,158,130,0.9)"><div class="lbl">Foráneos</div><div class="val">${k.foraneo}</div><div class="sub">${k.total?Math.round(k.foraneo/k.total*100):0}%</div></div>
+        <div class="ss-kpi" style="--sskpi-c:rgba(74,222,128,0.9)"><div class="lbl">% Promedio</div>
+          <div class="val">${k.pctPromedio.toFixed(1)}%</div>
+          <div class="sub">participación</div>
+        </div>
       </div>
       <div class="ss-two-col">
-        <div class="ss-chart-wrap"><div class="ss-chart-title">Top 5 colaboradores · viajes</div><div class="ss-chart-inner"><canvas id="ss-v-top"></canvas></div></div>
-        <div class="ss-chart-wrap"><div class="ss-chart-title">Distribución por tipo de unidad</div><div class="ss-chart-inner"><canvas id="ss-v-dona"></canvas></div></div>
+        <div class="ss-chart-wrap"><div class="ss-chart-title">Top 5 · viajes totales</div><div class="ss-chart-inner"><canvas id="ss-v-top"></canvas></div></div>
+        <div class="ss-chart-wrap"><div class="ss-chart-title">Por tipo de unidad</div><div class="ss-chart-inner"><canvas id="ss-v-dona"></canvas></div></div>
       </div>
     </div>`,
-
     `<div class="ss-slide" id="ss-slide-2">
-      <div class="ss-slide-eyebrow">Detalle de productividad</div>
-      <div class="ss-slide-heading">Ranking de <span>colaboradores</span></div>
-      <div class="ss-filtro-badge">🗓 <b>${periodo}</b> · Top 12 por total de viajes</div>
+      <div class="ss-slide-eyebrow">Ranking</div>
+      <div class="ss-slide-heading">Productividad <span>colaboradores</span></div>
+      <div class="ss-filtro-badge">🗓 <b>${periodo}</b> · Top 12 por % participación</div>
       <div class="ss-table-wrap"><table class="ss-table">
         <thead><tr><th>#</th><th>Colaborador</th><th>Unidad</th><th class="r">Local</th><th class="r">Foráneo</th><th class="r">Total</th><th class="r">% Part.</th><th>Estatus</th></tr></thead>
-        <tbody>${data.slice(0,12).map((r,i)=>{
-          const ratio=r.NoViajMin>0?r.Total/r.NoViajMin:0;
-          const color=ratio>=1?'#4ade80':ratio>=0.7?'#fbbf24':'#ff8896';
-          const label=ratio>=1?'✓ Meta':'En proceso';
+        <tbody>${[...data].sort((a,b)=>b.PctViajes-a.PctViajes).slice(0,12).map((r,i)=>{
+          // PctViajes ya es 0–100
+          const pct=r.PctViajes;
+          const color=pct>=100?'#4ade80':pct>=70?'#fbbf24':'#ff8896';
+          const label=pct>=100?'✓ Meta':'En proceso';
           const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':`${i+1}`;
           return`<tr>
             <td style="color:rgba(255,255,255,0.5);font-size:11px">${medal}</td>
@@ -1601,52 +1393,21 @@ function abrirSlideshowColab(){
             <td style="font-size:10px;color:rgba(255,255,255,0.4)">${r.Unidad}</td>
             <td class="r">${r.Local}</td><td class="r">${r.Foraneo}</td>
             <td class="r" style="color:#fff;font-weight:700">${r.Total}</td>
-            <td class="r" style="color:${color};font-weight:700">${(r.PctViajes*100).toFixed(1)}%</td>
+            <td class="r" style="color:${color};font-weight:700">${pct.toFixed(1)}%</td>
             <td style="color:${color};font-size:11px;font-weight:700">${label}</td>
           </tr>`;}).join('')}
         </tbody>
-        <tfoot><tr><td colspan="3">TOTALES</td><td class="r">${k.local}</td><td class="r">${k.foraneo}</td><td class="r" style="color:#fff">${k.total}</td><td class="r">${(k.pctPromedio*100).toFixed(1)}%</td><td>${k.metaCump}/${k.n} ✓</td></tr></tfoot>
+        <tfoot><tr><td colspan="3">TOTALES</td><td class="r">${k.local}</td><td class="r">${k.foraneo}</td><td class="r" style="color:#fff">${k.total}</td><td class="r">${k.pctPromedio.toFixed(1)}%</td><td>${k.metaCump}/${k.n} ✓</td></tr></tfoot>
       </table></div>
     </div>`,
-
-    `<div class="ss-slide" id="ss-slide-3"><div class="ss-end">
-      <div class="ss-end-badge">FIS FIBER · Logística</div>
-      <div class="ss-end-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-      <div class="ss-end-title">Participación Colaboradores</div>
-      <div class="ss-end-stat">
-        <div class="ss-end-stat-item"><div class="ss-end-stat-val">${k.total}</div><div class="ss-end-stat-lbl">Total viajes</div></div>
-        <div class="ss-end-stat-item"><div class="ss-end-stat-val" style="color:#4ade80">${k.metaCump}/${k.n}</div><div class="ss-end-stat-lbl">Meta cumplida</div></div>
-        <div class="ss-end-stat-item"><div class="ss-end-stat-val">${(k.pctPromedio*100).toFixed(1)}%</div><div class="ss-end-stat-lbl">Part. promedio</div></div>
-      </div>
-      <div class="ss-end-sub">${periodo}</div>
-    </div></div>`,
+    `<div class="ss-slide" id="ss-slide-3"><div class="ss-end"><div class="ss-end-badge">FIS FIBER · Logística</div><div class="ss-end-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div class="ss-end-title">Participación Colaboradores</div><div class="ss-end-stat"><div class="ss-end-stat-item"><div class="ss-end-stat-val">${k.total}</div><div class="ss-end-stat-lbl">Total viajes</div></div><div class="ss-end-stat-item"><div class="ss-end-stat-val" style="color:#4ade80">${k.metaCump}/${k.n}</div><div class="ss-end-stat-lbl">Meta ≥100%</div></div><div class="ss-end-stat-item"><div class="ss-end-stat-val">${k.pctPromedio.toFixed(1)}%</div><div class="ss-end-stat-lbl">% promedio</div></div></div><div class="ss-end-sub">${periodo}</div></div></div>`,
   ];
-
   _abrirSS('FIS <span>FIBER</span> · Colaboradores');
   setTimeout(()=>{
     DC('ss-v-top');
-    CI['ss-v-top']=new Chart(document.getElementById('ss-v-top'),{type:'bar',
-      data:{labels:top5.map(r=>r.Colaborador.split(' ').slice(0,2).join(' ')),datasets:[
-        {label:'Local',data:top5.map(r=>r.Local),backgroundColor:'rgba(26,58,112,0.82)',borderRadius:3,borderSkipped:false},
-        {label:'Foráneo',data:top5.map(r=>r.Foraneo),backgroundColor:'rgba(26,158,130,0.82)',borderRadius:3,borderSkipped:false}
-      ]},
-      options:{responsive:true,maintainAspectRatio:false,plugins:{
-        legend:{display:true,position:'bottom',labels:{color:'rgba(255,255,255,0.4)',font:{size:10,family:'Outfit'},usePointStyle:true,padding:10}},
-        datalabels:{anchor:'end',align:'end',offset:1,color:'rgba(255,255,255,0.6)',font:{size:9,family:SS_MF,weight:'600'},formatter:v=>v||''},
-        tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.parsed.y}`}}
-      },scales:{
-        x:{grid:{display:false},ticks:{color:SS_TC,font:{size:9,family:SS_MF},maxRotation:0},border:{color:'transparent'}},
-        y:{grid:{color:SS_GC},ticks:{color:SS_TC,font:{size:9}},border:{color:'transparent'},beginAtZero:true,grace:'15%'}
-      }}
-    });
+    CI['ss-v-top']=new Chart(document.getElementById('ss-v-top'),{type:'bar',data:{labels:top5.map(r=>r.Colaborador.split(' ').slice(0,2).join(' ')),datasets:[{label:'Local',data:top5.map(r=>r.Local),backgroundColor:'rgba(26,58,112,0.82)',borderRadius:3,borderSkipped:false},{label:'Foráneo',data:top5.map(r=>r.Foraneo),backgroundColor:'rgba(26,158,130,0.82)',borderRadius:3,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{color:'rgba(255,255,255,0.4)',font:{size:10,family:'Outfit'},usePointStyle:true,padding:10}},datalabels:{anchor:'end',align:'end',offset:1,color:'rgba(255,255,255,0.6)',font:{size:9,family:SS_MF,weight:'600'},formatter:v=>v||''}},scales:{x:{grid:{display:false},ticks:{color:SS_TC,font:{size:9,family:SS_MF},maxRotation:0},border:{color:'transparent'}},y:{grid:{color:SS_GC},ticks:{color:SS_TC,font:{size:9}},border:{color:'transparent'},beginAtZero:true,grace:'15%'}}}});
     DC('ss-v-dona');
-    CI['ss-v-dona']=new Chart(document.getElementById('ss-v-dona'),{type:'doughnut',
-      data:{labels:uKeys,datasets:[{data:uKeys.map(u=>uTot[u]),backgroundColor:uKeys.map(u=>uColors[u]||'rgba(150,150,150,0.75)'),borderWidth:0,hoverOffset:8}]},
-      options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{
-        legend:{position:'bottom',labels:{color:'rgba(255,255,255,0.45)',font:{size:11,family:'Outfit'},usePointStyle:true,padding:12}},
-        datalabels:{color:'#fff',font:{size:12,family:SS_MF,weight:'700'},formatter:(v,ctx)=>{const t=ctx.dataset.data.reduce((a,b)=>a+b,0);return t?Math.round(v/t*100)+'%':'';}}
-      }}
-    });
+    CI['ss-v-dona']=new Chart(document.getElementById('ss-v-dona'),{type:'doughnut',data:{labels:uKeys,datasets:[{data:uKeys.map(u=>uTot[u]),backgroundColor:uKeys.map(u=>uColors[u]||'rgba(150,150,150,0.75)'),borderWidth:0,hoverOffset:8}]},options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{position:'bottom',labels:{color:'rgba(255,255,255,0.45)',font:{size:11,family:'Outfit'},usePointStyle:true,padding:12}},datalabels:{color:'#fff',font:{size:12,family:SS_MF,weight:'700'},formatter:(v,ctx)=>{const t=ctx.dataset.data.reduce((a,b)=>a+b,0);return t?Math.round(v/t*100)+'%':'';}}}}});
   },300);
 }
 </script>
