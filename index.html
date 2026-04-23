@@ -1109,23 +1109,43 @@ async function renderColaboradores(container){
       DC('cv-bar-top');
       const top8=[...data].sort((a,b)=>b.Total-a.Total).slice(0,5);
       CI['cv-bar-top']=new Chart(document.getElementById('cv-bar-top'),{type:'bar',
-        data:{labels:top8.map(r=>r.Colaborador.split(' ').slice(0,2).join(' ')),
+        data:{
+          // split name into 2 lines so all 5 fit
+          labels:top8.map(r=>{const p=r.Colaborador.split(' ');return p.slice(0,2).join(' ')+'\n'+p.slice(2,4).join(' ');}),
           datasets:[
-            {label:'Local',data:top8.map(r=>r.Local),backgroundColor:'rgba(26,58,112,0.88)',borderRadius:{topLeft:4,topRight:0,bottomLeft:4,bottomRight:0},borderSkipped:false,
-              datalabels:{anchor:'center',align:'center',color:'#fff',font:{size:12,family:mf,weight:'700'},formatter:v=>v>0?`${v}`:''}},
-            {label:'Foráneo',data:top8.map(r=>r.Foraneo),backgroundColor:'rgba(26,158,130,0.88)',borderRadius:{topLeft:0,topRight:4,bottomLeft:0,bottomRight:4},borderSkipped:false,
-              datalabels:{anchor:'end',align:'top',offset:4,color:'#1A0A0C',font:{size:14,family:mf,weight:'900'},
-                formatter:(v,ctx)=>{return `${top8[ctx.dataIndex].Total}`;}}}
-          ]},
+            {label:'Local',
+              data:top8.map(r=>r.Local),
+              backgroundColor:'rgba(26,58,112,0.88)',
+              borderRadius:4,borderSkipped:false,
+              datalabels:{anchor:'center',align:'center',color:'#fff',font:{size:12,family:mf,weight:'700'},formatter:v=>v>0?`${v}`:''}
+            },
+            {label:'Foráneo',
+              data:top8.map(r=>r.Foraneo),
+              backgroundColor:'rgba(26,158,130,0.88)',
+              borderRadius:4,borderSkipped:false,
+              datalabels:{
+                anchor:'end',align:'top',offset:3,
+                color:'#1A0A0C',font:{size:13,family:mf,weight:'900'},
+                // show on foraneo bar: total viajes
+                formatter:(v,ctx)=>`${top8[ctx.dataIndex].Total}`
+              }
+            }
+          ]
+        },
         options:{responsive:true,maintainAspectRatio:false,
-          plugins:{legend:{display:true,position:'bottom',labels:{color:'#5C3038',font:{size:12,family:'Outfit'},usePointStyle:true,padding:16}},
+          plugins:{
+            legend:{display:true,position:'bottom',labels:{color:'#5C3038',font:{size:12,family:'Outfit'},usePointStyle:true,padding:16}},
             tooltip:{callbacks:{
               label:c=>`${c.dataset.label}: ${c.parsed.y} viajes`,
-              afterBody:items=>{const r=top8[items[0].dataIndex];return[`Total: ${r.Total} viajes`];}
+              afterBody:items=>{const r=top8[items[0].dataIndex];return[`Total: ${r.Local+r.Foraneo} viajes`];}
             }},
-            datalabels:{}},
-          scales:{x:{grid:{display:false},ticks:{color:tc,font:{size:11,family:mf},maxRotation:0},border:{color:'transparent'}},
-            y:{grid:{color:gc},ticks:{color:tc,font:{size:11}},border:{color:'transparent'},beginAtZero:true,grace:'25%'}}}
+            datalabels:{}
+          },
+          scales:{
+            x:{grid:{display:false},ticks:{color:tc,font:{size:10,family:mf},maxRotation:0},border:{color:'transparent'}},
+            y:{grid:{color:gc},ticks:{color:tc,font:{size:11}},border:{color:'transparent'},beginAtZero:true,grace:'22%'}
+          }
+        }
       });
 
       DC('cv-dona-unidad');
@@ -1399,27 +1419,75 @@ function abrirSlideshowColab(){
         <div class="ss-chart-wrap"><div class="ss-chart-title">Por tipo de unidad</div><div class="ss-chart-inner"><canvas id="ss-v-dona"></canvas></div></div>
       </div>
     </div>`,
-    `<div class="ss-slide" id="ss-slide-2">
-      <div class="ss-slide-eyebrow">Ranking</div>
-      <div class="ss-slide-heading">Productividad <span>colaboradores</span></div>
-      <div class="ss-filtro-badge">🗓 <b>${periodo}</b> · ${data.length} colaboradores · ordenado por viajes</div>
-      <div class="ss-table-wrap" style="overflow-y:auto;max-height:480px"><table class="ss-table">
-        <thead><tr><th>#</th><th>Colaborador</th><th>Unidad</th><th class="r">Local</th><th class="r">Foráneo</th><th class="r">Total</th><th>Estatus</th></tr></thead>
-        <tbody>${[...data].sort((a,b)=>b.Total-a.Total).map((r,i)=>{
-          const color=r.PctViajes>=100?'#4ade80':r.PctViajes>=70?'#fbbf24':'#ff8896';
-          const label=r.PctViajes>=100?'✓ Meta':'En proceso';
-          const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':`${i+1}`;
-          return`<tr>
-            <td style="color:rgba(255,255,255,0.5);font-size:11px">${medal}</td>
-            <td><b>${r.Colaborador.split(' ').slice(0,3).join(' ')}</b></td>
-            <td style="font-size:10px;color:rgba(255,255,255,0.4)">${r.Unidad}</td>
-            <td class="r">${r.Local}</td><td class="r">${r.Foraneo}</td>
-            <td class="r" style="color:#fff;font-weight:700">${r.Total}</td>
-            <td style="color:${color};font-size:11px;font-weight:700">${label}</td>
-          </tr>`;}).join('')}
-        </tbody>
-        <tfoot><tr><td colspan="3">TOTALES</td><td class="r">${k.local}</td><td class="r">${k.foraneo}</td><td class="r" style="color:#fff">${k.total}</td><td>${k.metaCump}/${k.n} meta ✓</td></tr></tfoot>
-      </table></div>
+    `<div class="ss-slide" id="ss-slide-2" style="justify-content:flex-start;padding:1.25rem 2rem">
+      <div class="ss-slide-eyebrow" style="margin-bottom:.25rem">Ranking</div>
+      <div class="ss-slide-heading" style="font-size:22px;margin-bottom:.5rem">Productividad <span>colaboradores</span></div>
+      <div class="ss-filtro-badge" style="margin-bottom:.5rem">🗓 <b>${periodo}</b> · ${data.length} colaboradores · ordenado por viajes</div>
+      <div style="flex:1;overflow:hidden;display:flex;flex-direction:column">
+        <table style="width:100%;border-collapse:collapse;font-family:'Outfit',sans-serif;flex:1">
+          <thead><tr style="border-bottom:1px solid rgba(255,255,255,0.12)">
+            <th style="width:32px;padding:5px 8px;font-size:8px;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,0.3);text-align:left">#</th>
+            <th style="padding:5px 8px;font-size:8px;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,0.3);text-align:left">Colaborador</th>
+            <th style="padding:5px 8px;font-size:8px;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,0.3);text-align:left">Unidad</th>
+            <th style="padding:5px 8px;font-size:8px;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,0.3);text-align:right">Local</th>
+            <th style="padding:5px 8px;font-size:8px;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,0.3);text-align:right">Foráneo</th>
+            <th style="padding:5px 8px;font-size:8px;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,0.3);text-align:right">Total</th>
+            <th style="padding:5px 8px;font-size:8px;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,0.3);text-align:right">% Viajes</th>
+            <th style="padding:5px 8px;font-size:8px;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,0.3);text-align:center">Estatus</th>
+          </tr></thead>
+          <tbody>${(()=>{
+            const sorted=[...data].sort((a,b)=>b.Total-a.Total);
+            const n=sorted.length;
+            const rPad=n<=15?'5px 8px':n<=20?'3px 8px':'2px 6px';
+            const fName=n<=15?13:n<=20?12:11;
+            const fNum=n<=15?13:n<=20?12:11;
+            const fTot=n<=15?15:n<=20?13:12;
+            const barW=n<=15?55:n<=20?45:38;
+            return sorted.map((r,i)=>{
+              const color=r.PctViajes>=100?'#4ade80':r.PctViajes>=70?'#fbbf24':'#ff8896';
+              const label=r.PctViajes>=100?'✓ Meta':'En proceso';
+              const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':`${i+1}`;
+              const rowBg=i%2===0?'rgba(255,255,255,0.025)':'transparent';
+              const lPct=r.Total>0?Math.round(r.Local/r.Total*100):0;
+              const fPct=r.Total>0?Math.round(r.Foraneo/r.Total*100):0;
+              const bPct=Math.min(100,Math.round(r.PctViajes));
+              return`<tr style="border-bottom:1px solid rgba(255,255,255,0.04);background:${rowBg}">
+                <td style="padding:${rPad};font-size:10px;color:rgba(255,255,255,0.5)">${medal}</td>
+                <td style="padding:${rPad};font-size:${fName}px;font-weight:700;color:#fff">${r.Colaborador}</td>
+                <td style="padding:${rPad};font-size:9px;color:rgba(255,255,255,0.4)">${r.Unidad}</td>
+                <td style="padding:${rPad};text-align:right">
+                  <div style="display:flex;align-items:center;justify-content:flex-end;gap:4px">
+                    <div style="width:${barW}px;height:9px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden"><div style="height:100%;width:${lPct}%;background:rgba(26,58,112,0.95);border-radius:3px"></div></div>
+                    <span style="font-family:'JetBrains Mono',monospace;font-size:${fNum}px;font-weight:700;color:rgba(147,197,253,1);min-width:18px;text-align:right">${r.Local}</span>
+                  </div>
+                </td>
+                <td style="padding:${rPad};text-align:right">
+                  <div style="display:flex;align-items:center;justify-content:flex-end;gap:4px">
+                    <div style="width:${barW}px;height:9px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden"><div style="height:100%;width:${fPct}%;background:rgba(26,158,130,0.95);border-radius:3px"></div></div>
+                    <span style="font-family:'JetBrains Mono',monospace;font-size:${fNum}px;font-weight:700;color:rgba(110,231,183,1);min-width:18px;text-align:right">${r.Foraneo}</span>
+                  </div>
+                </td>
+                <td style="padding:${rPad};text-align:right;font-family:'JetBrains Mono',monospace;font-size:${fTot}px;font-weight:900;color:#fff">${r.Total}</td>
+                <td style="padding:${rPad};text-align:right">
+                  <div style="display:flex;align-items:center;justify-content:flex-end;gap:4px">
+                    <div style="width:40px;height:9px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden"><div style="height:100%;width:${bPct}%;background:${color};border-radius:3px;opacity:0.85"></div></div>
+                    <span style="font-family:'JetBrains Mono',monospace;font-size:${fNum}px;font-weight:700;color:${color};min-width:38px;text-align:right">${r.PctViajes.toFixed(1)}%</span>
+                  </div>
+                </td>
+                <td style="padding:${rPad};text-align:center;font-size:${fNum-1}px;font-weight:700;color:${color}">${label}</td>
+              </tr>`;}).join('');
+          })()}
+          </tbody>
+          <tfoot><tr style="border-top:2px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.04)">
+            <td colspan="3" style="padding:5px 8px;font-size:10px;font-weight:700;color:rgba(255,255,255,0.5)">TOTALES · ${k.n} colaboradores</td>
+            <td style="padding:5px 8px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:rgba(147,197,253,0.9)">${k.local}</td>
+            <td style="padding:5px 8px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:rgba(110,231,183,0.9)">${k.foraneo}</td>
+            <td style="padding:5px 8px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:900;color:#fff">${k.total}</td>
+            <td style="padding:5px 8px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:rgba(255,255,255,0.5)">${k.pctPromedio.toFixed(1)}%</td>
+            <td style="padding:5px 8px;text-align:center;font-size:11px;font-weight:700;color:#4ade80">${k.metaCump}/${k.n} ✓</td>
+          </tr></tfoot>
+        </table>
+      </div>
     </div>`,
     `<div class="ss-slide" id="ss-slide-3"><div class="ss-end"><div class="ss-end-badge">FIS FIBER · Logística</div><div class="ss-end-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div class="ss-end-title">Participación Colaboradores</div><div class="ss-end-stat"><div class="ss-end-stat-item"><div class="ss-end-stat-val">${k.total}</div><div class="ss-end-stat-lbl">Total viajes</div></div><div class="ss-end-stat-item"><div class="ss-end-stat-val" style="color:#4ade80">${k.metaCump}/${k.n}</div><div class="ss-end-stat-lbl">Meta cumplida</div></div><div class="ss-end-stat-item"><div class="ss-end-stat-val">${k.total&&k.n?(k.total/k.n).toFixed(1):0}</div><div class="ss-end-stat-lbl">Prom/chofer</div></div></div><div class="ss-end-sub">${periodo}</div></div></div>`,
   ];
