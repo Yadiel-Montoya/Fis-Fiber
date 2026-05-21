@@ -3,257 +3,133 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FIS FIBER · Indicadores</title>
+<title>FIS FIBER · Acceso</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+<script src="js/users.js"></script>
+<script src="js/auth.js"></script>
 <style>
-/* REUTILIZANDO TUS ESTILOS ORIGINALES */
-:root{
-  --red:#C0152A;--red2:#9E0E20;--red3:#E8192F;--red-soft:rgba(192,21,42,0.08);--red-mid:rgba(192,21,42,0.15);
-  --white:#FFFFFF;--off:#F7F5F4;--off2:#F0ECEB;
-  --ink:#1A0A0C;--ink2:#5C3038;--ink3:#9A7078;
-  --border:#E8DCDE;--border2:#D4C0C4;
-  --green:#1A9E5C;--green-bg:rgba(26,158,92,0.09);
-  --blue:#1A5FA0;--blue-bg:rgba(26,95,160,0.09);
-  --amber:#B87A10;--amber-bg:rgba(184,122,16,0.09);
-  --teal:#1A9E82;--teal-bg:rgba(26,158,130,0.09);
-  --sidebar:240px;
-}
+:root{--red:#C0152A;--red2:#9E0E20;--off:#F7F5F4;--ink:#1A0A0C;--ink3:#9A7078;--border:#E8DCDE}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Outfit',sans-serif;background:var(--off);color:var(--ink);min-height:100vh;display:flex;overflow-x:hidden}
-#login-overlay { position: fixed; inset: 0; background: #0D0608; z-index: 10000; display: flex; align-items: center; justify-content: center; }
-.login-card { background: var(--white); padding: 40px; border-radius: 20px; width: 100%; max-width: 360px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-.sidebar{width:var(--sidebar);min-width:var(--sidebar);height:100vh;position:fixed;top:0;left:0;z-index:200;background:var(--red);display:flex;flex-direction:column;box-shadow:4px 0 24px rgba(192,21,42,0.18)}
-.sidebar-brand{padding:2rem 1.5rem 1.5rem;border-bottom:1px solid rgba(255,255,255,0.12)}
-.brand-name{font-size:20px;font-weight:700;color:#fff;line-height:1.1}
-.sidebar-nav{flex:1;padding:1.25rem 0;overflow-y:auto}
-.nav-section{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,0.35);padding:0 1.5rem;margin:1.25rem 0 .5rem;font-family:'JetBrains Mono',monospace}
-.nav-item{display:flex;align-items:center;gap:10px;padding:10px 1.5rem;font-size:13px;font-weight:500;color:rgba(255,255,255,0.65);cursor:pointer;transition:all .18s;border-left:3px solid transparent}
-.nav-item.active{color:#fff;background:rgba(255,255,255,0.13);border-left-color:#fff}
-.main{margin-left:var(--sidebar);flex:1;min-height:100vh;display:flex;flex-direction:column;overflow-x:hidden;min-width:0}
-.topbar{height:52px;background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 2rem;position:sticky;top:0;z-index:100}
-.page{display:none;flex:1;padding:2rem;width:100%}
-.page.active{display:block}
-.overview-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
-.area-card{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:1.75rem;cursor:pointer;position:relative;transition:all .2s}
-.area-card:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(0,0,0,0.09)}
-.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:1.5rem}
-.chart-box{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:1.5rem}
-.chart-box.full{grid-column:1/-1}
-.table-wrap{background:var(--white);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:1.5rem}
-table{width:100%;border-collapse:collapse}
-thead th{font-size:10px;text-transform:uppercase;padding:10px 1.25rem;text-align:left;background:var(--off)}
-tbody td{font-size:13px;padding:14px 1.25rem;border-bottom:1px solid var(--border)}
-/* REUTILIZANDO TUS ESTILOS DE SLIDESHOW */
-.slideshow-overlay{position:fixed;inset:0;z-index:9999;background:#0D0608;display:none;flex-direction:column;opacity:0;transition:opacity .35s}
-.slideshow-overlay.open{display:flex}.slideshow-overlay.visible{opacity:1}
-.ss-slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:2.25rem 3rem;opacity:0;transform:translateX(36px);transition:all .38s;pointer-events:none}
-.ss-slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+html,body{height:100%;font-family:'Outfit',sans-serif}
+body{
+  display:flex;align-items:center;justify-content:center;min-height:100vh;
+  background:#0a0508;
+  background-image:
+    radial-gradient(ellipse 70% 50% at 50% 0%, rgba(192,21,42,0.18) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 40% at 80% 80%, rgba(192,21,42,0.08) 0%, transparent 60%);
+}
+.login-wrap{
+  width:100%;max-width:420px;padding:1.5rem;
+}
+.brand{text-align:center;margin-bottom:2.5rem}
+.brand-logo{
+  width:64px;height:64px;border-radius:18px;background:var(--red);
+  display:inline-flex;align-items:center;justify-content:center;
+  margin-bottom:1rem;box-shadow:0 8px 32px rgba(192,21,42,0.5);
+}
+.brand-logo svg{width:30px;height:30px;stroke:#fff}
+.brand-name{font-size:26px;font-weight:700;color:#fff;letter-spacing:-.01em}
+.brand-name span{color:rgba(255,255,255,0.35);font-weight:300}
+.brand-sub{font-size:12px;font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,0.3);margin-top:4px;letter-spacing:.1em;text-transform:uppercase}
+.card{
+  background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);
+  border-radius:20px;padding:2rem;backdrop-filter:blur(16px);
+}
+.card-title{font-size:17px;font-weight:600;color:#fff;margin-bottom:.3rem}
+.card-sub{font-size:13px;color:rgba(255,255,255,0.35);margin-bottom:1.75rem}
+.field{margin-bottom:1.25rem}
+.field label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,0.4);margin-bottom:6px}
+.field input{
+  width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);
+  border-radius:10px;padding:11px 14px;font-size:14px;color:#fff;font-family:'Outfit',sans-serif;
+  outline:none;transition:border-color .18s,background .18s;
+}
+.field input::placeholder{color:rgba(255,255,255,0.2)}
+.field input:focus{border-color:rgba(192,21,42,0.7);background:rgba(192,21,42,0.06)}
+.btn-login{
+  width:100%;background:var(--red);border:none;border-radius:10px;
+  padding:13px;font-size:15px;font-weight:700;color:#fff;font-family:'Outfit',sans-serif;
+  cursor:pointer;transition:all .18s;box-shadow:0 4px 16px rgba(192,21,42,0.4);
+  margin-top:.25rem;
+}
+.btn-login:hover{background:var(--red2);transform:translateY(-1px);box-shadow:0 6px 20px rgba(192,21,42,0.5)}
+.btn-login:active{transform:translateY(0)}
+.btn-login:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.error-msg{
+  background:rgba(192,21,42,0.12);border:1px solid rgba(192,21,42,0.3);
+  border-radius:8px;padding:10px 14px;font-size:13px;color:#ff8896;
+  margin-bottom:1rem;display:none;
+}
+.error-msg.show{display:block}
+.footer-note{text-align:center;margin-top:1.5rem;font-size:11px;font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,0.15)}
 </style>
 </head>
 <body>
-
-<div id="login-overlay">
-    <div class="login-card">
-        <h2 style="margin-bottom:10px">FIS <span style="color:var(--red)">FIBER</span></h2>
-        <p style="font-size:12px; color:var(--ink3); margin-bottom:25px">INICIO DE SESIÓN</p>
-        <input type="text" id="log-email" class="filter-input" style="width:100%; margin-bottom:10px; padding:10px; border:1px solid var(--border)" placeholder="admin@fisfiber.com">
-        <input type="password" id="log-pass" class="filter-input" style="width:100%; margin-bottom:20px; padding:10px; border:1px solid var(--border)" placeholder="••••••••">
-        <button class="filter-btn" style="width:100%; background:var(--red); color:#fff; border:none; padding:12px; border-radius:8px; cursor:pointer" onclick="checkAuth()">ENTRAR</button>
-        <p id="log-error" style="color:var(--red); font-size:12px; margin-top:15px; display:none">Credenciales inválidas</p>
+<div class="login-wrap">
+  <div class="brand">
+    <div class="brand-logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+        <circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
+      </svg>
     </div>
-</div>
+    <div class="brand-name">FIS <span>FIBER</span></div>
+    <div class="brand-sub">Sistema de Indicadores</div>
+  </div>
 
-<div id="app-content" style="display:none">
-    <aside class="sidebar">
-      <div class="sidebar-brand"><div class="brand-name">FIS <span>FIBER</span></div></div>
-      <nav class="sidebar-nav" id="sidebar-nav-content"></nav>
-      <div class="sidebar-footer">
-        <div id="clock" style="color:#fff; font-family:monospace; font-size:12px"></div>
-        <button onclick="logout()" style="background:none; border:none; color:rgba(255,255,255,0.4); font-size:10px; margin-top:10px; cursor:pointer">Cerrar Sesión</button>
+  <div class="card">
+    <div class="card-title">Iniciar sesión</div>
+    <div class="card-sub">Ingresa tus credenciales para continuar</div>
+
+    <div class="error-msg" id="err-msg">Usuario o contraseña incorrectos.</div>
+
+    <form id="login-form" onsubmit="handleLogin(event)">
+      <div class="field">
+        <label>Usuario</label>
+        <input type="text" id="inp-user" placeholder="tu.usuario" autocomplete="username" required>
       </div>
-    </aside>
-    <div class="main">
-      <header class="topbar"><div id="bc-current" style="font-weight:600">Resumen</div><div id="user-display" style="font-size:11px"></div></header>
-      <div class="page active" id="page-home">
-        <h1 style="margin-bottom:2rem">Indicadores <span>FIS FIBER</span></h1>
-        <div class="overview-grid" id="home-grid"></div>
+      <div class="field">
+        <label>Contraseña</label>
+        <input type="password" id="inp-pass" placeholder="••••••••" autocomplete="current-password" required>
       </div>
-      <div class="page" id="page-detail">
-        <div id="detail-body"></div>
-      </div>
-    </div>
+      <button type="submit" class="btn-login" id="btn-login">Entrar al sistema</button>
+    </form>
+  </div>
+
+  <div class="footer-note">FIS FIBER · Control Operativo · Acceso restringido</div>
 </div>
 
 <script>
-/* ════ SEGURIDAD Y PERMISOS ════ */
-let appUsers = JSON.parse(localStorage.getItem('fisfiber_users')) || [
-    { email: "admin@fisfiber.com", pass: "admin123", name: "Administrador", role: "admin", permisos: ["logistica", "ventas", "maquilas"] }
-];
-let activeUser = null;
-
-function checkAuth() {
-    const e = document.getElementById('log-email').value, p = document.getElementById('log-pass').value;
-    const u = appUsers.find(x => x.email === e && x.pass === p);
-    if(u){ activeUser=u; localStorage.setItem('fisfiber_session', JSON.stringify(u)); startApp(); }
-    else document.getElementById('log-error').style.display='block';
+// Si ya tiene sesión activa, redirige directo a la app
+if (sessionStorage.getItem('fis_session')) {
+  window.location.replace('app.html');
 }
 
-function startApp() {
-    document.getElementById('login-overlay').style.display='none';
-    document.getElementById('app-content').style.display='block';
-    renderMenu(); renderHome();
-}
+function handleLogin(e) {
+  e.preventDefault();
+  const btn = document.getElementById('btn-login');
+  const err = document.getElementById('err-msg');
+  const user = document.getElementById('inp-user').value;
+  const pass = document.getElementById('inp-pass').value;
 
-function logout() { localStorage.removeItem('fisfiber_session'); location.reload(); }
+  btn.disabled = true;
+  btn.textContent = 'Verificando…';
+  err.classList.remove('show');
 
-/* ════ URLS DE GOOGLE SHEETS ORIGINALES ════ */
-const CASETAS_MENSUAL_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSb8jHJ_Fqmp-Pxvy1Y8Frwc_uj49tWkcgVydTBUe1kBK7e1xte_1s5YLvx1UXetA/pub?gid=1168469221&single=true&output=csv';
-const CASETAS_COMPARATIVO_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSb8jHJ_Fqmp-Pxvy1Y8Frwc_uj49tWkcgVydTBUe1kBK7e1xte_1s5YLvx1UXetA/pub?gid=439879445&single=true&output=csv';
-const SHEETS_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSgRgBjIySNNLYySfwSdEXuHJcu-vwg1ZK-mQb6HQZm8xXAex31UOtJaVZlnwzZGA/pub?gid=241439534&single=true&output=csv';
-const VIAJES_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQXHv7eviqTWjlZLJLhnvKtACyFtBMYT2LbnahX5qzju4y_5rB0crQB1LC6QfpCWw/pub?gid=1801163127&single=true&output=csv';
-
-const areas = {
-    logistica: {
-        name: 'Logística', color: 'var(--red)', desc: 'Gestión de fletes y gastos operativos',
-        submods: [
-            {id:'cargas', label:'📦 Cargas', render:renderCargas},
-            {id:'colab', label:'👥 Colaboradores', render:renderColaboradores},
-            {id:'casetas', label:'🛣️ Casetas', render:renderCasetas}
-        ]
+  setTimeout(() => {
+    const result = fisLogin(user, pass);
+    if (result.ok) {
+      window.location.replace('app.html');
+    } else {
+      err.textContent = result.error;
+      err.classList.add('show');
+      btn.disabled = false;
+      btn.textContent = 'Entrar al sistema';
+      document.getElementById('inp-pass').value = '';
+      document.getElementById('inp-pass').focus();
     }
-};
-
-/* AQUÍ COMIENZAN LAS FUNCIONES DE TU CÓDIGO ORIGINAL (RECONSTRUIDAS) */
-function parseMoney(v){ let s=(v||'0').toString().replace(/[$\s,]/g,''); return parseFloat(s)||0; }
-function parseCSV(t){
-    const l=t.trim().split('\n'); if(l.length<2) return [];
-    const h=l[0].split(',').map(x=>x.trim().replace(/^"|"$/g,''));
-    return l.slice(1).map(line=>{
-        const v=line.split(','), o={}; h.forEach((hdr,i)=>o[hdr]=(v[i]||'').trim().replace(/^"|"$/g,'')); return o;
-    });
+  }, 400);
 }
-/* RENDERIZADO DE CASETAS (TU LÓGICA DE 1500 LÍNEAS INTEGRADA) */
-async function renderCasetas(container) {
-    container.innerHTML = `<div class="loading-state">Conectando a Google Sheets...</div>`;
-    try {
-        const res = await fetch(CASETAS_MENSUAL_URL + '&cb=' + Date.now());
-        const data = parseCSV(await res.text());
-        const rows = data.map(r => ({
-            mes: r.MES || r.Mes,
-            c24: parseMoney(r['2024'] || r['caseta 2024']),
-            c25: parseMoney(r['2025'] || r['caseta 2025']),
-            c26: parseMoney(r['2026'] || r['caseta 2026']),
-        })).filter(r => r.mes);
-
-        container.innerHTML = `
-            <div class="casetas-summary-grid">
-                <div class="cs-card" style="--cs-c:var(--blue)"><div class="lbl">Casetas 2024</div><div class="val">$${rows.reduce((a,b)=>a+b.c24,0).toLocaleString()}</div></div>
-                <div class="cs-card" style="--cs-c:var(--amber)"><div class="lbl">Casetas 2025</div><div class="val">$${rows.reduce((a,b)=>a+b.c25,0).toLocaleString()}</div></div>
-                <div class="cs-card" style="--cs-c:var(--red)"><div class="lbl">Casetas 2026</div><div class="val">$${rows.reduce((a,b)=>a+b.c26,0).toLocaleString()}</div></div>
-            </div>
-            <div class="chart-box full"><canvas id="casetas-chart" height="320"></canvas></div>
-            <div class="table-wrap">
-                <table>
-                    <thead><tr><th>Mes</th><th>2024</th><th>2025</th><th>2026</th><th>Diferencia</th></tr></thead>
-                    <tbody>${rows.map(r => `<tr><td>${r.mes}</td><td>$${r.c24.toLocaleString()}</td><td>$${r.c25.toLocaleString()}</td><td>$${r.c26.toLocaleString()}</td><td style="color:${r.c26 < r.c25 ? 'green':'red'}">$${(r.c26-r.c25).toLocaleString()}</td></tr>`).join('')}</tbody>
-                </table>
-            </div>
-        `;
-
-        new Chart(document.getElementById('casetas-chart'), {
-            type: 'bar',
-            data: {
-                labels: rows.map(r => r.mes),
-                datasets: [
-                    { label: '2024', data: rows.map(r=>r.c24), backgroundColor: 'rgba(26,95,160,0.5)' },
-                    { label: '2025', data: rows.map(r=>r.c25), backgroundColor: 'rgba(184,122,16,0.5)' },
-                    { label: '2026', data: rows.map(r=>r.c26), backgroundColor: 'rgba(192,21,42,0.8)' }
-                ]
-            }
-        });
-    } catch(e) { container.innerHTML = "Error al cargar datos."; }
-}
-
-/* CARGAS Y COLABORADORES (MISMA ESTRUCTURA) */
-async function renderCargas(c){ c.innerHTML = "Lógica de Cargas Cargada ✓"; }
-async function renderColaboradores(c){ c.innerHTML = "Lógica de Colaboradores Cargada ✓"; }
-
-/* ════ GESTIÓN DE USUARIOS (EL PANEL DE ADMIN QUE PEDISTE) ════ */
-function openSecurity() {
-    document.getElementById('page-home').classList.remove('active');
-    document.getElementById('page-detail').classList.add('active');
-    document.getElementById('bc-current').textContent = "Configuración de Usuarios";
-    
-    let html = `
-        <div class="chart-box full">
-            <h3>Crear Nuevo Usuario</h3>
-            <div style="display:grid; grid-template-columns: 1fr 1fr 1fr auto; gap:10px; margin-top:15px">
-                <input type="text" id="new-name" class="filter-input" placeholder="Nombre">
-                <input type="email" id="new-email" class="filter-input" placeholder="Email">
-                <input type="text" id="new-pass" class="filter-input" placeholder="Password">
-                <button class="filter-btn" onclick="saveUser()">+ Guardar</button>
-            </div>
-            <div style="margin-top:10px">
-                <label style="font-size:11px; color:var(--ink3)">Módulos Permitidos: </label>
-                <input type="text" id="new-perms" class="filter-input" value="logistica" placeholder="logistica, ventas">
-            </div>
-        </div>
-        <div class="table-wrap">
-            <table>
-                <thead><tr><th>Nombre</th><th>Email</th><th>Permisos</th><th>Acciones</th></tr></thead>
-                <tbody id="user-table-body">${appUsers.map((u,i)=>`<tr><td>${u.name}</td><td>${u.email}</td><td>${u.permisos.join(', ')}</td><td><button onclick="deleteUser(${i})">Borrar</button></td></tr>`).join('')}</tbody>
-            </table>
-        </div>
-    `;
-    document.getElementById('detail-body').innerHTML = html;
-}
-
-function saveUser() {
-    const n = document.getElementById('new-name').value, e = document.getElementById('new-email').value, p = document.getElementById('new-pass').value, pr = document.getElementById('new-perms').value.split(',').map(x=>x.trim());
-    if(!n || !e || !p) return alert("Faltan datos");
-    appUsers.push({name:n, email:e, pass:p, role:'user', permisos: pr});
-    localStorage.setItem('fisfiber_users', JSON.stringify(appUsers));
-    openSecurity();
-}
-
-function deleteUser(i) {
-    if(appUsers[i].email === activeUser.email) return alert("No puedes borrarte a ti mismo");
-    appUsers.splice(i,1); localStorage.setItem('fisfiber_users', JSON.stringify(appUsers)); openSecurity();
-}
-
-/* NAVEGACIÓN Y CIERRE */
-function renderMenu() {
-    let h = '<div class="nav-item active" onclick="showHome()">🏠 Inicio</div>';
-    Object.keys(areas).forEach(k => { if(activeUser.permisos.includes(k)) h += `<div class="nav-item" onclick="openArea('${k}')">📊 ${areas[k].name}</div>`; });
-    if(activeUser.role==='admin') h += '<div class="nav-section">ADMIN</div><div class="nav-item" onclick="openSecurity()">🛡️ Seguridad</div>';
-    document.getElementById('sidebar-nav-content').innerHTML = h;
-}
-
-function renderHome() {
-    let h = ''; Object.keys(areas).forEach(k => { if(activeUser.permisos.includes(k)) { h += `<div class="area-card" style="border-top:4px solid ${areas[k].color}" onclick="openArea('${k}')"><h3>${areas[k].name}</h3><p>${areas[k].desc}</p></div>`; } });
-    document.getElementById('home-grid').innerHTML = h;
-}
-
-function openArea(key) {
-    const a = areas[key]; document.getElementById('page-home').classList.remove('active'); document.getElementById('page-detail').classList.add('active');
-    document.getElementById('detail-body').innerHTML = `<div class="submod-tabs">${a.submods.map(s=>`<button class="submod-tab" onclick="loadSub('${key}','${s.id}')">${s.label}</button>`).join('')}</div><div id="sub-panel"></div>`;
-    loadSub(key, a.submods[0].id);
-}
-
-function loadSub(akey, sid) {
-    const s = areas[akey].submods.find(x => x.id === sid);
-    s.render(document.getElementById('sub-panel'));
-}
-
-function showHome() { document.getElementById('page-detail').classList.remove('active'); document.getElementById('page-home').classList.add('active'); }
-
-window.onload = () => {
-    const s = localStorage.getItem('fisfiber_session');
-    if(s){ activeUser=JSON.parse(s); startApp(); }
-    setInterval(() => { const n=new Date(); document.getElementById('clock').innerText = n.toLocaleTimeString(); }, 1000);
-};
 </script>
 </body>
 </html>
