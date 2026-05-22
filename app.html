@@ -287,6 +287,55 @@ tfoot td.num{text-align:right}
 .ss-end-sub{font-size:14px;color:rgba(255,255,255,0.3);max-width:420px;line-height:1.6}
 /* % bar colores para presentación */
 .pct-ok{color:var(--green)}.pct-warn{color:var(--amber)}.pct-low{color:var(--red)}
+/* ── Sello documento controlado ── */
+.doc-control{
+  position:absolute;
+  top:1.5rem;
+  right:2rem;
+  background:#fff;
+  border:1.5px solid var(--ink);
+  border-radius:4px;
+  font-family:'Outfit',sans-serif;
+  font-size:9.5px;
+  color:var(--ink);
+  min-width:230px;
+  z-index:10;
+  box-shadow:0 2px 6px rgba(0,0,0,0.06);
+}
+.doc-control-row{
+  padding:4px 10px;
+  border-bottom:1px solid var(--ink);
+  text-align:center;
+  line-height:1.3;
+}
+.doc-control-row:last-child{border-bottom:none}
+.doc-control-title{
+  font-weight:700;
+  font-size:10.5px;
+  letter-spacing:.02em;
+}
+.doc-control-sub{
+  font-style:italic;
+  font-weight:500;
+}
+.doc-control-split{
+  display:flex;
+  padding:0;
+}
+.doc-control-split > div{
+  flex:1;
+  padding:4px 10px;
+  text-align:center;
+}
+.doc-control-split > div:first-child{
+  border-right:1px solid var(--ink);
+}
+.doc-control b{font-weight:700}
+
+@media(max-width:900px){
+  .doc-control{position:static;margin:0 0 1rem auto;display:block;width:fit-content}
+}
+
 @media(max-width:700px){.ss-slide{padding:1.25rem 1rem}.ss-two-col{grid-template-columns:1fr}.ss-kpi .val{font-size:24px}}
 </style>
 </head>
@@ -389,6 +438,16 @@ tfoot td.num{text-align:right}
     </div>
   </div>
   <div class="page" id="page-detail">
+<div class="doc-control" id="docControlBox" style="display:none">
+      <div class="doc-control-row doc-control-title">RC-PGC-02-02</div>
+      <div class="doc-control-row doc-control-sub">Revisión de indicadores y proyectos</div>
+      <div class="doc-control-row doc-control-split" style="padding:0">
+        <div>Fecha de liberación: <b>oct 19</b></div>
+        <div>Fecha de revisión: <b>Ene 25</b></div>
+      </div>
+      <div class="doc-control-row">Revisión: <b>04</b></div>
+    </div>
+
     <div class="detail-title-row">
       <div class="detail-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="1.8" stroke-linecap="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>
       <div><div class="detail-title" id="detail-name"></div><div class="detail-sub">Indicadores en tiempo real · Auto-actualización cada 5 min</div></div>
@@ -1676,10 +1735,14 @@ const areas={
   operaciones:{name:'Operaciones especiales',submods:[]},vigilancia:{name:'Vigilancia',submods:[]},
 };
 function setNav(id){document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));const e=document.getElementById(id);if(e)e.classList.add('active');}
-function showHome(){setNav('nav-home');document.getElementById('page-home').classList.add('active');document.getElementById('page-detail').classList.remove('active');document.getElementById('bc-current').textContent='Resumen general';if(window._timerCargas){clearInterval(window._timerCargas);window._timerCargas=null;}Object.keys(CI).forEach(DC);if(window.innerWidth<900)toggleSidebar();}
+function showHome(){setNav('nav-home');document.getElementById('page-home').classList.add('active');document.getElementById('docControlBox').style.display='none';
+document.getElementById('page-detail').classList.remove('active');document.getElementById('bc-current').textContent='Resumen general';if(window._timerCargas){clearInterval(window._timerCargas);window._timerCargas=null;}Object.keys(CI).forEach(DC);if(window.innerWidth<900)toggleSidebar();}
 function openArea(key){
   if(!fisHasModule(key)){return;}
   const area=areas[key];setNav('nav-'+key);
+	document.getElementById('docControlBox').style.display=(key==='logistica')?'block':'none';
+
+
   document.getElementById('detail-name').textContent=area.name;
   document.getElementById('bc-current').textContent=area.name;
   let body='';
