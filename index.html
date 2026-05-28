@@ -11,26 +11,35 @@
 :root{--red:#C0152A;--red2:#9E0E20;--off:#F7F5F4;--ink:#1A0A0C;--ink3:#9A7078;--border:#E8DCDE}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;font-family:'Outfit',sans-serif}
+@keyframes loginBg{
+  0%  {background-position:0% 50%}
+  50% {background-position:100% 50%}
+  100%{background-position:0% 50%}
+}
 body{
   display:flex;align-items:center;justify-content:center;min-height:100vh;
-  background:#0a0508;
-  background-image:
-    radial-gradient(ellipse 70% 50% at 50% 0%, rgba(192,21,42,0.18) 0%, transparent 60%),
-    radial-gradient(ellipse 40% 40% at 80% 80%, rgba(192,21,42,0.08) 0%, transparent 60%);
+  background:linear-gradient(-50deg,#0a0508,#1a0008,#2a0510,#0d0205,#1f0612,#0a0508);
+  background-size:400% 400%;
+  animation:loginBg 16s ease infinite;
 }
-.login-wrap{
-  width:100%;max-width:420px;padding:1.5rem;
-}
+.login-wrap{width:100%;max-width:420px;padding:1.5rem}
+/* FFISA brand en login */
 .brand{text-align:center;margin-bottom:2.5rem}
-.brand-logo{
-  width:64px;height:64px;border-radius:18px;background:var(--red);
-  display:inline-flex;align-items:center;justify-content:center;
-  margin-bottom:1rem;box-shadow:0 8px 32px rgba(192,21,42,0.5);
+.ffisa-login{display:inline-flex;align-items:center;gap:16px;margin-bottom:1.1rem}
+.ffisa-login-circle{
+  width:68px;height:68px;border-radius:50%;
+  background:radial-gradient(circle at 36% 34%,#fff 0%,#f5eced 55%,#e0cdd0 100%);
+  display:flex;align-items:center;justify-content:center;
+  font-size:34px;font-weight:900;font-family:'Outfit',sans-serif;color:#C0152A;
+  box-shadow:0 8px 32px rgba(192,21,42,0.55),inset 0 1px 0 rgba(255,255,255,0.95);
+  flex-shrink:0;
 }
-.brand-logo svg{width:30px;height:30px;stroke:#fff}
-.brand-name{font-size:26px;font-weight:700;color:#fff;letter-spacing:-.01em}
-.brand-name span{color:rgba(255,255,255,0.35);font-weight:300}
-.brand-sub{font-size:12px;font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,0.3);margin-top:4px;letter-spacing:.1em;text-transform:uppercase}
+.ffisa-login-text{text-align:left;line-height:1}
+.ffisa-login-name{font-size:34px;font-weight:900;letter-spacing:-.03em;font-family:'Outfit',sans-serif}
+.ffisa-login-ff{color:#fff}
+.ffisa-login-isa{color:rgba(255,255,255,0.28);font-weight:300}
+.ffisa-login-sub{font-size:10px;font-style:italic;font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,0.3);margin-top:6px;letter-spacing:.04em}
+.brand-sub{font-size:11px;font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,0.22);margin-top:6px;letter-spacing:.15em;text-transform:uppercase}
 .card{
   background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);
   border-radius:20px;padding:2rem;backdrop-filter:blur(16px);
@@ -67,14 +76,14 @@ body{
 <body>
 <div class="login-wrap">
   <div class="brand">
-    <div class="brand-logo">
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
-        <circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
-      </svg>
+    <div class="ffisa-login">
+      <div class="ffisa-login-circle">F</div>
+      <div class="ffisa-login-text">
+        <div class="ffisa-login-name"><span class="ffisa-login-ff">FF</span><span class="ffisa-login-isa">ISA</span></div>
+        <div class="ffisa-login-sub">Fis Fiber Industries</div>
+      </div>
     </div>
-    <div class="brand-name">FIS <span>FIBER</span></div>
-    <div class="brand-sub">Sistema de Indicadores</div>
+    <div class="brand-sub">Sistema de Indicadores · Acceso Restringido</div>
   </div>
 
   <div class="card">
