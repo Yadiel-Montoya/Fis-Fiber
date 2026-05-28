@@ -19,7 +19,14 @@ async function loadViajesPiezas() {
     const MESES_VALIDOS = ['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE'];
     const parseNum = v => {
       if (!v && v !== 0) return 0;
-      const s = (v || '0').toString().trim().replace(/[,$\s\r]/g, '');
+      let s = (v || '0').toString().trim().replace(/[$\s\r]/g, '');
+      // Detectar formato europeo: punto como separador de miles (ej. "41.839" = 41,839)
+      // Patrón: dígitos{1-3} seguidos de uno o más grupos (.dígitos{3})
+      if (/^\d{1,3}(\.\d{3})+$/.test(s)) {
+        s = s.replace(/\./g, ''); // quitar puntos de miles → "41839"
+      } else {
+        s = s.replace(/,/g, ''); // quitar comas de miles (formato americano)
+      }
       return parseFloat(s) || 0;
     };
 
