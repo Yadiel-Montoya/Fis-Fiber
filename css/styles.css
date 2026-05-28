@@ -26,15 +26,15 @@ body{font-family:'Outfit',sans-serif;background:var(--off);color:var(--ink);min-
 .sidebar{width:var(--sidebar);min-width:var(--sidebar);height:100vh;position:fixed;top:0;left:0;z-index:200;display:flex;flex-direction:column;box-shadow:4px 0 32px rgba(100,0,10,0.35);background:linear-gradient(-55deg,#C0152A,#7A000E,#E01C36,#5A0008,#B5101E,#8B0010);background-size:400% 400%;animation:sidebarFlow 14s ease infinite}
 
 /* ── FFISA BRAND LOGO ── */
-.ffisa-brand{display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center}
-.ffisa-circle{width:72px;height:72px;border-radius:50%;background:radial-gradient(circle at 36% 34%,#fff 0%,#f5eced 55%,#e4d0d3 100%);display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:900;font-family:'Outfit',sans-serif;color:#C0152A;flex-shrink:0;box-shadow:0 8px 32px rgba(0,0,0,0.55),0 2px 8px rgba(192,21,42,0.3),inset 0 2px 0 rgba(255,255,255,0.95)}
+.ffisa-brand{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
+.ffisa-circle{width:72px;height:72px;border-radius:50%;background:radial-gradient(circle at 36% 34%,#fff 0%,#f5eced 55%,#e4d0d3 100%);display:flex;align-items:center;justify-content:center;font-size:42px;font-weight:400;font-family:'Bebas Neue',sans-serif;color:#C0152A;flex-shrink:0;box-shadow:0 8px 32px rgba(0,0,0,0.55),0 2px 8px rgba(192,21,42,0.3),inset 0 2px 0 rgba(255,255,255,0.95)}
 .ffisa-text-wrap{line-height:1;text-align:center}
-.ffisa-name{font-size:32px;font-weight:900;letter-spacing:-.03em;font-family:'Outfit',sans-serif}
+.ffisa-name{font-size:48px;font-weight:400;letter-spacing:.08em;font-family:'Bebas Neue',sans-serif}
 .ffisa-ff{color:#fff}
-.ffisa-isa{color:rgba(255,255,255,0.3);font-weight:300}
-.ffisa-sub-brand{font-size:10.5px;color:rgba(255,255,255,0.32);font-style:italic;font-family:'JetBrains Mono',monospace;margin-top:7px;letter-spacing:.04em}
+.ffisa-isa{color:rgba(255,255,255,0.55)}
+.ffisa-sub-brand{font-size:11px;color:rgba(255,255,255,0.48);font-style:italic;font-family:'JetBrains Mono',monospace;margin-top:7px;letter-spacing:.04em}
 .sidebar-brand{padding:2.25rem 1.25rem 1.75rem;border-bottom:1px solid rgba(255,255,255,0.12);display:flex;flex-direction:column;align-items:center}
-.brand-eyebrow{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-bottom:6px;font-family:'JetBrains Mono',monospace;text-align:center}
+.brand-eyebrow{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,0.55);margin-bottom:6px;font-family:'JetBrains Mono',monospace;text-align:center}
 .brand-name{font-size:20px;font-weight:700;color:#fff;line-height:1.1}
 .brand-name span{color:rgba(255,255,255,0.55);font-weight:300}
 .brand-sub{font-size:11px;color:rgba(255,255,255,0.45);margin-top:4px;font-family:'JetBrains Mono',monospace}
