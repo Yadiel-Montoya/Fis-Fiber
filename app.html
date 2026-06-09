@@ -31,6 +31,7 @@
 <script src="js/areas/ventas.js"></script>
 <script src="js/areas/operaciones.js"></script>
 <script src="js/areas/vigilancia.js"></script>
+<script src="js/areas/almacen.js"></script>
 
 <!-- Enrutador (debe ir al final, después de todos los módulos) -->
 <script src="js/navigation.js"></script>
@@ -105,6 +106,14 @@
       </svg>
       Vigilancia<span class="nav-badge">—</span>
     </div>
+    <div class="nav-item" data-module="almacen" id="nav-almacen" onclick="openArea('almacen')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+        <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+        <line x1="12" y1="22.08" x2="12" y2="12"/>
+      </svg>
+      Almacén MP<span class="nav-badge">Nuevo</span>
+    </div>
   </nav>
   <div class="sidebar-footer">
     <div class="live-pill"><div class="live-dot"></div>En vivo</div>
@@ -144,7 +153,7 @@
     <div class="stats-strip">
       <div class="stat-box">
         <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
-        <div><div class="stat-val">5</div><div class="stat-lbl">Áreas activas</div></div>
+        <div><div class="stat-val">6</div><div class="stat-lbl">Áreas activas</div></div>
       </div>
       <div class="stat-box">
         <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
@@ -217,6 +226,18 @@
           <span class="ac-status"><span class="st-dot off"></span>Sin datos</span>
         </div>
       </div>
+      <div class="area-card" style="--ac:var(--teal);--ac-bg:var(--teal-bg);--ac-border:rgba(26,158,130,0.2)" onclick="openArea('almacen')">
+        <div class="ac-top">
+          <div class="ac-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></div>
+          <div class="ac-arr">↗</div>
+        </div>
+        <div class="ac-name">Almacén MP</div>
+        <div class="ac-desc">Entradas, salidas y existencias de materia prima</div>
+        <div class="ac-footer">
+          <span class="ac-badge" style="color:var(--teal);background:var(--teal-bg);border-color:rgba(26,158,130,0.2)">Módulo nuevo</span>
+          <span class="ac-status"><span class="st-dot off"></span>Pendiente</span>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -285,7 +306,10 @@
 <!-- ── INIT ── -->
 <script>
 const _fisUser = fisCheckAuth();
-if (_fisUser) fisApplyModuleRestrictions(_fisUser);
+if (_fisUser) {
+  fisApplyModuleRestrictions(_fisUser);
+  if (_fisUser.role !== 'admin') openArea(_fisUser.modules[0]);
+}
 Chart.register(ChartDataLabels);
 updateClock();
 setInterval(updateClock, 1000);

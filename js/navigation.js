@@ -69,6 +69,11 @@ const areas = {
     submods: [],
     render: renderOperaciones,
   },
+  almacen: {
+    name: 'Almacén Materia Prima',
+    submods: [],
+    render: renderAlmacen,
+  },
   vigilancia: {
     name: 'Vigilancia',
     submods: [],
