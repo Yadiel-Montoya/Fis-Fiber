@@ -23,3 +23,7 @@ const VIAJES_PIEZAS_URL       = 'https://docs.google.com/spreadsheets/d/e/2PACX-
    const MAQUILAS_URL = 'https://docs.google.com/...&output=csv';
    const VENTAS_URL   = 'https://docs.google.com/...&output=csv';
 */
+
+/* ── LOGÍSTICA: EMBARQUES REPROGRAMADOS (proxy interno) ── */
+/* Cambia la IP si el proxy corre en otra máquina de la red  */
+const EMBARQUES_PROXY_URL = 'http://172.16.2.42:3001';

@@ -16,7 +16,8 @@ function _clearAllTimers() {
   if (window._timerCargas)   { clearInterval(window._timerCargas);   window._timerCargas   = null; }
   if (window._timerColab)    { clearInterval(window._timerColab);    window._timerColab    = null; }
   if (window._timerCasetas)  { clearInterval(window._timerCasetas);  window._timerCasetas  = null; }
-  if (window._timerVP)       { clearInterval(window._timerVP);       window._timerVP       = null; }
+  if (window._timerVP)        { clearInterval(window._timerVP);        window._timerVP        = null; }
+  if (window._timerEmbarques) { clearInterval(window._timerEmbarques); window._timerEmbarques = null; }
 }
 
 /* ── PLACEHOLDER PARA MÓDULOS SIN DATOS ── */
@@ -61,7 +62,8 @@ const areas = {
       { id: 'cargas',   label: '📦 Cargas anticipadas',           render: renderCargas },
       { id: 'colab',    label: '👥 Participación colaboradores',  render: renderColaboradores },
       { id: 'casetas',  label: '🛣️ Gastos casetas',              render: renderCasetas },
-      { id: 'viajespz', label: '🚛 Viajes y Piezas',              render: renderViajesPiezas },
+      { id: 'viajespz',  label: '🚛 Viajes y Piezas',              render: renderViajesPiezas },
+      { id: 'embarques', label: '🔄 Embarques reprogramados',       render: renderEmbarques },
     ],
   },
   operaciones: {
