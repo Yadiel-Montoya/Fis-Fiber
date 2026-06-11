@@ -1,12 +1,12 @@
 ﻿/**
  * embarques.js - Modulo Embarques Reprogramados
- * Fuente: proxy WMS interno en EMBARQUES_PROXY_URL (config.js)
+ * Fuente: Vercel serverless function /api/reprogramados (fisfiberwms.duckdns.org)
  * Filtra registros donde NumeroViaje === "Reprogramado"
  */
 
 async function loadEmbarques() {
   try {
-    const r = await fetch(EMBARQUES_PROXY_URL + "/api/reprogramados?cb=" + Date.now(), { cache: "no-store" });
+    const r = await fetch((EMBARQUES_PROXY_URL || "") + "/api/reprogramados?cb=" + Date.now(), { cache: "no-store" });
     if (!r.ok) throw new Error("HTTP " + r.status);
     const js = await r.json();
     if (js.error) throw new Error(js.error);
@@ -17,7 +17,7 @@ async function loadEmbarques() {
 }
 
 async function renderEmbarques(container) {
-  container.innerHTML = "<div class=\"loading-state\"><div class=\"spinner\"></div>Conectando con WMS interno…</div>";
+  container.innerHTML = "<div class=\"loading-state\"><div class=\"spinner\"></div>Conectando con WMS…</div>";
   const res = await loadEmbarques();
   const data = res.data, timestamp = res.timestamp, cacheAge = res.cacheAge, error = res.error;
 
@@ -25,9 +25,8 @@ async function renderEmbarques(container) {
     container.innerHTML =
       "<div class=\"empty-state\">" +
         "<div class=\"empty-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"var(--red)\" stroke-width=\"1.8\" stroke-linecap=\"round\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><line x1=\"12\" y1=\"8\" x2=\"12\" y2=\"12\"/><line x1=\"12\" y1=\"16\" x2=\"12.01\" y2=\"16\"/></svg></div>" +
-        "<div class=\"empty-title\">Proxy WMS no disponible</div>" +
-        "<div class=\"empty-desc\">Verifica que el proxy esté corriendo:<br>" +
-        "<code style=\"background:var(--off2);padding:2px 8px;border-radius:4px;font-size:12px\">" + EMBARQUES_PROXY_URL + "/health</code><br><br>" +
+        "<div class=\"empty-title\">WMS no disponible</div>" +
+        "<div class=\"empty-desc\">La función serverless no pudo conectar con el WMS.<br><br>" +
         "<span style=\"color:var(--red);font-size:12px\">" + error + "</span></div>" +
       "</div>";
     return;

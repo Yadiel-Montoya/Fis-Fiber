@@ -12,7 +12,7 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 import requests
 
 # ── CONFIGURACIÓN ───────────────────────────────────────
-WMS_BASE   = 'http://172.16.2.42'
+WMS_BASE   = 'https://fisfiberwms.duckdns.org'
 WMS_EMAIL  = 'ymontoya@fisfiber.com.mx'
 WMS_PASS   = '7895'
 PORT       = 3001
