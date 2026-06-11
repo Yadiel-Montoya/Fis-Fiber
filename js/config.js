@@ -24,6 +24,6 @@ const VIAJES_PIEZAS_URL       = 'https://docs.google.com/spreadsheets/d/e/2PACX-
    const VENTAS_URL   = 'https://docs.google.com/...&output=csv';
 */
 
-/* ── LOGÍSTICA: EMBARQUES REPROGRAMADOS ── */
-/* String vacío = llama a la función Vercel /api/reprogramados (relativo) */
-const EMBARQUES_PROXY_URL = '';
+/* ── LOGÍSTICA: EMBARQUES REPROGRAMADOS (proxy local) ── */
+/* El proxy corre en la red interna. Cambia la IP si cambia de máquina.  */
+const EMBARQUES_PROXY_URL = 'http://172.16.2.42:3001';
