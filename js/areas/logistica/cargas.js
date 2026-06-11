@@ -58,7 +58,10 @@ async function renderCargas(container) {
     const noc = d.reduce((s,r)=>s+r.Nocturnas,0);
     const ren = d.reduce((s,r)=>s+r.Rentados,0);
     const tot = ant+noc+ren;
-    return { ant, noc, ren, tot, pct: tot?Math.round(ant/tot*100):0, prom: d.length?(tot/d.length).toFixed(1):0, dias: d.length };
+    const pctAnt = tot ? Math.round(ant/tot*100) : 0;
+    const pctNoc = tot ? Math.round(noc/tot*100) : 0;
+    const pctRen = tot ? 100 - pctAnt - pctNoc : 0;
+    return { ant, noc, ren, tot, pct: pctAnt, pctNoc, pctRen, prom: d.length?(tot/d.length).toFixed(1):0, dias: d.length };
   }
 
   const CHART_IDS = ['g-bar','g-dona','g-dow','g-acum'];
@@ -88,8 +91,8 @@ async function renderCargas(container) {
       <div class="kpi-row">
         <div class="ckpi" style="--ck-color:var(--ink)"><div class="lbl">Total cargas</div><div class="val">${k.tot}</div><div class="sub">${k.dias} días</div></div>
         <div class="ckpi" style="--ck-color:var(--blue)"><div class="lbl">Anticipadas</div><div class="val">${k.ant}</div><div class="sub">${k.pct}% del total</div></div>
-        <div class="ckpi" style="--ck-color:var(--teal)"><div class="lbl">Nocturnas</div><div class="val">${k.noc}</div><div class="sub">${k.noc&&k.tot?Math.round(k.noc/k.tot*100):0}% del total</div></div>
-        <div class="ckpi" style="--ck-color:var(--amber)"><div class="lbl">Rentados</div><div class="val">${k.ren}</div><div class="sub">${k.ren&&k.tot?Math.round(k.ren/k.tot*100):0}% del total</div></div>
+        <div class="ckpi" style="--ck-color:var(--teal)"><div class="lbl">Nocturnas</div><div class="val">${k.noc}</div><div class="sub">${k.pctNoc}% del total</div></div>
+        <div class="ckpi" style="--ck-color:var(--amber)"><div class="lbl">Rentados</div><div class="val">${k.ren}</div><div class="sub">${k.pctRen}% del total</div></div>
       </div>
       <div class="charts-grid">
         <div class="chart-box full"><div class="chart-title">Cargas por día <span class="chart-badge">${data.length} días</span></div><div style="position:relative;width:100%;height:${barH}px"><canvas id="g-bar"></canvas></div></div>
