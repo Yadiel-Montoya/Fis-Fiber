@@ -5,11 +5,25 @@
 
 const FIS_SESSION_KEY = 'fis_session';
 
+/** Lee y valida la sesión. Si está corrupta o incompleta, la elimina. */
+function fisGetSession() {
+  const raw = sessionStorage.getItem(FIS_SESSION_KEY);
+  if (!raw) return null;
+  try {
+    const s = JSON.parse(raw);
+    if (!s || !s.username || !Array.isArray(s.modules)) throw new Error('sesión inválida');
+    return s;
+  } catch(e) {
+    sessionStorage.removeItem(FIS_SESSION_KEY);
+    return null;
+  }
+}
+
 /** Verifica sesión activa. Si no hay, redirige a login. */
 function fisCheckAuth() {
-  const raw = sessionStorage.getItem(FIS_SESSION_KEY);
-  if (!raw) { window.location.replace('index.html'); return null; }
-  return JSON.parse(raw);
+  const session = fisGetSession();
+  if (!session) { window.location.replace('index.html'); return null; }
+  return session;
 }
 
 /** Login: valida credenciales y guarda sesión. Retorna { ok, error } */
@@ -60,14 +74,12 @@ function fisApplyModuleRestrictions(user) {
 
 /** Verifica si el usuario actual tiene acceso a un módulo dado. */
 function fisHasModule(key) {
-  const raw = sessionStorage.getItem(FIS_SESSION_KEY);
-  if (!raw) return false;
-  return JSON.parse(raw).modules.includes(key);
+  const s = fisGetSession();
+  return !!s && s.modules.includes(key);
 }
 
 /** Retorna true si el usuario actual es admin. */
 function fisIsAdmin() {
-  const raw = sessionStorage.getItem(FIS_SESSION_KEY);
-  if (!raw) return false;
-  return JSON.parse(raw).role === 'admin';
+  const s = fisGetSession();
+  return !!s && s.role === 'admin';
 }

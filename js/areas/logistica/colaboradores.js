@@ -60,7 +60,9 @@ async function renderColaboradores(container) {
       Meta:        parseInt((r['Meta 100%']||'60').toString().replace(/[^\d]/g,'')) || 60,
       PctViajes:   parsePct(r['% DE VIAJES']||r['%viajes']||r['% viajes']||'0')
     })).filter(r => r.Colaborador && r.Colaborador.length > 2 && r.Colaborador !== 'COLABORADOR');
-    VD.forEach(r => { if (!r.Mes || r.Mes.length < 7) r.Mes = '2026-04'; });
+    const _hoy = new Date();
+    const _mesActual = `${_hoy.getFullYear()}-${String(_hoy.getMonth()+1).padStart(2,'0')}`;
+    VD.forEach(r => { if (!r.Mes || r.Mes.length < 7) r.Mes = _mesActual; });
     if (!VD.length) throw new Error('Sin registros válidos');
   } catch(e) {
     container.innerHTML = `<div class="empty-state"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="1.8" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div class="empty-title">Error al cargar datos</div><div class="empty-desc">⚠ ${e.message}</div></div>`;

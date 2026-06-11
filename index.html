@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FIS FIBER · Acceso</title>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="js/users.js"></script>
 <script src="js/auth.js"></script>
 <style>
@@ -30,14 +30,14 @@ body{
   width:68px;height:68px;border-radius:50%;
   background:radial-gradient(circle at 36% 34%,#fff 0%,#f5eced 55%,#e0cdd0 100%);
   display:flex;align-items:center;justify-content:center;
-  font-size:34px;font-weight:900;font-family:'Outfit',sans-serif;color:#C0152A;
+  font-size:40px;font-weight:400;font-family:'Bebas Neue',sans-serif;color:#C0152A;
   box-shadow:0 8px 32px rgba(192,21,42,0.55),inset 0 1px 0 rgba(255,255,255,0.95);
   flex-shrink:0;
 }
 .ffisa-login-text{text-align:left;line-height:1}
-.ffisa-login-name{font-size:34px;font-weight:900;letter-spacing:-.03em;font-family:'Outfit',sans-serif}
+.ffisa-login-name{font-size:44px;font-weight:400;letter-spacing:.08em;font-family:'Bebas Neue',sans-serif}
 .ffisa-login-ff{color:#fff}
-.ffisa-login-isa{color:rgba(255,255,255,0.28);font-weight:300}
+.ffisa-login-isa{color:rgba(255,255,255,0.55)}
 .ffisa-login-sub{font-size:10px;font-style:italic;font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,0.3);margin-top:6px;letter-spacing:.04em}
 .brand-sub{font-size:11px;font-family:'JetBrains Mono',monospace;color:rgba(255,255,255,0.22);margin-top:6px;letter-spacing:.15em;text-transform:uppercase}
 .card{
@@ -109,8 +109,8 @@ body{
 </div>
 
 <script>
-// Si ya tiene sesión activa, redirige directo a la app
-if (sessionStorage.getItem('fis_session')) {
+// Si ya tiene sesión activa y válida, redirige directo a la app
+if (fisGetSession()) {
   window.location.replace('app.html');
 }
 

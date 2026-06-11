@@ -54,7 +54,10 @@ function parseCSV(txt) {
     const vals = []; let cur = '', inQ = false;
     for (let i = 0; i < line.length; i++) {
       const c = line[i];
-      if (c === '"') { inQ = !inQ; }
+      if (c === '"') {
+        if (inQ && line[i+1] === '"') { cur += '"'; i++; }  // comilla escapada ""
+        else inQ = !inQ;
+      }
       else if (c === ',' && !inQ) { vals.push(cur.trim().replace(/^"|"$/g, '')); cur = ''; }
       else cur += c;
     }

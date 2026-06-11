@@ -11,13 +11,12 @@
  */
 
 /* ── ESTADO GLOBAL DE TIMERS ── */
-// Limpia todos los timers de auto-refresco al cambiar de módulo
+// Limpia todos los timers de auto-refresco al cambiar de módulo.
+// Convención: todo timer de módulo se guarda en window._timer<Nombre>.
 function _clearAllTimers() {
-  if (window._timerCargas)   { clearInterval(window._timerCargas);   window._timerCargas   = null; }
-  if (window._timerColab)    { clearInterval(window._timerColab);    window._timerColab    = null; }
-  if (window._timerCasetas)  { clearInterval(window._timerCasetas);  window._timerCasetas  = null; }
-  if (window._timerVP)        { clearInterval(window._timerVP);        window._timerVP        = null; }
-  if (window._timerEmbarques) { clearInterval(window._timerEmbarques); window._timerEmbarques = null; }
+  Object.keys(window)
+    .filter(k => k.startsWith('_timer'))
+    .forEach(k => { if (window[k]) { clearInterval(window[k]); window[k] = null; } });
 }
 
 /* ── PLACEHOLDER PARA MÓDULOS SIN DATOS ── */

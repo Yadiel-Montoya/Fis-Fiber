@@ -45,7 +45,8 @@ module.exports = async function handler(req, res) {
       req2.write(body);
       req2.end();
     });
-    steps.push({ step: 'login', ms: Date.now()-t0, status: loginRes.status, bodyPreview: loginRes.body, cookies: loginRes.headers['set-cookie'] });
+    var gotCookie = !!(loginRes.headers['set-cookie'] && String(loginRes.headers['set-cookie']).match(/ASP\.NET_SessionId/i));
+    steps.push({ step: 'login', ms: Date.now()-t0, status: loginRes.status, bodyPreview: loginRes.body, sessionCookie: gotCookie ? 'presente (oculta)' : 'ausente' });
   } catch(e) {
     steps.push({ step: 'login', error: e.message });
     loginErr = e;

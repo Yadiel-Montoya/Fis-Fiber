@@ -6,9 +6,9 @@
 
 const https = require('https');
 
-const WMS_HOST    = 'fisfiberwms.duckdns.org';
-const WMS_EMAIL   = 'ymontoya@fisfiber.com.mx';
-const WMS_PASS    = '7895';
+const WMS_HOST    = process.env.WMS_HOST  || 'fisfiberwms.duckdns.org';
+const WMS_EMAIL   = process.env.WMS_EMAIL || 'ymontoya@fisfiber.com.mx';
+const WMS_PASS    = process.env.WMS_PASS  || '7895';
 const BATCH_SIZE  = 15;
 const DATA_TTL    = 5 * 60000;
 const SESSION_TTL = 20 * 60000;
