@@ -24,6 +24,7 @@ const VIAJES_PIEZAS_URL       = 'https://docs.google.com/spreadsheets/d/e/2PACX-
    const VENTAS_URL   = 'https://docs.google.com/...&output=csv';
 */
 
-/* ── LOGÍSTICA: EMBARQUES REPROGRAMADOS (proxy local) ── */
-/* El proxy corre en la red interna. Cambia la IP si cambia de máquina.  */
-const EMBARQUES_PROXY_URL = 'http://172.16.2.42:3001';
+/* ── LOGÍSTICA: EMBARQUES REPROGRAMADOS ── */
+/* Apunta a la API de FIS FIBER (carpeta servidor-api/, corre en tu servidor).
+   Cambia esta URL por la dirección pública/red donde la tengas montada.   */
+const EMBARQUES_PROXY_URL = 'http://TU-SERVIDOR:3001';
