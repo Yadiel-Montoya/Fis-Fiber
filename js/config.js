@@ -23,10 +23,11 @@ const VIAJES_PIEZAS_URL       = 'https://docs.google.com/spreadsheets/d/e/2PACX-
    La URL sin gid exporta la primera hoja (Ventas general).
    Para Fieltro/Fiberbond/Pedidos, publica cada hoja y pega su URL (con &gid=).
    Si una URL queda vacía, ese submódulo usa los datos embebidos de respaldo. */
-const VENTAS_GENERAL_URL   = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTllAuaaQnpxD0DE_eINa5vZq4Ifrquv14cu1v-l5Zl3ZsZpy7jwbYvWpULJeOOjw/pub?output=csv';
-const VENTAS_FIELTRO_URL   = '';
-const VENTAS_FIBERBOND_URL = '';
-const VENTAS_PEDIDOS_URL   = '';
+const _VENTAS_PUB = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTllAuaaQnpxD0DE_eINa5vZq4Ifrquv14cu1v-l5Zl3ZsZpy7jwbYvWpULJeOOjw/pub';
+const VENTAS_GENERAL_URL   = _VENTAS_PUB + '?gid=607309837&single=true&output=csv';
+const VENTAS_FIELTRO_URL   = _VENTAS_PUB + '?gid=1123259876&single=true&output=csv';
+const VENTAS_FIBERBOND_URL = _VENTAS_PUB + '?gid=1773611764&single=true&output=csv';
+const VENTAS_PEDIDOS_URL   = _VENTAS_PUB + '?gid=1798333200&single=true&output=csv';
 
 /* ── AGREGAR NUEVAS FUENTES AQUÍ ── */
 

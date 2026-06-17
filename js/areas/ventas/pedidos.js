@@ -1,10 +1,52 @@
 /**
  * pedidos.js — Submódulo Pedidos Reprogramados (ventas)
- * Depende de: datos-ventas.js, utils.js
+ * Depende de: datos-ventas.js, config.js (VENTAS_PEDIDOS_URL), utils.js
  */
-function renderPedidos(container) {
-  const D = VENTAS_PEDIDOS.meses;
-  const dg = VENTAS_PEDIDOS.desgloseUltimoMes;
+
+/* Carga Pedidos en vivo. Meses: 0=mes 2=2024 5=2025 7=2026.
+   Desglose por retraso: col 15 (rango) / col 16 (valor). */
+async function loadPedidos() {
+  if (typeof VENTAS_PEDIDOS_URL === 'undefined' || !VENTAS_PEDIDOS_URL)
+    return { meses: VENTAS_PEDIDOS.meses, desglose: VENTAS_PEDIDOS.desgloseUltimoMes, vivo: false };
+  try {
+    const res = await fetch(VENTAS_PEDIDOS_URL + '&cb=' + Date.now(), { cache: 'no-store' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const txt = await res.text();
+    if (txt.trim().startsWith('<')) throw new Error('HTML recibido');
+    const filas = txt.split('\n').map(parseCSVLine);
+    const hi = filas.findIndex(c => (c[0] || '').trim() === 'Mes');
+    if (hi < 0) throw new Error('Sin encabezado Mes');
+    const meses = [];
+    for (let i = hi + 1; i < filas.length && meses.length < 12; i++) {
+      const c = filas[i].map(x => (x || '').trim());
+      if (!MESES_VENTAS.includes(c[0])) { if (meses.length) break; continue; }
+      const v26 = parseMoney(c[7]);
+      meses.push({ mes:c[0], a2024:parseMoney(c[2])||null, a2025:parseMoney(c[5])||null, a2026: c[7]!=='' ? v26 : null });
+    }
+    if (!meses.length) throw new Error('Sin meses');
+    // Desglose por días de retraso (col 15 = rango, col 16 = valor)
+    const rangos = [];
+    for (const f of filas) {
+      const r = (f[15] || '').trim(), v = parseMoney(f[16] || '');
+      if (/1\s*a\s*3|4\s*a\s*10|m[aá]s\s*de\s*10/i.test(r) && v) rangos.push({ rango:r, valor:v });
+      if (rangos.length === 3) break;
+    }
+    const ultimoMes = (meses.filter(m => m.a2026 != null).slice(-1)[0] || {}).mes || '';
+    const desglose = rangos.length
+      ? { mes: ultimoMes, rangos, total: rangos.reduce((s,r)=>s+r.valor,0) }
+      : VENTAS_PEDIDOS.desgloseUltimoMes;
+    return { meses, desglose, vivo: true };
+  } catch (e) {
+    console.warn('Pedidos: datos embebidos (', e.message, ')');
+    return { meses: VENTAS_PEDIDOS.meses, desglose: VENTAS_PEDIDOS.desgloseUltimoMes, vivo: false };
+  }
+}
+
+async function renderPedidos(container) {
+  container.innerHTML = `<div class="loading-state"><div class="spinner"></div>Conectando con Google Sheets…</div>`;
+  const carga = await loadPedidos();
+  const D = carga.meses;
+  const dg = carga.desglose;
   const con26 = D.filter(r => r.a2026 != null);
   const tot26 = con26.reduce((s,r) => s + r.a2026, 0);
   const tot25 = D.filter((r,i) => i < con26.length).reduce((s,r) => s + (r.a2025||0), 0);
@@ -13,7 +55,7 @@ function renderPedidos(container) {
   const ultimo = con26[con26.length-1] || {};
 
   container.innerHTML = `
-    <div class="banner ok">✓ Pedidos reprogramados · Conteo mensual · Corte ${ultimo.mes||''} 2026</div>
+    <div class="banner ok">${carga.vivo?'✓ Google Sheets conectado':'✓ Datos locales'} · Pedidos reprogramados · Conteo mensual · Corte ${ultimo.mes||''} 2026</div>
     <div class="kpi-row">
       <div class="ckpi" style="--ck-color:var(--ink)"><div class="lbl">Total 2026 (YTD)</div><div class="val">${tot26}</div><div class="sub">${con26.length} meses</div></div>
       <div class="ckpi" style="--ck-color:var(--blue)"><div class="lbl">Promedio mensual</div><div class="val">${prom26.toFixed(0)}</div><div class="sub">pedidos / mes</div></div>

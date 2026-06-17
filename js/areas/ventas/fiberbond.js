@@ -1,9 +1,34 @@
 /**
  * fiberbond.js — Submódulo Ventas Fiberbond (kilos) · General vs FIS
- * Depende de: datos-ventas.js, utils.js
+ * Depende de: datos-ventas.js, config.js (VENTAS_FIBERBOND_URL), utils.js
  */
-function renderFiberbond(container) {
-  const D = VENTAS_FIBERBOND;
+
+/* Carga Fiberbond en vivo. Columnas: 0=Mes 2=g24 4=g25 6=g26 7=f26 */
+async function loadFiberbond() {
+  if (typeof VENTAS_FIBERBOND_URL === 'undefined' || !VENTAS_FIBERBOND_URL) return { data: VENTAS_FIBERBOND, vivo: false };
+  try {
+    const res = await fetch(VENTAS_FIBERBOND_URL + '&cb=' + Date.now(), { cache: 'no-store' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const txt = await res.text();
+    if (txt.trim().startsWith('<')) throw new Error('HTML recibido');
+    const filas = txt.split('\n').map(parseCSVLine);
+    const hi = filas.findIndex(c => (c[0] || '').trim() === 'Mes');
+    if (hi < 0) throw new Error('Sin encabezado Mes');
+    const data = [];
+    for (let i = hi + 1; i < filas.length && data.length < 12; i++) {
+      const c = filas[i].map(x => (x || '').trim());
+      if (!MESES_VENTAS.includes(c[0])) { if (data.length) break; continue; }
+      data.push({ mes:c[0], g2024:parseMoney(c[2]), g2025:parseMoney(c[4]), g2026:parseMoney(c[6])||null, f2026:parseMoney(c[7])||null });
+    }
+    if (!data.length) throw new Error('Sin meses');
+    return { data, vivo: true };
+  } catch (e) { console.warn('Fiberbond: datos embebidos (', e.message, ')'); return { data: VENTAS_FIBERBOND, vivo: false }; }
+}
+
+async function renderFiberbond(container) {
+  container.innerHTML = `<div class="loading-state"><div class="spinner"></div>Conectando con Google Sheets…</div>`;
+  const carga = await loadFiberbond();
+  const D = carga.data;
   const kg = n => n == null ? '—' : Math.round(n).toLocaleString('es-MX') + ' kg';
   const sum = k => D.reduce((s,r) => s + (r[k]||0), 0);
   const g26 = sum('g2026'), g25 = sum('g2025'), g24 = sum('g2024'), f26 = sum('f2026');
@@ -13,7 +38,7 @@ function renderFiberbond(container) {
   const ultimo = D[D.length-1] || {};
 
   container.innerHTML = `
-    <div class="banner ok">✓ Ventas Fiberbond en kilos · Comparativo General vs FIS · Corte ${ultimo.mes||''} 2026</div>
+    <div class="banner ok">${carga.vivo?'✓ Google Sheets conectado':'✓ Datos locales'} · Fiberbond en kilos · General vs FIS · Corte ${ultimo.mes||''} 2026</div>
     <div class="kpi-row">
       <div class="ckpi" style="--ck-color:var(--ink)"><div class="lbl">General 2026 (YTD)</div><div class="val">${Math.round(g26/1000)}<span style="font-size:15px">k kg</span></div><div class="sub">${D.length} meses</div></div>
       <div class="ckpi" style="--ck-color:var(--blue)"><div class="lbl">Promedio mensual</div><div class="val">${Math.round(prom26/1000)}<span style="font-size:15px">k</span></div><div class="sub">kg / mes</div></div>

@@ -1,9 +1,34 @@
 /**
  * fieltro.js — Submódulo Ventas Fieltro (kilos) · General vs FIS
- * Depende de: datos-ventas.js, utils.js
+ * Depende de: datos-ventas.js, config.js (VENTAS_FIELTRO_URL), utils.js
  */
-function renderFieltro(container) {
-  const D = VENTAS_FIELTRO;
+
+/* Carga Fieltro en vivo. Columnas: 0=Mes 2=g24 3=f24 5=g25 6=f25 7=g26 8=f26 */
+async function loadFieltro() {
+  if (typeof VENTAS_FIELTRO_URL === 'undefined' || !VENTAS_FIELTRO_URL) return { data: VENTAS_FIELTRO, vivo: false };
+  try {
+    const res = await fetch(VENTAS_FIELTRO_URL + '&cb=' + Date.now(), { cache: 'no-store' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const txt = await res.text();
+    if (txt.trim().startsWith('<')) throw new Error('HTML recibido');
+    const filas = txt.split('\n').map(parseCSVLine);
+    const hi = filas.findIndex(c => (c[0] || '').trim() === 'Mes');
+    if (hi < 0) throw new Error('Sin encabezado Mes');
+    const data = [];
+    for (let i = hi + 1; i < filas.length && data.length < 12; i++) {
+      const c = filas[i].map(x => (x || '').trim());
+      if (!MESES_VENTAS.includes(c[0])) { if (data.length) break; continue; }
+      data.push({ mes:c[0], g2024:parseMoney(c[2]), f2024:parseMoney(c[3]), g2025:parseMoney(c[5]), f2025:parseMoney(c[6]), g2026:parseMoney(c[7])||null, f2026:parseMoney(c[8])||null });
+    }
+    if (!data.length) throw new Error('Sin meses');
+    return { data, vivo: true };
+  } catch (e) { console.warn('Fieltro: datos embebidos (', e.message, ')'); return { data: VENTAS_FIELTRO, vivo: false }; }
+}
+
+async function renderFieltro(container) {
+  container.innerHTML = `<div class="loading-state"><div class="spinner"></div>Conectando con Google Sheets…</div>`;
+  const carga = await loadFieltro();
+  const D = carga.data;
   const kg = n => n == null ? '—' : Math.round(n).toLocaleString('es-MX') + ' kg';
   const sum = k => D.reduce((s,r) => s + (r[k]||0), 0);
   const g26 = sum('g2026'), g25 = sum('g2025'), g24 = sum('g2024'), f26 = sum('f2026');
@@ -13,7 +38,7 @@ function renderFieltro(container) {
   const ultimo = D[D.length-1] || {};
 
   container.innerHTML = `
-    <div class="banner ok">✓ Ventas Fieltro en kilos · Comparativo General vs FIS · Corte ${ultimo.mes||''} 2026</div>
+    <div class="banner ok">${carga.vivo?'✓ Google Sheets conectado':'✓ Datos locales'} · Fieltro en kilos · General vs FIS · Corte ${ultimo.mes||''} 2026</div>
     <div class="kpi-row">
       <div class="ckpi" style="--ck-color:var(--ink)"><div class="lbl">General 2026 (YTD)</div><div class="val">${Math.round(g26/1000)}<span style="font-size:15px">k kg</span></div><div class="sub">${D.length} meses</div></div>
       <div class="ckpi" style="--ck-color:var(--blue)"><div class="lbl">Promedio mensual</div><div class="val">${Math.round(prom26/1000)}<span style="font-size:15px">k</span></div><div class="sub">kg / mes</div></div>
