@@ -27,9 +27,15 @@
 <script src="js/areas/logistica/viajes-piezas.js"></script>
 <script src="js/areas/logistica/embarques.js"></script>
 
+<!-- Módulos de Ventas -->
+<script src="js/areas/ventas/datos-ventas.js"></script>
+<script src="js/areas/ventas/ventas-general.js"></script>
+<script src="js/areas/ventas/fieltro.js"></script>
+<script src="js/areas/ventas/fiberbond.js"></script>
+<script src="js/areas/ventas/pedidos.js"></script>
+
 <!-- Módulos de otras áreas -->
 <script src="js/areas/maquilas.js"></script>
-<script src="js/areas/ventas.js"></script>
 <script src="js/areas/operaciones.js"></script>
 <script src="js/areas/vigilancia.js"></script>
 <script src="js/areas/almacen.js"></script>
@@ -83,7 +89,7 @@
         <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/>
         <polyline points="16 7 22 7 22 13"/>
       </svg>
-      Ventas<span class="nav-badge">—</span>
+      Ventas<span class="nav-badge">Activo</span>
     </div>
     <div class="nav-item" data-module="logistica" id="nav-logistica" onclick="openArea('logistica')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -185,10 +191,10 @@
           <div class="ac-arr">↗</div>
         </div>
         <div class="ac-name">Ventas</div>
-        <div class="ac-desc">Ingresos, cumplimiento de metas y seguimiento comercial</div>
+        <div class="ac-desc">Ventas · Fieltro · Fiberbond · Pedidos reprogramados</div>
         <div class="ac-footer">
-          <span class="ac-badge">Pendiente</span>
-          <span class="ac-status"><span class="st-dot off"></span>Sin datos</span>
+          <span class="ac-badge" style="color:var(--green);background:var(--green-bg);border-color:rgba(26,158,92,0.2)">4 módulos activos</span>
+          <span class="ac-status"><span class="st-dot"></span>Conectado</span>
         </div>
       </div>
       <div class="area-card" style="--ac:var(--red);--ac-bg:var(--red-soft);--ac-border:rgba(192,21,42,0.2)" onclick="openArea('logistica')">

@@ -52,8 +52,12 @@ const areas = {
   },
   ventas: {
     name: 'Ventas',
-    submods: [],
-    render: renderVentas,
+    submods: [
+      { id: 'vgeneral', label: '💰 Ventas',                 render: renderVentasGeneral },
+      { id: 'fieltro',  label: '🧵 Fieltro (kg)',           render: renderFieltro },
+      { id: 'fiberbond',label: '🧱 Fiberbond (kg)',         render: renderFiberbond },
+      { id: 'pedidos',  label: '🔄 Pedidos reprogramados',  render: renderPedidos },
+    ],
   },
   logistica: {
     name: 'Logística',
