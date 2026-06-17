@@ -1,9 +1,61 @@
 /**
  * ventas-general.js — Submódulo Ventas (millones de pesos)
- * Depende de: datos-ventas.js, utils.js
+ * Depende de: datos-ventas.js, config.js (VENTAS_GENERAL_URL), utils.js
  */
-function renderVentasGeneral(container) {
-  const D = VENTAS_GENERAL.meses;
+
+/* Convierte "27,5" / "100%" / "$24,9" a número (coma decimal de Google Sheets) */
+function _vnum(s) {
+  if (s == null || s === '') return null;
+  const n = parseFloat(String(s).replace(/[$%\s]/g, '').replace(',', '.'));
+  return isNaN(n) ? null : n;
+}
+
+/**
+ * Carga la hoja de Ventas en vivo desde Google Sheets CSV.
+ * El CSV es de formato reporte: se ancla a la fila de encabezado
+ * "Mes … 2023 … 2024" y toma los 12 meses siguientes.
+ * Devuelve { meses, vivo }. Si falla, usa los datos embebidos de respaldo.
+ */
+async function loadVentasGeneral() {
+  if (typeof VENTAS_GENERAL_URL === 'undefined' || !VENTAS_GENERAL_URL) {
+    return { meses: VENTAS_GENERAL.meses, vivo: false };
+  }
+  try {
+    const res = await fetch(VENTAS_GENERAL_URL + '&cb=' + Date.now(), { cache: 'no-store' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const txt = await res.text();
+    if (txt.trim().startsWith('<')) throw new Error('HTML recibido (URL no es CSV público)');
+    const filas = txt.split('\n').map(parseCSVLine);
+    // Buscar la fila de encabezado del bloque de ventas
+    let hi = filas.findIndex(c => (c[0] || '').trim() === 'Mes' && /2023/.test(c[2] || '') && /2024/.test(c[3] || ''));
+    if (hi < 0) throw new Error('No se encontró el encabezado Mes/2023/2024');
+    const meses = [];
+    for (let i = hi + 1; i < filas.length && meses.length < 12; i++) {
+      const c = filas[i].map(x => (x || '').trim());
+      if (!MESES_VENTAS.includes(c[0])) {
+        if (meses.length) break;  // terminó el bloque
+        continue;
+      }
+      meses.push({
+        mes: c[0], a2023: _vnum(c[2]), a2024: _vnum(c[3]),
+        meta25: _vnum(c[5]), alc25: _vnum(c[6]), cump25: _pct(c[7]),
+        meta26: _vnum(c[8]), alc26: _vnum(c[9]), cump26: _pct(c[10]),
+      });
+    }
+    if (meses.length < 1) throw new Error('Sin meses válidos');
+    return { meses, vivo: true };
+  } catch (e) {
+    console.warn('Ventas: usando datos embebidos (', e.message, ')');
+    return { meses: VENTAS_GENERAL.meses, vivo: false };
+  }
+}
+/* Cumplimiento viene como "100%"/"95%" → 1.0/0.95 */
+function _pct(s) { const n = _vnum(s); return n == null ? null : (n > 1 ? n / 100 : n); }
+
+async function renderVentasGeneral(container) {
+  container.innerHTML = `<div class="loading-state"><div class="spinner"></div>Conectando con Google Sheets…</div>`;
+  const carga = await loadVentasGeneral();
+  const D = carga.meses;
   const con26 = D.filter(r => r.alc26 != null);
   const alc26Tot = con26.reduce((s,r) => s + r.alc26, 0);
   const meta26Tot = con26.reduce((s,r) => s + r.meta26, 0);
@@ -17,7 +69,7 @@ function renderVentasGeneral(container) {
   const cumpCls = c => c >= 1 ? 'pill-green' : c >= 0.9 ? 'pill-teal' : c >= 0.8 ? 'pill-amber' : 'pill-red';
 
   container.innerHTML = `
-    <div class="banner ok">✓ Indicador de Ventas · Meta anual $${VENTAS_GENERAL.metaAnual} M · Corte ${ultimo.mes || ''} 2026</div>
+    <div class="banner ok">${carga.vivo ? '✓ Google Sheets conectado' : '✓ Datos locales'} · Indicador de Ventas · Meta anual $${VENTAS_GENERAL.metaAnual} M · Corte ${ultimo.mes || ''} 2026</div>
     <div class="kpi-row">
       <div class="ckpi" style="--ck-color:var(--ink)"><div class="lbl">Alcanzado 2026 (YTD)</div><div class="val">$${alc26Tot.toFixed(1)}<span style="font-size:16px">M</span></div><div class="sub">${con26.length} meses</div></div>
       <div class="ckpi" style="--ck-color:var(--blue)"><div class="lbl">Meta 2026 (YTD)</div><div class="val">$${meta26Tot.toFixed(1)}<span style="font-size:16px">M</span></div><div class="sub">acumulada</div></div>

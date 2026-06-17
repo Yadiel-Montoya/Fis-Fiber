@@ -18,11 +18,17 @@ const VIAJES_URL              = 'https://docs.google.com/spreadsheets/d/e/2PACX-
 /* ── LOGÍSTICA: VIAJES Y PIEZAS ── */
 const VIAJES_PIEZAS_URL       = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSQzitwppssIay9_bVy3L56qe8VqQoJJgP5Rv9-d6-El5seGkMVWTNG00UDvgzmgQ/pub?output=csv';
 
-/* ── AGREGAR NUEVAS FUENTES AQUÍ ──
-   Ejemplo:
-   const MAQUILAS_URL = 'https://docs.google.com/...&output=csv';
-   const VENTAS_URL   = 'https://docs.google.com/...&output=csv';
-*/
+/* ── VENTAS ──
+   Cada hoja del libro de Ventas se publica por separado (output=csv).
+   La URL sin gid exporta la primera hoja (Ventas general).
+   Para Fieltro/Fiberbond/Pedidos, publica cada hoja y pega su URL (con &gid=).
+   Si una URL queda vacía, ese submódulo usa los datos embebidos de respaldo. */
+const VENTAS_GENERAL_URL   = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTllAuaaQnpxD0DE_eINa5vZq4Ifrquv14cu1v-l5Zl3ZsZpy7jwbYvWpULJeOOjw/pub?output=csv';
+const VENTAS_FIELTRO_URL   = '';
+const VENTAS_FIBERBOND_URL = '';
+const VENTAS_PEDIDOS_URL   = '';
+
+/* ── AGREGAR NUEVAS FUENTES AQUÍ ── */
 
 /* ── LOGÍSTICA: EMBARQUES REPROGRAMADOS ── */
 /* Apunta a la API de FIS FIBER (carpeta servidor-api/, corre en tu servidor).

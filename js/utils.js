@@ -43,6 +43,24 @@ function fmtDif(n) {
 
 /* ── PARSEO DE CSV ── */
 /**
+ * Parsea UNA línea CSV en array de celdas (maneja comillas y comas internas,
+ * y comillas escapadas ""). Útil para hojas con layout de reporte.
+ */
+function parseCSVLine(line) {
+  const vals = []; let cur = '', inQ = false;
+  for (let i = 0; i < line.length; i++) {
+    const c = line[i];
+    if (c === '"') {
+      if (inQ && line[i+1] === '"') { cur += '"'; i++; }
+      else inQ = !inQ;
+    } else if (c === ',' && !inQ) { vals.push(cur); cur = ''; }
+    else cur += c;
+  }
+  vals.push(cur);
+  return vals.map(v => v.replace(/\r/g, ''));
+}
+
+/**
  * Convierte texto CSV en array de objetos usando la primera fila como encabezados.
  * Maneja comillas y comas dentro de campos.
  */
