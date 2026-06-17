@@ -5,7 +5,7 @@
 
 /* Carga Fieltro en vivo. Columnas: 0=Mes 2=g24 3=f24 5=g25 6=f25 7=g26 8=f26 */
 async function loadFieltro() {
-  if (typeof VENTAS_FIELTRO_URL === 'undefined' || !VENTAS_FIELTRO_URL) return { data: VENTAS_FIELTRO, vivo: false };
+  if (typeof VENTAS_FIELTRO_URL === 'undefined' || !VENTAS_FIELTRO_URL) return { data: VENTAS_FIELTRO, tops: VENTAS_FIELTRO_TOPS, vivo: false };
   try {
     const res = await fetch(VENTAS_FIELTRO_URL + '&cb=' + Date.now(), { cache: 'no-store' });
     if (!res.ok) throw new Error('HTTP ' + res.status);
@@ -21,8 +21,8 @@ async function loadFieltro() {
       data.push({ mes:c[0], g2024:parseMoney(c[2]), f2024:parseMoney(c[3]), g2025:parseMoney(c[5]), f2025:parseMoney(c[6]), g2026:parseMoney(c[7])||null, f2026:parseMoney(c[8])||null });
     }
     if (!data.length) throw new Error('Sin meses');
-    return { data, vivo: true };
-  } catch (e) { console.warn('Fieltro: datos embebidos (', e.message, ')'); return { data: VENTAS_FIELTRO, vivo: false }; }
+    return { data, tops: parseTopsClientes(filas), vivo: true };
+  } catch (e) { console.warn('Fieltro: datos embebidos (', e.message, ')'); return { data: VENTAS_FIELTRO, tops: VENTAS_FIELTRO_TOPS, vivo: false }; }
 }
 
 async function renderFieltro(container) {
@@ -79,7 +79,8 @@ async function renderFieltro(container) {
           </tr>`).join('')}</tbody>
           <tfoot><tr><td>TOTAL</td><td class="num">${kg(g24)}</td><td class="num"></td><td class="num">${kg(g25)}</td><td class="num"></td><td class="num">${kg(g26)}</td><td class="num">${kg(f26)}</td><td class="num">${Math.round(pctFis)}%</td></tr></tfoot>
         </table></div>
-      </div>`;
+      </div>
+      ${renderTopsHTML(carga.tops, 'Fieltro')}`;
 
     setTimeout(() => {
       const gc='rgba(0,0,0,0.05)', tc='#9A7078', mf='JetBrains Mono';

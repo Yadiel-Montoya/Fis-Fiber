@@ -5,7 +5,7 @@
 
 /* Carga Fiberbond en vivo. Columnas: 0=Mes 2=g24 4=g25 6=g26 7=f26 */
 async function loadFiberbond() {
-  if (typeof VENTAS_FIBERBOND_URL === 'undefined' || !VENTAS_FIBERBOND_URL) return { data: VENTAS_FIBERBOND, vivo: false };
+  if (typeof VENTAS_FIBERBOND_URL === 'undefined' || !VENTAS_FIBERBOND_URL) return { data: VENTAS_FIBERBOND, tops: VENTAS_FIBERBOND_TOPS, vivo: false };
   try {
     const res = await fetch(VENTAS_FIBERBOND_URL + '&cb=' + Date.now(), { cache: 'no-store' });
     if (!res.ok) throw new Error('HTTP ' + res.status);
@@ -21,8 +21,8 @@ async function loadFiberbond() {
       data.push({ mes:c[0], g2024:parseMoney(c[2]), g2025:parseMoney(c[4]), g2026:parseMoney(c[6])||null, f2026:parseMoney(c[7])||null });
     }
     if (!data.length) throw new Error('Sin meses');
-    return { data, vivo: true };
-  } catch (e) { console.warn('Fiberbond: datos embebidos (', e.message, ')'); return { data: VENTAS_FIBERBOND, vivo: false }; }
+    return { data, tops: parseTopsClientes(filas), vivo: true };
+  } catch (e) { console.warn('Fiberbond: datos embebidos (', e.message, ')'); return { data: VENTAS_FIBERBOND, tops: VENTAS_FIBERBOND_TOPS, vivo: false }; }
 }
 
 async function renderFiberbond(container) {
@@ -80,7 +80,8 @@ async function renderFiberbond(container) {
           </tr>`).join('')}</tbody>
           <tfoot><tr><td>TOTAL</td><td class="num">${kg(g24)}</td><td class="num">${kg(g25)}</td><td class="num">${kg(g26)}</td><td class="num">${kg(f26)}</td><td class="num">${Math.round(pctFis)}%</td></tr></tfoot>
         </table></div>
-      </div>`;
+      </div>
+      ${renderTopsHTML(carga.tops, 'Fiberbond')}`;
 
     setTimeout(() => {
       const gc='rgba(0,0,0,0.05)', tc='#9A7078', mf='JetBrains Mono';

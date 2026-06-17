@@ -75,5 +75,100 @@ const VENTAS_PEDIDOS = {
       { rango:'Más de 10 días',valor:9  },
     ],
     total: 104
-  }
+  },
+  /* Motivos de reprogramación (último mes) */
+  motivos: [
+    { motivo:'Solicitud del cliente', valor:2 },
+    { motivo:'Administrativo',        valor:4 },
+    { motivo:'Fabricado',             valor:0 },
+  ]
 };
+
+/* ── TOPS DE CLIENTES (análisis por comportamiento) ──
+   4 categorías que vienen en cada hoja de producto. Respaldo embebido;
+   parseTopsClientes() los extrae en vivo del CSV. */
+const VENTAS_TOP_SECCIONES = [
+  { key:'inactivos',    match:'compras inactiva',  titulo:'Compras inactivas',     desc:'clientes inactivos', color:'var(--blue)',  positivo:true  },
+  { key:'baja',         match:'a la baja',         titulo:'Consumo a la baja',     desc:'clientes que bajaron', color:'var(--red)',  positivo:false },
+  { key:'reactivacion', match:'reactivaci',        titulo:'Reactivación de compra',desc:'clientes reactivados', color:'var(--teal)', positivo:true  },
+  { key:'incremento',   match:'incremento compra', titulo:'Incremento de compra',  desc:'clientes que subieron', color:'var(--green)',positivo:true },
+];
+
+const VENTAS_FIELTRO_TOPS = {
+  inactivos: [ {cliente:'SINTEPLAST',valor:1536.22},{cliente:'JYRSA PPE',valor:695.68},{cliente:'SPECIALITY WEAR & ACCESORIES',valor:585.29},{cliente:'WORLD EMBLEM DE MEXICO',valor:292.80},{cliente:'OCTAVIO JIMENEZ ALARCON',valor:14.10} ],
+  baja: [ {cliente:'OPLEX',valor:-9503.15},{cliente:'SAGE AUTOMOTIVE INTERIORS DE MEXICO',valor:-1496.97},{cliente:'Adient US Enterprises LP',valor:-1350.49},{cliente:'DECORPLAST DE MEXICO',valor:-1145.50},{cliente:'JAIME VERDIN SALDANA',valor:-802.77},{cliente:'L G MANUFACTURERA',valor:-185.33} ],
+  reactivacion: [ {cliente:'GUSTAVO GORDILLO CENTENO',valor:5871.10},{cliente:'AP MASCARILLAS',valor:2293.42},{cliente:'BLANCOS MILENIUM',valor:586.98},{cliente:'RAMAKAT',valor:323.17} ],
+  incremento: [ {cliente:'Lear Mexican Seating Corporation',valor:3123.90},{cliente:'VFMX DE MEXICO',valor:863.95},{cliente:'PLASTICOS POLA',valor:328.03},{cliente:'PIELES SINTETICAS',valor:258.09} ],
+};
+
+const VENTAS_FIBERBOND_TOPS = {
+  inactivos: [ {cliente:'LOGAN & MASON TEXTILE COMPANY',valor:23799.48},{cliente:'FORDEPRO',valor:2452.49},{cliente:'DISTRIBUIDORA SPRINGHOUSE',valor:2051.64},{cliente:'DALFIORI',valor:1662.67},{cliente:'D SOL A SOL INTERNATIONAL',valor:1447.22} ],
+  baja: [ {cliente:'TEJIDOS Y BLANCOS DE LA CASA',valor:-4561.86},{cliente:'TRIM SYSTEMS OPERATING CORPORATION',valor:-4089.29},{cliente:'GRUPO GEITANI TEXTIL',valor:-2888.73},{cliente:'BLANCOS MILENIUM',valor:-2486.72},{cliente:'SPRING AIR MEXICO',valor:-2080.86},{cliente:'DISENOS MAYRO',valor:-1069.72} ],
+  reactivacion: [ {cliente:'TELAS Y LONAS VALDES',valor:1309.03},{cliente:'TELAS DE VERDAD',valor:1082.32},{cliente:'THE DREAM STORE',valor:1010.76},{cliente:'DISTRIBUIDORA MAYORISTA DE ARTICULOS PELETEROS',valor:618.57},{cliente:'JUAN GARDUNO CHIMAL',valor:303.73} ],
+  incremento: [ {cliente:'FABRI-QUILT INC.',valor:15152.40},{cliente:'COLCHONES MASTER',valor:3654.18},{cliente:'INDUSTRIAS D K',valor:2827.20},{cliente:'INGENIERIA AMBIENTAL INDUSTRIAL',valor:1664.38},{cliente:'RAUL CRUZ ROMERO',valor:985.41} ],
+};
+
+/**
+ * Extrae los tops de clientes del CSV (formato reporte).
+ * Se ancla a los títulos "Análisis de …" y recoge pares cliente/valor
+ * de las columnas laterales (≥13). Devuelve {inactivos,baja,reactivacion,incremento}.
+ */
+function parseTopsClientes(filas) {
+  const out = { inactivos:[], baja:[], reactivacion:[], incremento:[] };
+  let cur = null;
+  for (const c of filas) {
+    const joined = c.join(' ').toLowerCase();
+    if (joined.includes('nálisis') || joined.includes('analisis')) {
+      const sec = VENTAS_TOP_SECCIONES.find(s => joined.includes(s.match));
+      if (sec) { cur = sec.key; continue; }
+    }
+    if (cur) {
+      for (let j = 13; j < Math.min(c.length - 1, 20); j++) {
+        const t = (c[j] || '').trim();
+        if (t.length > 2 && /[a-záéíóúñ]/i.test(t) && t !== 'Medición:' && t !== 'Descripción:') {
+          const v = parseMoney(c[j+1]);
+          if (v) out[cur].push({ cliente: t, valor: v });
+          break;
+        }
+      }
+    }
+  }
+  return out;
+}
+
+/** Extrae los motivos de reprogramación del CSV de Pedidos. */
+function parseMotivos(filas) {
+  const claves = ['solicitud del cliente','administrativo','fabricado'];
+  const out = [];
+  for (const c of filas) {
+    for (let j = 13; j < Math.min(c.length - 1, 20); j++) {
+      const t = (c[j] || '').trim();
+      if (claves.includes(t.toLowerCase())) {
+        out.push({ motivo: t, valor: parseMoney(c[j+1]) });
+        break;
+      }
+    }
+  }
+  return out.length ? out : VENTAS_PEDIDOS.motivos;
+}
+
+/** Devuelve el HTML de la sección "Tops de clientes" (4 tarjetas). */
+function renderTopsHTML(tops, producto) {
+  tops = tops || {};
+  const card = (sec) => {
+    const items = (tops[sec.key] || []).slice()
+      .sort((a,b) => Math.abs(b.valor) - Math.abs(a.valor)).slice(0, 6);
+    const rows = items.length ? items.map((it, i) => `
+      <div style="display:flex;align-items:center;gap:9px;padding:7px 2px;border-bottom:1px solid var(--border)">
+        <span style="flex-shrink:0;width:20px;height:20px;border-radius:50%;background:var(--off);color:var(--ink3);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace">${i+1}</span>
+        <span style="flex:1;font-size:12.5px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${it.cliente}">${it.cliente}</span>
+        <span class="pill ${it.valor>=0?'pill-green':'pill-red'}" style="flex-shrink:0">${it.valor>=0?'+':''}${Math.round(it.valor).toLocaleString('es-MX')} kg</span>
+      </div>`).join('') : '<div style="color:var(--ink3);font-size:13px;padding:12px 0;text-align:center">Sin datos</div>';
+    return `<div class="chart-box">
+      <div class="chart-title" style="border-left:3px solid ${sec.color};padding-left:9px">${sec.titulo} <span class="chart-badge">${sec.desc}</span></div>
+      <div style="margin-top:6px">${rows}</div>
+    </div>`;
+  };
+  return `<div class="section-divider"><span>Tops de clientes · ${producto}</span></div>
+    <div class="charts-grid">${VENTAS_TOP_SECCIONES.map(card).join('')}</div>`;
+}

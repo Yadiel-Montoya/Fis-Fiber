@@ -7,7 +7,7 @@
    Desglose por retraso: col 15 (rango) / col 16 (valor). */
 async function loadPedidos() {
   if (typeof VENTAS_PEDIDOS_URL === 'undefined' || !VENTAS_PEDIDOS_URL)
-    return { meses: VENTAS_PEDIDOS.meses, desglose: VENTAS_PEDIDOS.desgloseUltimoMes, vivo: false };
+    return { meses: VENTAS_PEDIDOS.meses, desglose: VENTAS_PEDIDOS.desgloseUltimoMes, motivos: VENTAS_PEDIDOS.motivos, vivo: false };
   try {
     const res = await fetch(VENTAS_PEDIDOS_URL + '&cb=' + Date.now(), { cache: 'no-store' });
     if (!res.ok) throw new Error('HTTP ' + res.status);
@@ -34,10 +34,10 @@ async function loadPedidos() {
     const desglose = rangos.length
       ? { mes: ultimoMes, rangos, total: rangos.reduce((s,r)=>s+r.valor,0) }
       : VENTAS_PEDIDOS.desgloseUltimoMes;
-    return { meses, desglose, vivo: true };
+    return { meses, desglose, motivos: parseMotivos(filas), vivo: true };
   } catch (e) {
     console.warn('Pedidos: datos embebidos (', e.message, ')');
-    return { meses: VENTAS_PEDIDOS.meses, desglose: VENTAS_PEDIDOS.desgloseUltimoMes, vivo: false };
+    return { meses: VENTAS_PEDIDOS.meses, desglose: VENTAS_PEDIDOS.desgloseUltimoMes, motivos: VENTAS_PEDIDOS.motivos, vivo: false };
   }
 }
 
@@ -46,6 +46,8 @@ async function renderPedidos(container) {
   const carga = await loadPedidos();
   const ALL = carga.meses;
   const dg = carga.desglose;
+  const motivos = (carga.motivos || []).filter(m => m.valor > 0);
+  const totMotivos = motivos.reduce((s,m) => s + m.valor, 0);
   let filtroMes = 'todos';
 
   const filtrar = () => filtroMes === 'todos' ? ALL : ALL.filter(r => r.mes === filtroMes);
@@ -99,13 +101,24 @@ async function renderPedidos(container) {
           <tfoot><tr><td>TOTAL ${esMes?periodo():'YTD'}</td><td class="num"></td><td class="num">${tot25}</td><td class="num">${tot26}</td><td class="num">${variacion>0?'+':''}${variacion.toFixed(0)}%</td></tr></tfoot>
         </table></div>
       </div>
-      <div class="table-wrap" style="margin-top:1rem">
-        <div class="table-head-bar"><span class="ttl">Desglose por días de retraso · ${dg.mes} 2026</span><span class="meta">${dg.total} pedidos</span></div>
-        <table>
-          <thead><tr><th>Rango de retraso</th><th class="num">Pedidos</th><th class="num">% del total</th></tr></thead>
-          <tbody>${dg.rangos.map(r => `<tr><td style="font-weight:600">${r.rango}</td><td class="num">${r.valor}</td><td class="num">${Math.round(r.valor/dg.total*100)}%</td></tr>`).join('')}</tbody>
-          <tfoot><tr><td>Total</td><td class="num">${dg.total}</td><td class="num">100%</td></tr></tfoot>
-        </table>
+      <div class="section-divider"><span>Detalle de reprogramaciones · ${dg.mes} 2026</span></div>
+      <div class="charts-grid">
+        <div class="table-wrap">
+          <div class="table-head-bar"><span class="ttl">Por días de retraso</span><span class="meta">${dg.total} pedidos</span></div>
+          <table>
+            <thead><tr><th>Rango de retraso</th><th class="num">Pedidos</th><th class="num">% del total</th></tr></thead>
+            <tbody>${dg.rangos.map(r => `<tr><td style="font-weight:600">${r.rango}</td><td class="num">${r.valor}</td><td class="num">${Math.round(r.valor/dg.total*100)}%</td></tr>`).join('')}</tbody>
+            <tfoot><tr><td>Total</td><td class="num">${dg.total}</td><td class="num">100%</td></tr></tfoot>
+          </table>
+        </div>
+        <div class="table-wrap">
+          <div class="table-head-bar"><span class="ttl">Por motivo</span><span class="meta">${totMotivos} reprog.</span></div>
+          <table>
+            <thead><tr><th>Motivo</th><th class="num">Cantidad</th><th class="num">% del total</th></tr></thead>
+            <tbody>${motivos.length ? motivos.map(m => `<tr><td style="font-weight:600">${m.motivo}</td><td class="num"><span class="pill ${/cliente/i.test(m.motivo)?'pill-blue':/administ/i.test(m.motivo)?'pill-amber':'pill-teal'}">${m.valor}</span></td><td class="num">${totMotivos?Math.round(m.valor/totMotivos*100):0}%</td></tr>`).join('') : '<tr><td colspan="3" style="text-align:center;color:var(--ink3)">Sin motivos registrados</td></tr>'}</tbody>
+            <tfoot><tr><td>Total</td><td class="num">${totMotivos}</td><td class="num">100%</td></tr></tfoot>
+          </table>
+        </div>
       </div>`;
 
     setTimeout(() => {
