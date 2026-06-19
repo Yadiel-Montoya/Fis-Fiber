@@ -62,7 +62,29 @@ def register(nombre, fetch_fn):
     DATASETS[nombre] = {"fetch": fetch_fn, "data": None, "ts": 0, "error": None}
 
 register("reprogramados", wms.get_reprogramados)
-# Futuro:  register("foraneos", wms.get_foraneos)  etc.
+
+# ── ALMACÉN MATERIA PRIMA (SAP SQL) ────────────────────────────────────
+# Solo se activa si hay credenciales SAP_* en .env. Corre el query de
+# query_almacen.sql y calcula la alerta (inventario < mínimo → Solicitar OC).
+from sap_client import SAPClient
+_sap = SAPClient()
+
+def get_almacen():
+    sql_path = os.path.join(os.path.dirname(__file__), "query_almacen.sql")
+    with open(sql_path, encoding="utf-8") as fh:
+        sql = fh.read()
+    filas = _sap.query(sql)
+    for r in filas:
+        inv = r.get("inv") or 0
+        mn  = r.get("min") or 0
+        r.setdefault("alerta", "Solicitar OC" if inv < mn else "Cubierta")
+    return filas
+
+if _sap.configurado():
+    register("almacen", get_almacen)
+    log.info("Dataset 'almacen' activado (SAP configurado)")
+else:
+    log.info("Dataset 'almacen' inactivo — configura SAP_* en .env para activarlo")
 
 # ── PERSISTENCIA EN DISCO (sobrevive reinicios) ────────────────────────
 def guardar_cache():

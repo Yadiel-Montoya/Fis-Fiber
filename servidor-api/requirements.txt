@@ -3,3 +3,9 @@ flask-cors>=4.0
 requests>=2.31
 urllib3>=2.0
 gunicorn>=21.0
+
+# SAP Business One — instala SOLO el de tu motor:
+#   SQL Server:  pip install pyodbc      (+ "ODBC Driver 17/18 for SQL Server")
+#   HANA:        pip install hdbcli
+# pyodbc>=5.0
+# hdbcli>=2.19
