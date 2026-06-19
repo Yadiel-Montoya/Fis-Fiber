@@ -132,5 +132,5 @@ async function renderAlmacen(container) {
   render();
 
   if (window._timerAlmacen) clearInterval(window._timerAlmacen);
-  window._timerAlmacen = setInterval(() => renderAlmacen(container), 10 * 60 * 1000);
+  window._timerAlmacen = setInterval(() => renderAlmacen(container), 5 * 60 * 1000);
 }
