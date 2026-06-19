@@ -74,9 +74,9 @@ async function renderAlmacen(container) {
         <div class="ckpi" style="--ck-color:var(--teal)"><div class="lbl">En tránsito</div><div class="val">${Math.round(transTot/1000)}<span style="font-size:15px">k</span></div><div class="sub">kg por llegar</div></div>
       </div>
       <div class="charts-grid">
+        <div class="chart-box full"><div class="chart-title">Gráfica de stock en almacén <span class="chart-badge">inventario vs mín/máx</span></div><div style="position:relative;width:100%;height:340px"><canvas id="al-stock"></canvas></div></div>
+        <div class="chart-box"><div class="chart-title">Alerta 1 por tipo</div><div style="position:relative;width:100%;height:240px"><canvas id="al-estatus"></canvas></div></div>
         <div class="chart-box"><div class="chart-title">Inventario por familia <span class="chart-badge">kg</span></div><div style="position:relative;width:100%;height:240px"><canvas id="al-fam-c"></canvas></div></div>
-        <div class="chart-box"><div class="chart-title">Estatus de abasto</div><div style="position:relative;width:100%;height:240px"><canvas id="al-estatus"></canvas></div></div>
-        <div class="chart-box full"><div class="chart-title">Materiales bajo mínimo (a solicitar) <span class="chart-badge">top ${bajos.length}</span></div><div style="position:relative;width:100%;height:${Math.max(200, bajos.length*34)}px"><canvas id="al-bajos"></canvas></div></div>
       </div>
       <div class="table-wrap">
         <div class="table-head-bar"><span class="ttl">Detalle de Materia Prima</span><span class="meta">${D.length} materiales</span></div>
@@ -115,14 +115,21 @@ async function renderAlmacen(container) {
         options:{ responsive:true, maintainAspectRatio:false, cutout:'62%', plugins:{ legend:{position:'bottom',labels:{color:'#5C3038',font:{size:11,family:'Outfit'},usePointStyle:true,padding:12}}, datalabels:{color:'#fff',font:{size:12,family:mf,weight:'700'},formatter:(v)=>v||''} } }
       });
 
-      DC('al-bajos');
-      CI['al-bajos'] = new Chart(document.getElementById('al-bajos'), {
-        type:'bar', data:{ labels: bajos.map(r=>(r.tipo||r.desc||'').substring(0,28)), datasets:[
-          { label:'Inventario', data:bajos.map(r=>r.inv), backgroundColor:'rgba(192,21,42,0.82)', borderRadius:3, borderSkipped:false, datalabels:{display:false} },
-          { label:'Mínimo', data:bajos.map(r=>r.min), backgroundColor:'rgba(184,122,16,0.4)', borderRadius:3, borderSkipped:false, datalabels:{display:false} },
-        ]},
-        options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:true,position:'bottom',labels:{color:'#5C3038',font:{size:11,family:'Outfit'},usePointStyle:true,padding:12}}, tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${kg(c.parsed.x)} kg`}}, datalabels:{display:false} },
-          scales:{ x:{grid:{color:gc},ticks:{color:tc,font:{size:9,family:mf},callback:v=>Math.round(v/1000)+'k'},border:{color:'transparent'},beginAtZero:true}, y:{grid:{display:false},ticks:{color:'#1A0A0C',font:{size:10,family:'Outfit'}},border:{color:'transparent'}} } }
+      DC('al-stock');
+      const ord = D.slice().sort((a,b) => (b.inv||0) - (a.inv||0));
+      const kFmt = v => v >= 1000 ? Math.round(v/1000)+'k' : (v||0);
+      CI['al-stock'] = new Chart(document.getElementById('al-stock'), {
+        data:{
+          labels: ord.map(r => r.tipo || r.desc || ''),
+          datasets:[
+            { type:'bar', label:'Mínimo en almacén', data: ord.map(r=>r.min||0), backgroundColor:'rgba(192,21,42,0.85)', borderRadius:2, borderSkipped:false, datalabels:{display:false}, order:2 },
+            { type:'bar', label:'Máximo en almacén', data: ord.map(r=>r.max||0), backgroundColor:'rgba(245,180,30,0.92)', borderRadius:2, borderSkipped:false, datalabels:{display:false}, order:2 },
+            { type:'line', label:'Inventario', data: ord.map(r=>r.inv||0), borderColor:'#1A9E5C', backgroundColor:'rgba(26,158,92,0.10)', borderWidth:2.5, borderDash:[7,4], pointRadius:2.5, pointBackgroundColor:'#1A9E5C', fill:true, tension:0.3, datalabels:{display:false}, order:1 },
+          ]
+        },
+        options:{ responsive:true, maintainAspectRatio:false, interaction:{mode:'index',intersect:false},
+          plugins:{ legend:{display:true,position:'top',labels:{color:'#5C3038',font:{size:12,family:'Outfit'},usePointStyle:true,padding:16}}, tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${kg(c.parsed.y)} kg`}}, datalabels:{display:false} },
+          scales:{ x:{grid:{display:false},ticks:{color:tc,font:{size:9,family:'Outfit'},maxRotation:55,minRotation:55,autoSkip:false},border:{color:'transparent'}}, y:{grid:{color:gc},ticks:{color:tc,font:{size:10,family:mf},callback:kFmt},border:{color:'transparent'},beginAtZero:true} } }
       });
     }, 60);
   }
