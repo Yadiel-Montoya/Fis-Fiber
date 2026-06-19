@@ -1,37 +1,34 @@
 /* =====================================================================
-   query_almacen.sql — Materia Prima desde SAP B1   (BORRADOR)
+   query_almacen.sql — Existencia de Materia Prima desde SAP B1
    ---------------------------------------------------------------------
-   Sintaxis SQL Server. Para HANA hay que entrecomillar identificadores
-   ("OITM"."ItemCode") y usar comillas dobles.
-
-   AJUSTAR antes de usar (lo afinamos con la salida de descubrir_sap.py):
-     - @almacen  : código del almacén de Materia Prima (de OWHS)
-     - familia   : de momento usa el nombre del grupo (OITB). Si la familia
-                   (GUATA/FIELTRO/FIELTROTEX) está en un campo de usuario,
-                   cambiar T0.ItmsGrpCod por T0.U_xxxxx
-     - El query devuelve columnas con EXACTAMENTE estos alias, que el
-       dashboard ya entiende: familia, grupo, desc, inv, min, max, transito
+   Fuente real (de las consultas guardadas en SAP):
+     OIBT = lotes/pacas en stock. Almacén 02 = Materia Prima, 42 = tránsito.
+   Da por fibra: # de pacas, kilos, grupo SAP y kilos en tránsito.
+   La familia se deriva del nombre del grupo SAP.
+   Mín/Máx salen de OITW (si SAP los tiene capturados; hoy vienen en 0).
    ===================================================================== */
-
-DECLARE @almacen NVARCHAR(20) = 'MP';   -- TODO: poner el código real del almacén
-
 SELECT
-    G.ItmsGrpNam              AS familia,      -- grupo de artículos (¿= familia?)
-    T0.ItemName               AS [desc],       -- descripción del material
-    CAST(T1.OnHand  AS INT)   AS inv,          -- inventario en almacén
-    CAST(T1.MinStock AS INT)  AS [min],        -- mínimo en almacén
-    CAST(T1.MaxStock AS INT)  AS [max],        -- máximo en almacén
-    /* tránsito = piezas en órdenes de compra abiertas (aún no recibidas) */
+    CASE
+        WHEN T2.ItmsGrpNam LIKE '%guata%'    THEN 'GUATA'
+        WHEN T2.ItmsGrpNam LIKE '%fieltr%'   THEN 'FIELTRO'
+        WHEN T2.ItmsGrpNam LIKE '%almohada%' THEN 'ALMOHADA'
+        WHEN T2.ItmsGrpNam LIKE '%hilo%'     THEN 'HILOS'
+        ELSE ISNULL(T2.ItmsGrpNam, 'OTROS')
+    END                                   AS familia,
+    T2.ItmsGrpNam                         AS grupo,
+    T1.ItemName                           AS [desc],
+    COUNT(T0.ItemCode)                    AS pacas,
+    CAST(SUM(T0.Quantity) AS INT)         AS inv,
+    CAST(MAX(W.MinStock) AS INT)          AS [min],
+    CAST(MAX(W.MaxStock) AS INT)          AS [max],
     CAST(ISNULL((
-        SELECT SUM(P1.OpenInvQty)
-        FROM POR1 P1
-        INNER JOIN OPOR P ON P.DocEntry = P1.DocEntry
-        WHERE P1.ItemCode = T0.ItemCode
-          AND P.DocStatus = 'O'                 -- abierta
-    ), 0) AS INT)             AS transito
-FROM OITM T0
-INNER JOIN OITW T1 ON T1.ItemCode = T0.ItemCode
-LEFT  JOIN OITB G  ON G.ItmsGrpCod = T0.ItmsGrpCod
-WHERE T1.WhsCode = @almacen
-  AND T0.validFor = 'Y'                         -- artículo activo
-ORDER BY familia, [desc];
+        SELECT SUM(B2.Quantity) FROM OIBT B2
+        WHERE B2.ItemCode = T1.ItemCode AND B2.WhsCode = '42'
+    ), 0) AS INT)                         AS transito
+FROM OIBT T0
+INNER JOIN OITM T1 ON T0.ItemCode = T1.ItemCode
+LEFT  JOIN OITB T2 ON T1.ItmsGrpCod = T2.ItmsGrpCod
+LEFT  JOIN OITW W  ON W.ItemCode = T0.ItemCode AND W.WhsCode = '02'
+WHERE T0.WhsCode = '02' AND T0.Quantity > 0
+GROUP BY T1.ItemCode, T1.ItemName, T2.ItmsGrpNam
+ORDER BY familia, inv DESC;

@@ -77,7 +77,9 @@ def get_almacen():
     for r in filas:
         inv = r.get("inv") or 0
         mn  = r.get("min") or 0
-        r.setdefault("alerta", "Solicitar OC" if inv < mn else "Cubierta")
+        r["totalGral"] = inv + (r.get("transito") or 0)
+        # Alerta solo si hay mínimo capturado en SAP; si no, "Sin mínimo"
+        r["alerta"] = ("Solicitar OC" if inv < mn else "Cubierta") if mn > 0 else "Sin mínimo"
     return filas
 
 if _sap.configurado():
