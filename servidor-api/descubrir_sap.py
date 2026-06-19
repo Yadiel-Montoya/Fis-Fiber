@@ -32,6 +32,18 @@ def show(titulo, sql):
 if not sap.configurado():
     print("Falta configurar SAP_* en .env"); raise SystemExit(1)
 
+# 0) ¿Qué tablas/vistas existen en la base? (clave si NO es SAP B1 estándar)
+show("TODAS LAS TABLAS Y VISTAS",
+     'SELECT TABLE_SCHEMA, TABLE_NAME, TABLE_TYPE FROM INFORMATION_SCHEMA.TABLES ORDER BY TABLE_NAME')
+
+# 0b) Tablas que suenan a materia prima / inventario
+show("TABLAS RELEVANTES (materia/prima/inventario/stock/almacen)",
+     "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES "
+     "WHERE TABLE_NAME LIKE '%MATERIA%' OR TABLE_NAME LIKE '%PRIMA%' "
+     "OR TABLE_NAME LIKE '%INVENT%' OR TABLE_NAME LIKE '%STOCK%' "
+     "OR TABLE_NAME LIKE '%ALMACEN%' OR TABLE_NAME LIKE '%ALMACÉN%' "
+     "OR TABLE_NAME LIKE '%FIBRA%' OR TABLE_NAME LIKE '%MP%'")
+
 # 1) Almacenes (para saber cuál es Materia Prima)
 show("ALMACENES (OWHS)",
      'SELECT "WhsCode","WhsName" FROM OWHS' if ES_HANA
