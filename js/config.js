@@ -35,3 +35,8 @@ const VENTAS_PEDIDOS_URL   = _VENTAS_PUB + '?gid=1798333200&single=true&output=c
 /* Apunta a la API de FIS FIBER (carpeta servidor-api/, corre en tu servidor).
    Cambia esta URL por la dirección pública/red donde la tengas montada.   */
 const EMBARQUES_PROXY_URL = 'http://TU-SERVIDOR:3001';
+
+/* ── ALMACÉN MATERIA PRIMA (SAP, vía API) ──
+   Inventario en vivo desde SAP. Apunta a la API: http://TU-SERVIDOR:3001/api/almacen
+   Si queda vacío, el módulo usa el snapshot base del Excel (datos-almacen.js). */
+const ALMACEN_URL = '';
