@@ -36,7 +36,10 @@ const VENTAS_PEDIDOS_URL   = _VENTAS_PUB + '?gid=1798333200&single=true&output=c
    Cambia esta URL por la dirección pública/red donde la tengas montada.   */
 const EMBARQUES_PROXY_URL = 'http://TU-SERVIDOR:3001';
 
-/* ── ALMACÉN MATERIA PRIMA (SAP, vía API) ──
-   Inventario en vivo desde SAP (vendor-api). Se actualiza solo cada 5 min.
-   Si la API no responde, el módulo usa el snapshot base del Excel. */
-const ALMACEN_URL = 'https://vendorapi-fisfiber.duckdns.org/api/almacen';
+/* ── ALMACÉN MATERIA PRIMA ──
+   Vista curada (42 tipos con mín/máx y alertas, base Excel). El inventario
+   en vivo desde SAP (https://vendorapi-fisfiber.duckdns.org/api/almacen) se
+   activará por tipo cuando esté el mapeo fibra→tipo curado.
+   Dejar vacío usa la base del Excel (con mín/máx); poner la URL usa SAP. */
+const ALMACEN_URL = '';
+const ALMACEN_SAP_URL = 'https://vendorapi-fisfiber.duckdns.org/api/almacen';
