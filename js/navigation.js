@@ -66,6 +66,7 @@ const areas = {
       { id: 'colab',    label: '👥 Participación colaboradores',  render: renderColaboradores },
       { id: 'casetas',  label: '🛣️ Gastos casetas',              render: renderCasetas },
       { id: 'viajespz',  label: '🚛 Viajes y Piezas',              render: renderViajesPiezas },
+      { id: 'cruce',     label: '🔀 Casetas × Foráneos',           render: renderAnalisisCruce },
       { id: 'embarques', label: '🔄 Embarques reprogramados',       render: renderEmbarques },
     ],
   },
