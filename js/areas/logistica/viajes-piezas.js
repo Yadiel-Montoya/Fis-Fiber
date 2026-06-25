@@ -187,7 +187,8 @@ async function renderViajesPiezas(container) {
         <div class="chart-box"><div class="chart-title">% Variación piezas 2026 vs años anteriores</div><div style="position:relative;width:100%;height:260px"><canvas id="vp-pct-piezas"></canvas></div></div>
         ${hayLocFor ? `
         <div class="chart-box full"><div class="chart-title">Viajes Local vs Foráneo por mes <span class="chart-badge">2026</span></div><div style="position:relative;width:100%;height:300px"><canvas id="vp-bar-locfor"></canvas></div></div>
-        <div class="chart-box"><div class="chart-title">Distribución Local vs Foráneo <span class="chart-badge">2026</span></div><div style="position:relative;width:100%;height:260px"><canvas id="vp-dona-locfor"></canvas></div></div>` : ''}
+        <div class="chart-box"><div class="chart-title">Distribución Local vs Foráneo <span class="chart-badge">2026</span></div><div style="position:relative;width:100%;height:260px"><canvas id="vp-dona-locfor"></canvas></div></div>
+        <div class="chart-box"><div class="chart-title">Local vs Foráneo <span class="chart-badge">2025 vs 2026</span></div><div style="position:relative;width:100%;height:260px"><canvas id="vp-comp-locfor"></canvas></div></div>` : ''}
       </div>
 
       <!-- TABLA -->
@@ -337,6 +338,12 @@ async function renderViajesPiezas(container) {
 
         DC('vp-dona-locfor');
         CI['vp-dona-locfor'] = new Chart(document.getElementById('vp-dona-locfor'), { type: 'doughnut', data: { labels: ['Local', 'Foráneo'], datasets: [{ data: [tl26, tf26], backgroundColor: ['rgba(26,95,160,0.85)', 'rgba(26,158,130,0.85)'], borderWidth: 1, hoverOffset: 6 }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '62%', plugins: { legend: { position: 'bottom', labels: { color: '#5C3038', font: { size: 12, family: 'Outfit' }, usePointStyle: true, padding: 14 } }, tooltip: { callbacks: { label: c => `${c.label}: ${c.parsed.toLocaleString('es-MX')} (${tl26 + tf26 ? Math.round(c.parsed / (tl26 + tf26) * 100) : 0}%)` } }, datalabels: { color: '#fff', font: { size: 13, family: mf, weight: '700' }, formatter: v => { const t = tl26 + tf26; return t ? Math.round(v / t * 100) + '%' : ''; } } } } });
+
+        DC('vp-comp-locfor');
+        CI['vp-comp-locfor'] = new Chart(document.getElementById('vp-comp-locfor'), { type: 'bar', data: { labels: ['Local', 'Foráneo'], datasets: [
+          { label: '2025', data: [tl25, tf25], backgroundColor: 'rgba(184,122,16,0.82)', borderRadius: 4, borderSkipped: false, datalabels: { anchor: 'end', align: 'end', offset: 2, color: '#7A5010', font: { size: 11, family: mf, weight: '700' }, formatter: v => v ? v.toLocaleString('es-MX') : '' } },
+          { label: '2026', data: [tl26, tf26], backgroundColor: 'rgba(26,95,160,0.85)', borderRadius: 4, borderSkipped: false, datalabels: { anchor: 'end', align: 'end', offset: 2, color: '#1A3A70', font: { size: 11, family: mf, weight: '700' }, formatter: v => v ? v.toLocaleString('es-MX') : '' } },
+        ] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: true, position: 'bottom', labels: { color: '#5C3038', font: { size: 12, family: 'Outfit' }, usePointStyle: true, padding: 14 } }, tooltip: { callbacks: { label: c => `${c.dataset.label}: ${(c.parsed.y || 0).toLocaleString('es-MX')}` } }, datalabels: {} }, scales: { x: { grid: { display: false }, ticks: { color: tc, font: { size: 12, family: 'Outfit' } }, border: { color: 'transparent' } }, y: { grid: { color: gc }, ticks: { color: tc, font: { size: 10 } }, border: { color: 'transparent' }, beginAtZero: true, grace: '15%' } } } });
       }
 
     }, 80);
