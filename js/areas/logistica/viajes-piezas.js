@@ -44,7 +44,12 @@ async function loadViajesPiezas() {
       const p24 = parseNum(get('Piezas embarcadas 2024', 'piezas embarcadas 2024', 'Piezas 2024'));
       const p25 = parseNum(get('Piezas embarcadas 2025', 'piezas embarcadas 2025', 'Piezas 2025'));
       const p26 = parseNum(get('Piezas embarcadas 2026', 'piezas embarcadas 2026', 'Piezas 2026'));
-      return { ord, mes, v23, v24, v25, v26, p23, p24, p25, p26 };
+      // Columnas nuevas: desglose Local vs Foráneo
+      const l25 = parseNum(get('Locales 2025', 'locales 2025', 'Local 2025'));
+      const f25 = parseNum(get('Foraneos 2025', 'Foráneos 2025', 'foraneos 2025', 'Foraneo 2025'));
+      const l26 = parseNum(get('Locales 2026', 'locales 2026', 'Local 2026'));
+      const f26 = parseNum(get('Foraneos 2026', 'Foráneos 2026', 'foraneos 2026', 'Foraneo 2026'));
+      return { ord, mes, v23, v24, v25, v26, p23, p24, p25, p26, l25, f25, l26, f26 };
     }).filter(Boolean);
 
     if (!rows.length) throw new Error('Ningún mes válido leído. Encabezados: ' + headersList.join(' | '));
@@ -100,6 +105,11 @@ async function renderViajesPiezas(container) {
           tv25 = data.reduce((s, r) => s + r.v25, 0), tv26 = data.reduce((s, r) => s + r.v26, 0);
     const tp23 = data.reduce((s, r) => s + r.p23, 0), tp24 = data.reduce((s, r) => s + r.p24, 0),
           tp25 = data.reduce((s, r) => s + r.p25, 0), tp26 = data.reduce((s, r) => s + r.p26, 0);
+    /* Local vs Foráneo (columnas nuevas) */
+    const tl25 = data.reduce((s, r) => s + (r.l25||0), 0), tf25 = data.reduce((s, r) => s + (r.f25||0), 0);
+    const tl26 = data.reduce((s, r) => s + (r.l26||0), 0), tf26 = data.reduce((s, r) => s + (r.f26||0), 0);
+    const hayLocFor = (tl25 + tf25 + tl26 + tf26) > 0;
+    const pctLocal26 = (tl26 + tf26) > 0 ? Math.round(tl26 / (tl26 + tf26) * 100) : 0;
 
     /* % variación 2026 vs cada año */
     const pV26v23 = pctVar(tv26, tv23), pV26v24 = pctVar(tv26, tv24), pV26v25 = pctVar(tv26, tv25);
@@ -148,6 +158,16 @@ async function renderViajesPiezas(container) {
         <div class="cs-card" style="--cs-c:var(--red)"><div class="lbl">Piezas 2026</div><div class="val">${tp26.toLocaleString('es-MX')}</div><div class="sub">vs 2025: ${fmtPct(pP26v25)}</div></div>
       </div>
 
+      ${hayLocFor ? `
+      <!-- LOCAL VS FORÁNEO -->
+      <div class="section-divider"><span>📍 Viajes Local vs Foráneo</span></div>
+      <div class="casetas-summary-grid">
+        <div class="cs-card" style="--cs-c:var(--blue)"><div class="lbl">Locales 2026</div><div class="val">${tl26.toLocaleString('es-MX')}</div><div class="sub">2025: ${tl25.toLocaleString('es-MX')}</div></div>
+        <div class="cs-card" style="--cs-c:var(--teal)"><div class="lbl">Foráneos 2026</div><div class="val">${tf26.toLocaleString('es-MX')}</div><div class="sub">2025: ${tf25.toLocaleString('es-MX')}</div></div>
+        <div class="cs-card" style="--cs-c:var(--green)"><div class="lbl">% Local 2026</div><div class="val">${pctLocal26}%</div><div class="sub">${100-pctLocal26}% foráneo</div></div>
+        <div class="cs-card" style="--cs-c:var(--amber)"><div class="lbl">Total 2026</div><div class="val">${(tl26+tf26).toLocaleString('es-MX')}</div><div class="sub">local + foráneo</div></div>
+      </div>` : ''}
+
       <!-- EFICIENCIA -->
       <div class="kpi-row">
         <div class="ckpi" style="--ck-color:var(--teal)"><div class="lbl">Piezas por viaje 2026</div><div class="val">${efic26}</div><div class="sub">2025: ${efic25}</div></div>
@@ -165,6 +185,9 @@ async function renderViajesPiezas(container) {
         <div class="chart-box"><div class="chart-title">Tendencia piezas <span class="chart-badge">líneas</span></div><div style="position:relative;width:100%;height:260px"><canvas id="vp-line-piezas"></canvas></div></div>
         <div class="chart-box"><div class="chart-title">% Variación viajes 2026 vs años anteriores</div><div style="position:relative;width:100%;height:260px"><canvas id="vp-pct-viajes"></canvas></div></div>
         <div class="chart-box"><div class="chart-title">% Variación piezas 2026 vs años anteriores</div><div style="position:relative;width:100%;height:260px"><canvas id="vp-pct-piezas"></canvas></div></div>
+        ${hayLocFor ? `
+        <div class="chart-box full"><div class="chart-title">Viajes Local vs Foráneo por mes <span class="chart-badge">2026</span></div><div style="position:relative;width:100%;height:300px"><canvas id="vp-bar-locfor"></canvas></div></div>
+        <div class="chart-box"><div class="chart-title">Distribución Local vs Foráneo <span class="chart-badge">2026</span></div><div style="position:relative;width:100%;height:260px"><canvas id="vp-dona-locfor"></canvas></div></div>` : ''}
       </div>
 
       <!-- TABLA -->
@@ -303,6 +326,18 @@ async function renderViajesPiezas(container) {
         { label: 'vs 2024', data: pctPdata.map(r => r.p24 !== null ? +r.p24.toFixed(1) : 0), backgroundColor: 'rgba(59,130,246,0.8)', borderRadius: 3, borderSkipped: false, datalabels: { display: false } },
         { label: 'vs 2025', data: pctPdata.map(r => r.p25 !== null ? +r.p25.toFixed(1) : 0), backgroundColor: pctPdata.map(r => r.p25 >= 0 ? 'rgba(34,197,94,0.85)' : 'rgba(239,68,68,0.85)'), borderRadius: 3, borderSkipped: false, datalabels: { anchor: 'end', align: 'end', offset: 2, color: pctPdata.map(r => r.p25 >= 0 ? '#15803d' : '#b91c1c'), font: { size: 9, family: mf, weight: '800' }, formatter: v => (v > 0 ? '+' : '') + v + '%' } }
       ] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: true, position: 'bottom', labels: { color: '#5C3038', font: { size: 11, family: 'Outfit' }, usePointStyle: true, padding: 12 } }, datalabels: {} }, scales: { x: { grid: { display: false }, ticks: { color: tc, font: { size: 11, family: mf } }, border: { color: 'transparent' } }, y: { grid: { color: gc }, ticks: { color: tc, font: { size: 10 }, callback: v => v + '%' }, border: { color: 'transparent' }, max: pctPMax, min: -pctPMax } } } });
+
+      /* LOCAL VS FORÁNEO (columnas nuevas) */
+      if (hayLocFor && document.getElementById('vp-bar-locfor')) {
+        DC('vp-bar-locfor');
+        CI['vp-bar-locfor'] = new Chart(document.getElementById('vp-bar-locfor'), { type: 'bar', data: { labels, datasets: [
+          { label: 'Local', data: data.map(r => r.l26 || 0), backgroundColor: 'rgba(26,95,160,0.85)', borderRadius: 3, borderSkipped: false, stack: 'v26', datalabels: { display: false } },
+          { label: 'Foráneo', data: data.map(r => r.f26 || 0), backgroundColor: 'rgba(26,158,130,0.85)', borderRadius: 3, borderSkipped: false, stack: 'v26', datalabels: { display: false } },
+        ] }, options: { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, plugins: { legend: { display: true, position: 'bottom', labels: { color: '#5C3038', font: { size: 11, family: 'Outfit' }, usePointStyle: true, padding: 14 } }, tooltip: { callbacks: { label: c => `${c.dataset.label}: ${(c.parsed.y || 0).toLocaleString('es-MX')}` } }, datalabels: { display: false } }, scales: { x: { stacked: true, grid: { display: false }, ticks: { color: tc, font: { size: 10, family: mf } }, border: { color: 'transparent' } }, y: { stacked: true, grid: { color: gc }, ticks: { color: tc, font: { size: 10 } }, border: { color: 'transparent' }, beginAtZero: true } } } });
+
+        DC('vp-dona-locfor');
+        CI['vp-dona-locfor'] = new Chart(document.getElementById('vp-dona-locfor'), { type: 'doughnut', data: { labels: ['Local', 'Foráneo'], datasets: [{ data: [tl26, tf26], backgroundColor: ['rgba(26,95,160,0.85)', 'rgba(26,158,130,0.85)'], borderWidth: 1, hoverOffset: 6 }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '62%', plugins: { legend: { position: 'bottom', labels: { color: '#5C3038', font: { size: 12, family: 'Outfit' }, usePointStyle: true, padding: 14 } }, tooltip: { callbacks: { label: c => `${c.label}: ${c.parsed.toLocaleString('es-MX')} (${tl26 + tf26 ? Math.round(c.parsed / (tl26 + tf26) * 100) : 0}%)` } }, datalabels: { color: '#fff', font: { size: 13, family: mf, weight: '700' }, formatter: v => { const t = tl26 + tf26; return t ? Math.round(v / t * 100) + '%' : ''; } } } } });
+      }
 
     }, 80);
   }
