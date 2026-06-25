@@ -183,6 +183,7 @@ function renderCasetasAnual(container, CM) {
         <div class="chart-box"><div class="chart-title">Diferencia 2025 vs 2026 <span class="chart-badge">ahorro/gasto</span></div><div style="position:relative;width:100%;height:260px"><canvas id="ca-bar-dif"></canvas></div></div>
         <div class="chart-box"><div class="chart-title">Comparativo 2025 vs 2026 <span class="chart-badge">${mesesCon26} meses</span></div><div style="position:relative;width:100%;height:260px"><canvas id="ca-dona-estatus"></canvas></div></div>
         <div class="chart-box"><div class="chart-title">% Variación 2025→2026</div><div style="position:relative;width:100%;height:260px"><canvas id="ca-pct-var"></canvas></div></div>
+        <div class="chart-box full"><div class="chart-title">Gasto acumulado por mes <span class="chart-badge">2023–2026 · corrida anual</span></div><div style="position:relative;width:100%;height:300px"><canvas id="ca-acum"></canvas></div></div>
       </div>
       <div class="table-wrap">
         <div class="table-head-bar"><span class="ttl">Informe General · Comparativa Anual</span><span class="meta">${data.length} meses</span></div>
@@ -204,8 +205,8 @@ function renderCasetasAnual(container, CM) {
         </table></div>
       </div>`;
 
-    window.applyFiltroAnual = () => { filtroMes = document.getElementById('ca-mes').value; ['ca-bar-comp','ca-line-trend','ca-bar-dif','ca-dona-estatus','ca-pct-var'].forEach(DC); render(); };
-    window.clearFiltroAnual = () => { filtroMes = 'todos'; ['ca-bar-comp','ca-line-trend','ca-bar-dif','ca-dona-estatus','ca-pct-var'].forEach(DC); render(); };
+    window.applyFiltroAnual = () => { filtroMes = document.getElementById('ca-mes').value; ['ca-bar-comp','ca-line-trend','ca-bar-dif','ca-dona-estatus','ca-pct-var','ca-acum'].forEach(DC); render(); };
+    window.clearFiltroAnual = () => { filtroMes = 'todos'; ['ca-bar-comp','ca-line-trend','ca-bar-dif','ca-dona-estatus','ca-pct-var','ca-acum'].forEach(DC); render(); };
     window._ssDataCasetas   = data;
     window._ssPeriodoCasetas = filtroMes === 'todos' ? 'Acumulado anual' : filtroMes.charAt(0)+filtroMes.slice(1).toLowerCase();
 
@@ -249,6 +250,16 @@ function renderCasetasAnual(container, CM) {
       const pctMax  = pctVals.length ? Math.ceil(Math.max(...pctVals)*1.4) : 50;
       DC('ca-pct-var');
       CI['ca-pct-var'] = new Chart(document.getElementById('ca-pct-var'), {type:'bar',data:{labels:difData.map(r=>r.mes.substring(0,3)),datasets:[{label:'% vs 2025',data:difData.map(r=>r.c25>0?+((r.dif2526/r.c25)*100).toFixed(1):0),backgroundColor:difData.map(r=>r.dif2526>0?'rgba(239,68,68,0.75)':'rgba(34,197,94,0.75)'),borderRadius:4,borderSkipped:false,datalabels:{display:true,anchor:'end',align:'end',offset:3,color:difData.map(r=>r.dif2526>0?'#b91c1c':'#15803d'),font:{size:10,family:mf,weight:'700'},formatter:v=>(v>0?'+':'')+v+'%'}}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},datalabels:{}},scales:{x:{grid:{display:false},ticks:{color:tc,font:{size:11,family:mf}},border:{color:'transparent'}},y:{grid:{color:gc},ticks:{color:tc,font:{size:10},callback:v=>v+'%'},border:{color:'transparent'},max:pctMax,min:-pctMax}}}});
+
+      /* GASTO ACUMULADO POR MES (corrida anual) */
+      const acumC = key => { const v=data.map(r=>r[key]||0); let last=-1; v.forEach((x,i)=>{if(x>0)last=i;}); let s=0; return v.map((x,i)=>i<=last?(s+=x):null); };
+      DC('ca-acum');
+      CI['ca-acum'] = new Chart(document.getElementById('ca-acum'), {type:'line',data:{labels,datasets:[
+        {label:'2023',data:acumC('c23'),borderColor:'rgba(148,163,184,0.75)',backgroundColor:'transparent',borderWidth:1.8,borderDash:[4,3],pointRadius:2.5,tension:0.3,datalabels:{display:false}},
+        {label:'2024',data:acumC('c24'),borderColor:'rgba(59,130,246,0.8)',backgroundColor:'transparent',borderWidth:1.8,borderDash:[4,3],pointRadius:2.5,tension:0.3,datalabels:{display:false}},
+        {label:'2025',data:acumC('c25'),borderColor:'rgba(251,191,36,0.9)',backgroundColor:'transparent',borderWidth:1.8,borderDash:[4,3],pointRadius:2.5,tension:0.3,datalabels:{display:false}},
+        {label:'2026',data:acumC('c26'),borderColor:'#C0152A',backgroundColor:'rgba(192,21,42,0.07)',borderWidth:2.6,pointRadius:3,fill:true,tension:0.3,datalabels:{display:false}},
+      ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:true,position:'bottom',labels:{color:'#5C3038',font:{size:11,family:'Outfit'},usePointStyle:true,padding:12}},tooltip:{callbacks:{label:c=>`${c.dataset.label}: $${(c.parsed.y||0).toLocaleString('es-MX')}`}},datalabels:{}},scales:{x:{grid:{display:false},ticks:{color:tc,font:{size:10,family:mf}},border:{color:'transparent'}},y:{grid:{color:gc},ticks:{color:tc,font:{size:10},callback:yFmt},border:{color:'transparent'},beginAtZero:true}}}});
     }, 80);
   }
   render();
