@@ -57,7 +57,7 @@ async function renderAnalisisCruce(container) {
     const varForaneos = pct(tF26, tF25c);
 
     container.innerHTML = `
-      <div class="banner ok">✓ Cruce en vivo · Gasto Casetas × Viajes Foráneos · 2025 vs 2026 · se actualiza de Casetas y Viajes</div>
+      <div class="banner ok">✓ Cierre mensual · Casetas × Viajes Foráneos · 2025 vs 2026 · se actualiza solo de Casetas y Viajes</div>
       <div class="filters-bar">
         <div class="filter-group"><span class="filter-label">Mes</span>
           <select class="filter-select" id="cr-mes"><option value="todos">Todos los meses</option>${rows.map(r => `<option value="${r.mes}"${filtroMes === r.mes ? ' selected' : ''}>${cap(r.mes)}</option>`).join('')}</select>
@@ -75,11 +75,11 @@ async function renderAnalisisCruce(container) {
       </div>
 
       <div class="charts-grid">
-        <div class="chart-box full"><div class="chart-title">Foráneos vs Gasto Casetas por mes <span class="chart-badge">2026 · doble eje</span></div><div style="position:relative;width:100%;height:320px"><canvas id="cr-combo"></canvas></div></div>
-        <div class="chart-box full"><div class="chart-title">Costo de caseta por viaje foráneo <span class="chart-badge">2025 vs 2026</span></div><div style="position:relative;width:100%;height:280px"><canvas id="cr-cpf"></canvas></div></div>
-        <div class="chart-box"><div class="chart-title">Gasto casetas por mes <span class="chart-badge">2025 vs 2026</span></div><div style="position:relative;width:100%;height:260px"><canvas id="cr-gasto"></canvas></div></div>
-        <div class="chart-box"><div class="chart-title">Viajes foráneos por mes <span class="chart-badge">2025 vs 2026</span></div><div style="position:relative;width:100%;height:260px"><canvas id="cr-foraneos"></canvas></div></div>
-        <div class="chart-box full"><div class="chart-title">Diferencia costo/foráneo 2026 vs 2025 <span class="chart-badge">▼ ahorro · ▲ más caro</span></div><div style="position:relative;width:100%;height:260px"><canvas id="cr-dif"></canvas></div></div>
+        <div class="chart-box full"><div class="chart-title">Gasto de casetas por mes <span class="chart-badge">2025 vs 2026</span></div><div style="position:relative;width:100%;height:300px"><canvas id="cr-gasto"></canvas></div></div>
+        <div class="chart-box full"><div class="chart-title">Viajes foráneos por mes <span class="chart-badge">2025 vs 2026</span></div><div style="position:relative;width:100%;height:300px"><canvas id="cr-foraneos"></canvas></div></div>
+        <div class="chart-box full"><div class="chart-title">Foráneos vs Gasto de casetas en el mes <span class="chart-badge">2026 · doble eje</span></div><div style="position:relative;width:100%;height:300px"><canvas id="cr-combo"></canvas></div></div>
+        <div class="chart-box"><div class="chart-title">Costo de caseta por viaje foráneo <span class="chart-badge">2025 vs 2026</span></div><div style="position:relative;width:100%;height:260px"><canvas id="cr-cpf"></canvas></div></div>
+        <div class="chart-box"><div class="chart-title">Diferencia costo/foráneo 2026 vs 2025 <span class="chart-badge">▼ ahorro · ▲ más caro</span></div><div style="position:relative;width:100%;height:260px"><canvas id="cr-dif"></canvas></div></div>
       </div>
 
       <div class="table-wrap">
