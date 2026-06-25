@@ -185,10 +185,15 @@ async function renderViajesPiezas(container) {
         <div class="chart-box"><div class="chart-title">Tendencia piezas <span class="chart-badge">líneas</span></div><div style="position:relative;width:100%;height:260px"><canvas id="vp-line-piezas"></canvas></div></div>
         <div class="chart-box"><div class="chart-title">% Variación viajes 2026 vs años anteriores</div><div style="position:relative;width:100%;height:260px"><canvas id="vp-pct-viajes"></canvas></div></div>
         <div class="chart-box"><div class="chart-title">% Variación piezas 2026 vs años anteriores</div><div style="position:relative;width:100%;height:260px"><canvas id="vp-pct-piezas"></canvas></div></div>
+        <div class="chart-box full"><div class="chart-title">Viajes acumulados por mes <span class="chart-badge">2023–2026 · corrida anual</span></div><div style="position:relative;width:100%;height:300px"><canvas id="vp-acum-viajes"></canvas></div></div>
+        <div class="chart-box full"><div class="chart-title">Piezas acumuladas por mes <span class="chart-badge">2023–2026 · corrida anual</span></div><div style="position:relative;width:100%;height:300px"><canvas id="vp-acum-piezas"></canvas></div></div>
         ${hayLocFor ? `
         <div class="chart-box full"><div class="chart-title">Viajes Local vs Foráneo por mes <span class="chart-badge">2026</span></div><div style="position:relative;width:100%;height:300px"><canvas id="vp-bar-locfor"></canvas></div></div>
         <div class="chart-box"><div class="chart-title">Distribución Local vs Foráneo <span class="chart-badge">2026</span></div><div style="position:relative;width:100%;height:260px"><canvas id="vp-dona-locfor"></canvas></div></div>
-        <div class="chart-box"><div class="chart-title">Local vs Foráneo <span class="chart-badge">2025 vs 2026</span></div><div style="position:relative;width:100%;height:260px"><canvas id="vp-comp-locfor"></canvas></div></div>` : ''}
+        <div class="chart-box"><div class="chart-title">Local vs Foráneo <span class="chart-badge">2025 vs 2026</span></div><div style="position:relative;width:100%;height:260px"><canvas id="vp-comp-locfor"></canvas></div></div>
+        <div class="chart-box"><div class="chart-title">Locales por mes <span class="chart-badge">2025 vs 2026</span></div><div style="position:relative;width:100%;height:260px"><canvas id="vp-locmes"></canvas></div></div>
+        <div class="chart-box"><div class="chart-title">Foráneos por mes <span class="chart-badge">2025 vs 2026</span></div><div style="position:relative;width:100%;height:260px"><canvas id="vp-formes"></canvas></div></div>
+        <div class="chart-box full"><div class="chart-title">Local + Foráneo acumulado por mes <span class="chart-badge">2025 vs 2026</span></div><div style="position:relative;width:100%;height:300px"><canvas id="vp-acum-locfor"></canvas></div></div>` : ''}
       </div>
 
       <!-- TABLA -->
@@ -247,12 +252,12 @@ async function renderViajesPiezas(container) {
 
     window.applyFiltroVP = () => {
       filtroMes = document.getElementById('vp-mes').value;
-      ['vp-bar-viajes','vp-bar-piezas','vp-line-viajes','vp-line-piezas','vp-pct-viajes','vp-pct-piezas'].forEach(DC);
+      ['vp-bar-viajes','vp-bar-piezas','vp-line-viajes','vp-line-piezas','vp-pct-viajes','vp-pct-piezas','vp-acum-viajes','vp-acum-piezas','vp-bar-locfor','vp-dona-locfor','vp-comp-locfor','vp-locmes','vp-formes','vp-acum-locfor'].forEach(DC);
       render();
     };
     window.clearFiltroVP = () => {
       filtroMes = 'todos';
-      ['vp-bar-viajes','vp-bar-piezas','vp-line-viajes','vp-line-piezas','vp-pct-viajes','vp-pct-piezas'].forEach(DC);
+      ['vp-bar-viajes','vp-bar-piezas','vp-line-viajes','vp-line-piezas','vp-pct-viajes','vp-pct-piezas','vp-acum-viajes','vp-acum-piezas','vp-bar-locfor','vp-dona-locfor','vp-comp-locfor','vp-locmes','vp-formes','vp-acum-locfor'].forEach(DC);
       render();
     };
 
@@ -328,6 +333,27 @@ async function renderViajesPiezas(container) {
         { label: 'vs 2025', data: pctPdata.map(r => r.p25 !== null ? +r.p25.toFixed(1) : 0), backgroundColor: pctPdata.map(r => r.p25 >= 0 ? 'rgba(34,197,94,0.85)' : 'rgba(239,68,68,0.85)'), borderRadius: 3, borderSkipped: false, datalabels: { anchor: 'end', align: 'end', offset: 2, color: pctPdata.map(r => r.p25 >= 0 ? '#15803d' : '#b91c1c'), font: { size: 9, family: mf, weight: '800' }, formatter: v => (v > 0 ? '+' : '') + v + '%' } }
       ] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: true, position: 'bottom', labels: { color: '#5C3038', font: { size: 11, family: 'Outfit' }, usePointStyle: true, padding: 12 } }, datalabels: {} }, scales: { x: { grid: { display: false }, ticks: { color: tc, font: { size: 11, family: mf } }, border: { color: 'transparent' } }, y: { grid: { color: gc }, ticks: { color: tc, font: { size: 10 }, callback: v => v + '%' }, border: { color: 'transparent' }, max: pctPMax, min: -pctPMax } } } });
 
+      /* ── ACUMULADOS (corrida anual mes a mes) ── */
+      // Suma corrida; corta (null) después del último mes con dato de ese año
+      const acum = key => { const v = data.map(r => r[key] || 0); let last = -1; v.forEach((x, i) => { if (x > 0) last = i; }); let s = 0; return v.map((x, i) => i <= last ? (s += x) : null); };
+      const lineDS = (label, key, color, dash, fill) => ({ label, data: acum(key), borderColor: color, backgroundColor: fill || 'transparent', borderWidth: dash ? 1.8 : 2.6, borderDash: dash || [], pointRadius: 2.5, pointBackgroundColor: color, fill: !!fill, tension: 0.3, datalabels: { display: false } });
+
+      DC('vp-acum-viajes');
+      CI['vp-acum-viajes'] = new Chart(document.getElementById('vp-acum-viajes'), { type: 'line', data: { labels, datasets: [
+        lineDS('2023', 'v23', 'rgba(148,163,184,0.7)', [4, 3]),
+        lineDS('2024', 'v24', 'rgba(59,130,246,0.8)', [4, 3]),
+        lineDS('2025', 'v25', 'rgba(251,191,36,0.9)', [4, 3]),
+        lineDS('2026', 'v26', '#C0152A', null, 'rgba(192,21,42,0.07)'),
+      ] }, options: { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, plugins: { legend: { display: true, position: 'bottom', labels: { color: '#5C3038', font: { size: 11, family: 'Outfit' }, usePointStyle: true, padding: 12 } }, tooltip: { callbacks: { label: c => `${c.dataset.label}: ${(c.parsed.y || 0).toLocaleString('es-MX')}` } }, datalabels: {} }, scales: { x: { grid: { display: false }, ticks: { color: tc, font: { size: 10, family: mf } }, border: { color: 'transparent' } }, y: { grid: { color: gc }, ticks: { color: tc, font: { size: 10 }, callback: yFmt }, border: { color: 'transparent' }, beginAtZero: true } } } });
+
+      DC('vp-acum-piezas');
+      CI['vp-acum-piezas'] = new Chart(document.getElementById('vp-acum-piezas'), { type: 'line', data: { labels, datasets: [
+        lineDS('2023', 'p23', 'rgba(148,163,184,0.7)', [4, 3]),
+        lineDS('2024', 'p24', 'rgba(59,130,246,0.8)', [4, 3]),
+        lineDS('2025', 'p25', 'rgba(251,191,36,0.9)', [4, 3]),
+        lineDS('2026', 'p26', '#1A5FA0', null, 'rgba(26,95,160,0.08)'),
+      ] }, options: { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, plugins: { legend: { display: true, position: 'bottom', labels: { color: '#5C3038', font: { size: 11, family: 'Outfit' }, usePointStyle: true, padding: 12 } }, tooltip: { callbacks: { label: c => `${c.dataset.label}: ${(c.parsed.y || 0).toLocaleString('es-MX')}` } }, datalabels: {} }, scales: { x: { grid: { display: false }, ticks: { color: tc, font: { size: 10, family: mf } }, border: { color: 'transparent' } }, y: { grid: { color: gc }, ticks: { color: tc, font: { size: 10 }, callback: yFmt }, border: { color: 'transparent' }, beginAtZero: true } } } });
+
       /* LOCAL VS FORÁNEO (columnas nuevas) */
       if (hayLocFor && document.getElementById('vp-bar-locfor')) {
         DC('vp-bar-locfor');
@@ -344,6 +370,27 @@ async function renderViajesPiezas(container) {
           { label: '2025', data: [tl25, tf25], backgroundColor: 'rgba(184,122,16,0.82)', borderRadius: 4, borderSkipped: false, datalabels: { anchor: 'end', align: 'end', offset: 2, color: '#7A5010', font: { size: 11, family: mf, weight: '700' }, formatter: v => v ? v.toLocaleString('es-MX') : '' } },
           { label: '2026', data: [tl26, tf26], backgroundColor: 'rgba(26,95,160,0.85)', borderRadius: 4, borderSkipped: false, datalabels: { anchor: 'end', align: 'end', offset: 2, color: '#1A3A70', font: { size: 11, family: mf, weight: '700' }, formatter: v => v ? v.toLocaleString('es-MX') : '' } },
         ] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: true, position: 'bottom', labels: { color: '#5C3038', font: { size: 12, family: 'Outfit' }, usePointStyle: true, padding: 14 } }, tooltip: { callbacks: { label: c => `${c.dataset.label}: ${(c.parsed.y || 0).toLocaleString('es-MX')}` } }, datalabels: {} }, scales: { x: { grid: { display: false }, ticks: { color: tc, font: { size: 12, family: 'Outfit' } }, border: { color: 'transparent' } }, y: { grid: { color: gc }, ticks: { color: tc, font: { size: 10 } }, border: { color: 'transparent' }, beginAtZero: true, grace: '15%' } } } });
+
+        const optMes = titulo => ({ responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, plugins: { legend: { display: true, position: 'bottom', labels: { color: '#5C3038', font: { size: 11, family: 'Outfit' }, usePointStyle: true, padding: 12 } }, tooltip: { callbacks: { label: c => `${c.dataset.label}: ${(c.parsed.y || 0).toLocaleString('es-MX')}` } }, datalabels: { display: false } }, scales: { x: { grid: { display: false }, ticks: { color: tc, font: { size: 10, family: mf } }, border: { color: 'transparent' } }, y: { grid: { color: gc }, ticks: { color: tc, font: { size: 10 } }, border: { color: 'transparent' }, beginAtZero: true } } });
+
+        DC('vp-locmes');
+        CI['vp-locmes'] = new Chart(document.getElementById('vp-locmes'), { type: 'bar', data: { labels, datasets: [
+          { label: 'Local 2025', data: data.map(r => r.l25 || 0), backgroundColor: 'rgba(184,122,16,0.78)', borderRadius: 3, borderSkipped: false },
+          { label: 'Local 2026', data: data.map(r => r.l26 || 0), backgroundColor: 'rgba(26,95,160,0.85)', borderRadius: 3, borderSkipped: false },
+        ] }, options: optMes() });
+
+        DC('vp-formes');
+        CI['vp-formes'] = new Chart(document.getElementById('vp-formes'), { type: 'bar', data: { labels, datasets: [
+          { label: 'Foráneo 2025', data: data.map(r => r.f25 || 0), backgroundColor: 'rgba(184,122,16,0.78)', borderRadius: 3, borderSkipped: false },
+          { label: 'Foráneo 2026', data: data.map(r => r.f26 || 0), backgroundColor: 'rgba(26,158,130,0.85)', borderRadius: 3, borderSkipped: false },
+        ] }, options: optMes() });
+
+        const acumTot = (kl, kf) => { const v = data.map(r => (r[kl] || 0) + (r[kf] || 0)); let last = -1; v.forEach((x, i) => { if (x > 0) last = i; }); let s = 0; return v.map((x, i) => i <= last ? (s += x) : null); };
+        DC('vp-acum-locfor');
+        CI['vp-acum-locfor'] = new Chart(document.getElementById('vp-acum-locfor'), { type: 'line', data: { labels, datasets: [
+          { label: 'Acumulado 2025', data: acumTot('l25', 'f25'), borderColor: 'rgba(184,122,16,0.9)', backgroundColor: 'transparent', borderWidth: 2, pointRadius: 2.5, tension: 0.3, datalabels: { display: false } },
+          { label: 'Acumulado 2026', data: acumTot('l26', 'f26'), borderColor: '#1A5FA0', backgroundColor: 'rgba(26,95,160,0.08)', borderWidth: 2.6, pointRadius: 3, fill: true, tension: 0.3, datalabels: { display: false } },
+        ] }, options: optMes() });
       }
 
     }, 80);
