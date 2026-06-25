@@ -189,6 +189,7 @@ async function renderViajesPiezas(container) {
         <div class="chart-box full"><div class="chart-title">Piezas acumuladas por mes <span class="chart-badge">2023–2026 · corrida anual</span></div><div style="position:relative;width:100%;height:300px"><canvas id="vp-acum-piezas"></canvas></div></div>
         ${hayLocFor ? `
         <div class="chart-box full"><div class="chart-title">Viajes Local vs Foráneo por mes <span class="chart-badge">2026</span></div><div style="position:relative;width:100%;height:300px"><canvas id="vp-bar-locfor"></canvas></div></div>
+        <div class="chart-box"><div class="chart-title">Distribución Local vs Foráneo <span class="chart-badge">2025</span></div><div style="position:relative;width:100%;height:260px"><canvas id="vp-dona-locfor-25"></canvas></div></div>
         <div class="chart-box"><div class="chart-title">Distribución Local vs Foráneo <span class="chart-badge">2026</span></div><div style="position:relative;width:100%;height:260px"><canvas id="vp-dona-locfor"></canvas></div></div>
         <div class="chart-box"><div class="chart-title">Local vs Foráneo <span class="chart-badge">2025 vs 2026</span></div><div style="position:relative;width:100%;height:260px"><canvas id="vp-comp-locfor"></canvas></div></div>
         <div class="chart-box"><div class="chart-title">Locales por mes <span class="chart-badge">2025 vs 2026</span></div><div style="position:relative;width:100%;height:260px"><canvas id="vp-locmes"></canvas></div></div>
@@ -252,12 +253,12 @@ async function renderViajesPiezas(container) {
 
     window.applyFiltroVP = () => {
       filtroMes = document.getElementById('vp-mes').value;
-      ['vp-bar-viajes','vp-bar-piezas','vp-line-viajes','vp-line-piezas','vp-pct-viajes','vp-pct-piezas','vp-acum-viajes','vp-acum-piezas','vp-bar-locfor','vp-dona-locfor','vp-comp-locfor','vp-locmes','vp-formes','vp-acum-locfor'].forEach(DC);
+      ['vp-bar-viajes','vp-bar-piezas','vp-line-viajes','vp-line-piezas','vp-pct-viajes','vp-pct-piezas','vp-acum-viajes','vp-acum-piezas','vp-bar-locfor','vp-dona-locfor','vp-dona-locfor-25','vp-comp-locfor','vp-locmes','vp-formes','vp-acum-locfor'].forEach(DC);
       render();
     };
     window.clearFiltroVP = () => {
       filtroMes = 'todos';
-      ['vp-bar-viajes','vp-bar-piezas','vp-line-viajes','vp-line-piezas','vp-pct-viajes','vp-pct-piezas','vp-acum-viajes','vp-acum-piezas','vp-bar-locfor','vp-dona-locfor','vp-comp-locfor','vp-locmes','vp-formes','vp-acum-locfor'].forEach(DC);
+      ['vp-bar-viajes','vp-bar-piezas','vp-line-viajes','vp-line-piezas','vp-pct-viajes','vp-pct-piezas','vp-acum-viajes','vp-acum-piezas','vp-bar-locfor','vp-dona-locfor','vp-dona-locfor-25','vp-comp-locfor','vp-locmes','vp-formes','vp-acum-locfor'].forEach(DC);
       render();
     };
 
@@ -362,8 +363,9 @@ async function renderViajesPiezas(container) {
           { label: 'Foráneo', data: data.map(r => r.f26 || 0), backgroundColor: 'rgba(26,158,130,0.85)', borderRadius: 3, borderSkipped: false, stack: 'v26', datalabels: { display: false } },
         ] }, options: { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, plugins: { legend: { display: true, position: 'bottom', labels: { color: '#5C3038', font: { size: 11, family: 'Outfit' }, usePointStyle: true, padding: 14 } }, tooltip: { callbacks: { label: c => `${c.dataset.label}: ${(c.parsed.y || 0).toLocaleString('es-MX')}` } }, datalabels: { display: false } }, scales: { x: { stacked: true, grid: { display: false }, ticks: { color: tc, font: { size: 10, family: mf } }, border: { color: 'transparent' } }, y: { stacked: true, grid: { color: gc }, ticks: { color: tc, font: { size: 10 } }, border: { color: 'transparent' }, beginAtZero: true } } } });
 
-        DC('vp-dona-locfor');
-        CI['vp-dona-locfor'] = new Chart(document.getElementById('vp-dona-locfor'), { type: 'doughnut', data: { labels: ['Local', 'Foráneo'], datasets: [{ data: [tl26, tf26], backgroundColor: ['rgba(26,95,160,0.85)', 'rgba(26,158,130,0.85)'], borderWidth: 1, hoverOffset: 6 }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '62%', plugins: { legend: { position: 'bottom', labels: { color: '#5C3038', font: { size: 12, family: 'Outfit' }, usePointStyle: true, padding: 14 } }, tooltip: { callbacks: { label: c => `${c.label}: ${c.parsed.toLocaleString('es-MX')} (${tl26 + tf26 ? Math.round(c.parsed / (tl26 + tf26) * 100) : 0}%)` } }, datalabels: { color: '#fff', font: { size: 13, family: mf, weight: '700' }, formatter: v => { const t = tl26 + tf26; return t ? Math.round(v / t * 100) + '%' : ''; } } } } });
+        const donaLocFor = (id, tl, tf) => { const tot = tl + tf; DC(id); CI[id] = new Chart(document.getElementById(id), { type: 'doughnut', data: { labels: ['Local', 'Foráneo'], datasets: [{ data: [tl, tf], backgroundColor: ['rgba(26,95,160,0.85)', 'rgba(26,158,130,0.85)'], borderWidth: 1, hoverOffset: 6 }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '62%', plugins: { legend: { position: 'bottom', labels: { color: '#5C3038', font: { size: 12, family: 'Outfit' }, usePointStyle: true, padding: 14 } }, tooltip: { callbacks: { label: c => `${c.label}: ${c.parsed.toLocaleString('es-MX')} (${tot ? Math.round(c.parsed / tot * 100) : 0}%)` } }, datalabels: { color: '#fff', font: { size: 13, family: mf, weight: '700' }, formatter: v => tot ? Math.round(v / tot * 100) + '%' : '' } } } }); };
+        donaLocFor('vp-dona-locfor-25', tl25, tf25);
+        donaLocFor('vp-dona-locfor', tl26, tf26);
 
         DC('vp-comp-locfor');
         CI['vp-comp-locfor'] = new Chart(document.getElementById('vp-comp-locfor'), { type: 'bar', data: { labels: ['Local', 'Foráneo'], datasets: [
