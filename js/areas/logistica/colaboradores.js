@@ -114,7 +114,7 @@ async function renderColaboradores(container) {
   function sortTable(col) {
     if (sortCol === col) { sortDir = sortDir === 'asc' ? 'desc' : 'asc'; }
     else { sortCol = col; sortDir = col === 'Colaborador' ? 'asc' : 'desc'; }
-    ['cv-bar-top','cv-dona-unidad','cv-pct-bar'].forEach(DC);
+    ['cv-bar-top','cv-dona-unidad','cv-pct-bar','cv-acum'].forEach(DC);
     render();
   }
 
@@ -159,6 +159,7 @@ async function renderColaboradores(container) {
       <div class="charts-grid">
         <div class="chart-box"><div class="chart-title">Top colaboradores <span class="chart-badge">Top 5 · viajes</span></div><div style="position:relative;width:100%;height:280px"><canvas id="cv-bar-top"></canvas></div></div>
         <div class="chart-box"><div class="chart-title">Por unidad <span class="chart-badge">${uKeys.length} tipos</span></div><div style="position:relative;width:100%;height:230px"><canvas id="cv-dona-unidad"></canvas></div></div>
+        <div class="chart-box full"><div class="chart-title">Viajes acumulados a la fecha <span class="chart-badge">todos los colaboradores · corrida mensual</span></div><div style="position:relative;width:100%;height:280px"><canvas id="cv-acum"></canvas></div></div>
         <div class="chart-box full"><div class="chart-title">Viajes por colaborador <span class="chart-badge" style="background:var(--blue-bg);color:var(--blue);border-color:rgba(26,95,160,.2)">🔵 Local + 🟢 Foráneo · ordenado por total desc</span></div><div style="position:relative;width:100%;overflow-x:auto"><canvas id="cv-pct-bar" style="height:${Math.max(320,data.length*42)}px"></canvas></div></div>
       </div>
       <div class="table-wrap">
@@ -207,11 +208,25 @@ async function renderColaboradores(container) {
       </div>`;
 
     window.sortTable = sortTable;
-    window.applyFiltersColab = () => { filtroMes=document.getElementById('cv-mes').value; filtroUnidad=document.getElementById('cv-unidad').value; filtroColab=document.getElementById('cv-colab').value.trim(); ['cv-bar-top','cv-dona-unidad','cv-pct-bar'].forEach(DC); render(); };
-    window.clearFiltersColab  = () => { filtroMes=mesesList[0]||'todos'; filtroUnidad='todos'; filtroColab=''; ['cv-bar-top','cv-dona-unidad','cv-pct-bar'].forEach(DC); render(); };
+    window.applyFiltersColab = () => { filtroMes=document.getElementById('cv-mes').value; filtroUnidad=document.getElementById('cv-unidad').value; filtroColab=document.getElementById('cv-colab').value.trim(); ['cv-bar-top','cv-dona-unidad','cv-pct-bar','cv-acum'].forEach(DC); render(); };
+    window.clearFiltersColab  = () => { filtroMes=mesesList[0]||'todos'; filtroUnidad='todos'; filtroColab=''; ['cv-bar-top','cv-dona-unidad','cv-pct-bar','cv-acum'].forEach(DC); render(); };
 
     setTimeout(() => {
       const gc='rgba(0,0,0,0.05)', tc='#9A7078', mf='JetBrains Mono';
+
+      /* Acumulado a la fecha: total de viajes por mes (todos), suma corrida */
+      const porMesTot = {}; VD.forEach(r => { porMesTot[r.Mes] = (porMesTot[r.Mes]||0) + r.Total; });
+      const mesesAsc = Object.keys(porMesTot).sort();
+      let acRun = 0;
+      const acumLbl = mesesAsc.map(m => { const [y,mm]=m.split('-'); return MESES[+mm-1].substring(0,3); });
+      const acumData = mesesAsc.map(m => { acRun += porMesTot[m]; return acRun; });
+      const mensualData = mesesAsc.map(m => porMesTot[m]);
+      DC('cv-acum');
+      CI['cv-acum'] = new Chart(document.getElementById('cv-acum'), { data:{ labels:acumLbl, datasets:[
+        { type:'bar', label:'Viajes del mes', data:mensualData, backgroundColor:'rgba(26,95,160,0.5)', borderRadius:3, borderSkipped:false, yAxisID:'y', datalabels:{display:false} },
+        { type:'line', label:'Acumulado a la fecha', data:acumData, borderColor:'#C0152A', backgroundColor:'rgba(192,21,42,0.07)', borderWidth:2.6, pointRadius:3.5, pointBackgroundColor:'#C0152A', fill:true, tension:0.3, yAxisID:'y1', datalabels:{display:false} },
+      ]}, options:{ responsive:true, maintainAspectRatio:false, interaction:{mode:'index',intersect:false}, plugins:{ legend:{display:true,position:'bottom',labels:{color:'#5C3038',font:{size:11,family:'Outfit'},usePointStyle:true,padding:12}}, tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${(c.parsed.y||0).toLocaleString('es-MX')}`}}, datalabels:{display:false} }, scales:{ x:{grid:{display:false},ticks:{color:tc,font:{size:10,family:mf}},border:{color:'transparent'}}, y:{position:'left',grid:{color:gc},ticks:{color:'rgba(26,95,160,0.95)',font:{size:10}},border:{color:'transparent'},beginAtZero:true,title:{display:true,text:'Del mes',color:tc,font:{size:10}}}, y1:{position:'right',grid:{display:false},ticks:{color:'#C0152A',font:{size:10}},border:{color:'transparent'},beginAtZero:true,title:{display:true,text:'Acumulado',color:tc,font:{size:10}}} } } });
+
       DC('cv-bar-top');
       const top8 = [...data].sort((a,b)=>b.Total-a.Total).slice(0,5);
       CI['cv-bar-top'] = new Chart(document.getElementById('cv-bar-top'), {type:'bar',data:{labels:top8.map(r=>{const p=r.Colaborador.split(' ');return p.slice(0,2).join(' ')+'\n'+p.slice(2,4).join(' ');}),datasets:[{label:'Local',data:top8.map(r=>r.Local),backgroundColor:'rgba(26,58,112,0.88)',borderRadius:4,borderSkipped:false,datalabels:{anchor:'center',align:'center',color:'#fff',font:{size:12,family:mf,weight:'700'},formatter:v=>v>0?`${v}`:''}},{label:'Foráneo',data:top8.map(r=>r.Foraneo),backgroundColor:'rgba(26,158,130,0.88)',borderRadius:4,borderSkipped:false,datalabels:{anchor:'end',align:'top',offset:3,color:'#1A0A0C',font:{size:13,family:mf,weight:'900'},formatter:(v,ctx)=>`${top8[ctx.dataIndex].Total}`}}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{color:'#5C3038',font:{size:12,family:'Outfit'},usePointStyle:true,padding:16}},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.parsed.y} viajes`,afterBody:items=>{const r=top8[items[0].dataIndex];return[`Total: ${r.Local+r.Foraneo} viajes`];}}},datalabels:{}},scales:{x:{grid:{display:false},ticks:{color:tc,font:{size:10,family:mf},maxRotation:0},border:{color:'transparent'}},y:{grid:{color:gc},ticks:{color:tc,font:{size:11}},border:{color:'transparent'},beginAtZero:true,grace:'22%'}}}});
@@ -233,7 +248,7 @@ async function renderColaboradores(container) {
   }
   render();
   if (window._timerColab) clearInterval(window._timerColab);
-  window._timerColab = setInterval(() => { ['cv-bar-top','cv-dona-unidad','cv-pct-bar'].forEach(DC); renderColaboradores(container); }, 5*60*1000);
+  window._timerColab = setInterval(() => { ['cv-bar-top','cv-dona-unidad','cv-pct-bar','cv-acum'].forEach(DC); renderColaboradores(container); }, 5*60*1000);
 }
 
 /* ══════════════════════════
