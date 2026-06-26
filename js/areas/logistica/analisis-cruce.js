@@ -52,6 +52,8 @@ async function renderAnalisisCruce(container) {
     const tF25c = con26.reduce((s, r) => s + r.f25, 0);
     const varGasto = pct(tG26, tG25c);
     const varForaneos = pct(tF26, tF25c);
+    const difGasto = tG26 - tG25c;                                   // pesos: 2026 vs 2025 (mismo periodo)
+    const pico = con26.slice().sort((a, b) => b.g26 - a.g26)[0] || {}; // mes de mayor gasto 2026
 
     container.innerHTML = `
       <div class="banner ok">✓ Cierre mensual · Casetas × Viajes Foráneos · 2025 vs 2026 · se actualiza solo de Casetas y Viajes</div>
@@ -65,10 +67,10 @@ async function renderAnalisisCruce(container) {
       </div>
 
       <div class="kpi-row">
-        <div class="ckpi" style="--ck-color:var(--amber)"><div class="lbl">Gasto casetas 2026 (YTD)</div><div class="val" style="font-size:20px">${$(tG26)}</div><div class="sub">vs 2025: ${fmtPct(varGasto)}</div></div>
-        <div class="ckpi" style="--ck-color:#6B7280"><div class="lbl">Gasto casetas 2025 (YTD)</div><div class="val" style="font-size:20px">${$(tG25c)}</div><div class="sub">mismo periodo</div></div>
-        <div class="ckpi" style="--ck-color:var(--teal)"><div class="lbl">Foráneos 2026 (YTD)</div><div class="val">${tF26.toLocaleString('es-MX')}</div><div class="sub">vs 2025: ${fmtPct(varForaneos)}</div></div>
-        <div class="ckpi" style="--ck-color:#6B7280"><div class="lbl">Foráneos 2025 (YTD)</div><div class="val">${tF25c.toLocaleString('es-MX')}</div><div class="sub">mismo periodo</div></div>
+        <div class="ckpi" style="--ck-color:var(--amber)"><div class="lbl">Gasto casetas 2026 (YTD)</div><div class="val" style="font-size:20px">${$(tG26)}</div><div class="sub">vs 2025 (${$(tG25c)}): ${fmtPct(varGasto)}</div></div>
+        <div class="ckpi" style="--ck-color:${difGasto <= 0 ? 'var(--green)' : 'var(--red)'}"><div class="lbl">Diferencia de gasto vs 2025</div><div class="val" style="font-size:20px;color:${difGasto <= 0 ? 'var(--green)' : 'var(--red)'}">${difGasto > 0 ? '+' : '−'}${$(Math.abs(difGasto))}</div><div class="sub">${difGasto <= 0 ? '✓ menos gasto en casetas' : '⚠ más gasto en casetas'}</div></div>
+        <div class="ckpi" style="--ck-color:var(--teal)"><div class="lbl">Foráneos 2026 (YTD)</div><div class="val">${tF26.toLocaleString('es-MX')}</div><div class="sub">vs 2025 (${tF25c}): ${fmtPct(varForaneos)}</div></div>
+        <div class="ckpi" style="--ck-color:var(--blue)"><div class="lbl">Mes de mayor gasto 2026</div><div class="val" style="font-size:19px">${pico.mes ? cap(pico.mes) : '—'}</div><div class="sub">${pico.g26 ? $(pico.g26) + ' · ' + (pico.f26 || 0) + ' foráneos' : ''}</div></div>
       </div>
 
       <div class="charts-grid">
