@@ -77,6 +77,8 @@ async function renderAnalisisCruce(container) {
         <div class="chart-box full"><div class="chart-title">Gasto de casetas por mes <span class="chart-badge">2025 vs 2026</span></div><div style="position:relative;width:100%;height:300px"><canvas id="cr-gasto"></canvas></div></div>
         <div class="chart-box full"><div class="chart-title">Viajes foráneos por mes <span class="chart-badge">2025 vs 2026</span></div><div style="position:relative;width:100%;height:300px"><canvas id="cr-foraneos"></canvas></div></div>
         <div class="chart-box full"><div class="chart-title">Foráneos vs Gasto de casetas por mes <span class="chart-badge">2025 vs 2026 · doble eje</span></div><div style="position:relative;width:100%;height:320px"><canvas id="cr-combo"></canvas></div></div>
+        <div class="chart-box"><div class="chart-title">Gasto de casetas acumulado a la fecha <span class="chart-badge">2025 vs 2026</span></div><div style="position:relative;width:100%;height:280px"><canvas id="cr-acum-gasto"></canvas></div></div>
+        <div class="chart-box"><div class="chart-title">Foráneos acumulados a la fecha <span class="chart-badge">2025 vs 2026</span></div><div style="position:relative;width:100%;height:280px"><canvas id="cr-acum-for"></canvas></div></div>
       </div>
 
       <div class="table-wrap">
@@ -100,8 +102,8 @@ async function renderAnalisisCruce(container) {
         </table></div>
       </div>`;
 
-    window.applyCruce = () => { filtroMes = document.getElementById('cr-mes').value; ['cr-combo','cr-gasto','cr-foraneos'].forEach(DC); render(); };
-    window.clearCruce = () => { filtroMes = 'todos'; ['cr-combo','cr-gasto','cr-foraneos'].forEach(DC); render(); };
+    window.applyCruce = () => { filtroMes = document.getElementById('cr-mes').value; ['cr-combo','cr-gasto','cr-foraneos','cr-acum-gasto','cr-acum-for'].forEach(DC); render(); };
+    window.clearCruce = () => { filtroMes = 'todos'; ['cr-combo','cr-gasto','cr-foraneos','cr-acum-gasto','cr-acum-for'].forEach(DC); render(); };
 
     setTimeout(() => {
       const gc = 'rgba(0,0,0,0.05)', tc = '#9A7078', mf = 'JetBrains Mono';
@@ -128,6 +130,21 @@ async function renderAnalisisCruce(container) {
       CI['cr-foraneos'] = new Chart(document.getElementById('cr-foraneos'), { type: 'bar', data: { labels: lbl, datasets: [
         { label: 'Foráneos 2025', data: data.map(r => r.f25 || 0), backgroundColor: 'rgba(184,122,16,0.78)', borderRadius: 3, borderSkipped: false },
         { label: 'Foráneos 2026', data: data.map(r => r.f26 || 0), backgroundColor: 'rgba(26,158,130,0.85)', borderRadius: 3, borderSkipped: false },
+      ] }, options: optComp });
+
+      // Acumulado a la fecha: suma corrida; corta tras el último mes con dato
+      const acumK = key => { const v = data.map(r => r[key] || 0); let last = -1; v.forEach((x, i) => { if (x > 0) last = i; }); let s = 0; return v.map((x, i) => i <= last ? (s += x) : null); };
+
+      DC('cr-acum-gasto');
+      CI['cr-acum-gasto'] = new Chart(document.getElementById('cr-acum-gasto'), { type: 'line', data: { labels: lbl, datasets: [
+        { label: 'Casetas 2025', data: acumK('g25'), borderColor: 'rgba(184,122,16,0.95)', backgroundColor: 'transparent', borderWidth: 2, borderDash: [5, 3], pointRadius: 3, tension: 0.3, datalabels: { display: false } },
+        { label: 'Casetas 2026', data: acumK('g26'), borderColor: '#C0152A', backgroundColor: 'rgba(192,21,42,0.07)', borderWidth: 2.6, pointRadius: 3.5, fill: true, tension: 0.3, datalabels: { display: false } },
+      ] }, options: { ...optComp, plugins: { ...optComp.plugins, tooltip: { callbacks: { label: c => `${c.dataset.label}: ${$(c.parsed.y || 0)}` } } }, scales: { ...optComp.scales, y: { ...optComp.scales.y, ticks: { color: tc, font: { size: 10 }, callback: kFmt } } } } });
+
+      DC('cr-acum-for');
+      CI['cr-acum-for'] = new Chart(document.getElementById('cr-acum-for'), { type: 'line', data: { labels: lbl, datasets: [
+        { label: 'Foráneos 2025', data: acumK('f25'), borderColor: 'rgba(184,122,16,0.95)', backgroundColor: 'transparent', borderWidth: 2, borderDash: [5, 3], pointRadius: 3, tension: 0.3, datalabels: { display: false } },
+        { label: 'Foráneos 2026', data: acumK('f26'), borderColor: 'rgba(26,158,130,0.95)', backgroundColor: 'rgba(26,158,130,0.08)', borderWidth: 2.6, pointRadius: 3.5, fill: true, tension: 0.3, datalabels: { display: false } },
       ] }, options: optComp });
     }, 70);
   }
