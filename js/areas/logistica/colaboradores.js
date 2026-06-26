@@ -17,8 +17,12 @@ function parseMes(raw) {
   if (/^\d{4}[-/]\d{1,2}[-/]\d{1,2}$/.test(s)) { const p=s.split(/[-/]/); return `${p[0]}-${p[1].padStart(2,'0')}`; }
   if (/^\d{1,2}[/-]\d{1,2}[/-]\d{4}$/.test(s)) { const p=s.split(/[/-]/); return `${p[2]}-${p[1].padStart(2,'0')}`; }
   const mMap={ene:'01',feb:'02',mar:'03',abr:'04',may:'05',jun:'06',jul:'07',ago:'08',sep:'09',oct:'10',nov:'11',dic:'12'};
+  // Mes en texto con año de 4 dígitos: "Junio 2026", "Enero 2026"
   const m=s.toLowerCase().match(/([a-záéíóú]{3})[a-záéíóú.]*\s*(\d{4})/);
   if (m && mMap[m[1]]) return `${m[2]}-${mMap[m[1]]}`;
+  // Mes abreviado con año de 2 dígitos: "abr-26", "jun 26", "ene.25"
+  const m2=s.toLowerCase().match(/([a-záéíóú]{3})[a-záéíóú.]*[\s\-/]*(\d{2})\b/);
+  if (m2 && mMap[m2[1]]) return `20${m2[2]}-${mMap[m2[1]]}`;
   const d=new Date(s); if (!isNaN(d)) return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
   return '';
 }
@@ -60,9 +64,9 @@ async function renderColaboradores(container) {
       Meta:        parseInt((r['Meta 100%']||'60').toString().replace(/[^\d]/g,'')) || 60,
       PctViajes:   parsePct(r['% DE VIAJES']||r['%viajes']||r['% viajes']||'0')
     })).filter(r => r.Colaborador && r.Colaborador.length > 2 && r.Colaborador !== 'COLABORADOR');
-    const _hoy = new Date();
-    const _mesActual = `${_hoy.getFullYear()}-${String(_hoy.getMonth()+1).padStart(2,'0')}`;
-    VD.forEach(r => { if (!r.Mes || r.Mes.length < 7) r.Mes = _mesActual; });
+    // Descarta filas sin un mes válido (antes se asignaban al mes actual y
+    // contaminaban junio con datos de meses que no parseaban, ej. "abr-26")
+    VD = VD.filter(r => r.Mes && r.Mes.length === 7);
     if (!VD.length) throw new Error('Sin registros válidos');
   } catch(e) {
     container.innerHTML = `<div class="empty-state"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="1.8" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div class="empty-title">Error al cargar datos</div><div class="empty-desc">⚠ ${e.message}</div></div>`;
