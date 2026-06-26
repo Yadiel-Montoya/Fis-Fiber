@@ -98,7 +98,7 @@ async function renderCargas(container) {
         <div class="chart-box full"><div class="chart-title">Cargas por día <span class="chart-badge">${data.length} días</span></div><div style="position:relative;width:100%;height:${barH}px"><canvas id="g-bar"></canvas></div></div>
         <div class="chart-box"><div class="chart-title">Distribución total</div><div style="position:relative;width:100%;height:220px"><canvas id="g-dona"></canvas></div></div>
         <div class="chart-box"><div class="chart-title">Promedio por día de semana</div><div style="position:relative;width:100%;height:220px"><canvas id="g-dow"></canvas></div></div>
-        <div class="chart-box full"><div class="chart-title">Tendencia acumulada</div><div style="position:relative;width:100%;height:200px"><canvas id="g-acum"></canvas></div></div>
+        <div class="chart-box full"><div class="chart-title">Cargas acumuladas a la fecha <span class="chart-badge">corrida del período</span></div><div style="position:relative;width:100%;height:200px"><canvas id="g-acum"></canvas></div></div>
       </div>
       <div class="table-wrap"><div class="table-head-bar"><span class="ttl">Detalle por día</span><span class="meta">${data.length} registros</span></div>
       <table><thead><tr><th>Fecha</th><th>Día</th><th class="num">Anticipadas</th><th class="num">Nocturnas</th><th class="num">Rentados</th><th class="num">Total</th><th class="num">% Antic.</th></tr></thead>
