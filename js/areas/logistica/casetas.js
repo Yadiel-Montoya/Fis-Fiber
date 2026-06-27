@@ -183,7 +183,7 @@ function renderCasetasAnual(container, CM) {
         <div class="chart-box"><div class="chart-title">Diferencia 2025 vs 2026 <span class="chart-badge">ahorro/gasto</span></div><div style="position:relative;width:100%;height:260px"><canvas id="ca-bar-dif"></canvas></div></div>
         <div class="chart-box"><div class="chart-title">Comparativo 2025 vs 2026 <span class="chart-badge">${mesesCon26} meses</span></div><div style="position:relative;width:100%;height:260px"><canvas id="ca-dona-estatus"></canvas></div></div>
         <div class="chart-box"><div class="chart-title">% Variación 2025→2026</div><div style="position:relative;width:100%;height:260px"><canvas id="ca-pct-var"></canvas></div></div>
-        <div class="chart-box full"><div class="chart-title">Gasto acumulado por mes <span class="chart-badge">2023–2026 · corrida anual</span></div><div style="position:relative;width:100%;height:300px"><canvas id="ca-acum"></canvas></div></div>
+        <div class="chart-box full"><div class="chart-title">Gasto de casetas acumulado a la fecha <span class="chart-badge">2023–2026</span></div><div style="position:relative;width:100%;height:300px"><canvas id="ca-acum"></canvas></div></div>
       </div>
       <div class="table-wrap">
         <div class="table-head-bar"><span class="ttl">Informe General · Comparativa Anual</span><span class="meta">${data.length} meses</span></div>
