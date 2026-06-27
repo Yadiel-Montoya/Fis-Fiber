@@ -28,6 +28,22 @@ import threading
 import logging
 from datetime import datetime
 
+# ── Cargar .env (sin dependencias externas) ──
+def _cargar_env():
+    ruta = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
+    if not os.path.exists(ruta):
+        return
+    with open(ruta, encoding="utf-8") as fh:
+        for linea in fh:
+            linea = linea.strip()
+            if not linea or linea.startswith("#") or "=" not in linea:
+                continue
+            clave, valor = linea.split("=", 1)
+            clave, valor = clave.strip(), valor.strip().strip('"').strip("'")
+            if clave and clave not in os.environ:   # no pisa variables ya definidas
+                os.environ[clave] = valor
+_cargar_env()
+
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
@@ -89,11 +105,13 @@ else:
     log.info("Dataset 'almacen' inactivo — configura SAP_* en .env para activarlo")
 
 # ── PERSISTENCIA EN DISCO (sobrevive reinicios) ────────────────────────
+_cache_lock = threading.Lock()
 def guardar_cache():
     try:
-        snapshot = {n: {"data": d["data"], "ts": d["ts"]} for n, d in DATASETS.items()}
-        with open(CACHE_FILE, "w", encoding="utf-8") as f:
-            json.dump(snapshot, f, ensure_ascii=False)
+        with _cache_lock:
+            snapshot = {n: {"data": d["data"], "ts": d["ts"]} for n, d in DATASETS.items()}
+            with open(CACHE_FILE, "w", encoding="utf-8") as f:
+                json.dump(snapshot, f, ensure_ascii=False)
     except Exception as e:
         log.warning(f"No se pudo guardar caché: {e}")
 
@@ -124,8 +142,10 @@ def refrescar(nombre):
         log.error(f"Error al refrescar '{nombre}': {e}")
 
 def refrescar_todo():
-    for nombre in DATASETS:
-        refrescar(nombre)
+    # Cada dataset en su propio hilo: uno lento (WMS) no bloquea a otro (SAP)
+    hilos = [threading.Thread(target=refrescar, args=(n,), daemon=True) for n in DATASETS]
+    for h in hilos: h.start()
+    for h in hilos: h.join()
 
 def planificador():
     """Hilo en segundo plano: refresca al arrancar y cada REFRESH_MIN minutos."""
