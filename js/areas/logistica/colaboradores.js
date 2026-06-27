@@ -83,17 +83,28 @@ async function renderColaboradores(container) {
   function mesLabel(m) { const [y,mm] = m.split('-'); return `${MESES[+mm-1]} ${y}`; }
 
   function filtrar() {
-    return VD
-      .filter(r => filtroMes === 'todos' || r.Mes === filtroMes)
+    let rows = VD
       .filter(r => filtroUnidad === 'todos' || r.Unidad === filtroUnidad)
-      .filter(r => !filtroColab || r.Colaborador.toLowerCase().includes(filtroColab.toLowerCase()))
-      .sort((a,b) => {
-        let va=a[sortCol]??0, vb=b[sortCol]??0;
-        if (typeof va === 'string') { va=va.toLowerCase(); vb=(vb+'').toLowerCase(); }
-        if (va < vb) return sortDir === 'asc' ? -1 : 1;
-        if (va > vb) return sortDir === 'asc' ?  1 : -1;
-        return 0;
+      .filter(r => !filtroColab || r.Colaborador.toLowerCase().includes(filtroColab.toLowerCase()));
+    if (filtroMes !== 'todos') {
+      rows = rows.filter(r => r.Mes === filtroMes);
+    } else {
+      // "Todos": agregar por colaborador (acumulado del año, no una fila por mes)
+      const byCol = {};
+      rows.forEach(r => {
+        const k = r.Colaborador;
+        if (!byCol[k]) byCol[k] = { Colaborador: r.Colaborador, Unidad: r.Unidad, Local: 0, Foraneo: 0, Total: 0, _meta: 0 };
+        byCol[k].Local += r.Local; byCol[k].Foraneo += r.Foraneo; byCol[k].Total += r.Total; byCol[k]._meta += r.Meta;
       });
+      rows = Object.values(byCol).map(r => ({ ...r, PctViajes: r._meta > 0 ? +(r.Total / r._meta * 100).toFixed(2) : 0 }));
+    }
+    return rows.sort((a,b) => {
+      let va=a[sortCol]??0, vb=b[sortCol]??0;
+      if (typeof va === 'string') { va=va.toLowerCase(); vb=(vb+'').toLowerCase(); }
+      if (va < vb) return sortDir === 'asc' ? -1 : 1;
+      if (va > vb) return sortDir === 'asc' ?  1 : -1;
+      return 0;
+    });
   }
 
   function getColor(pct) {
@@ -137,7 +148,7 @@ async function renderColaboradores(container) {
     }
 
     container.innerHTML = `
-      <div class="banner ok">✓ Google Sheets conectado · ${VD.length} colaboradores · Auto-refresco cada 5 min · <b>Doble clic</b> en columna para ordenar</div>
+      <div class="banner ok">✓ Google Sheets conectado · ${new Set(VD.map(r=>r.Colaborador)).size} colaboradores · ${mesesList.length} meses · Auto-refresco cada 5 min · <b>Doble clic</b> en columna para ordenar</div>
       <div class="filters-bar">
         <div class="filter-group"><span class="filter-label">Mes</span><select class="filter-select" id="cv-mes"><option value="todos">Todos</option>${mesesList.map(m=>`<option value="${m}"${filtroMes===m?' selected':''}>${mesLabel(m)}</option>`).join('')}</select></div>
         <div class="filter-group"><span class="filter-label">Unidad</span><select class="filter-select" id="cv-unidad"><option value="todos">Todas</option>${unidadesList.map(u=>`<option value="${u}"${filtroUnidad===u?' selected':''}>${u}</option>`).join('')}</select></div>
