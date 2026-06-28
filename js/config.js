@@ -32,9 +32,12 @@ const VENTAS_PEDIDOS_URL   = _VENTAS_PUB + '?gid=1798333200&single=true&output=c
 /* ── AGREGAR NUEVAS FUENTES AQUÍ ── */
 
 /* ── LOGÍSTICA: EMBARQUES REPROGRAMADOS ── */
-/* Apunta a la API de FIS FIBER (carpeta servidor-api/, corre en tu servidor).
-   Cambia esta URL por la dirección pública/red donde la tengas montada.   */
-const EMBARQUES_PROXY_URL = 'http://TU-SERVIDOR:3001';
+/* La oficina se conecta al WMS, scrapea cada 5 min y PUBLICA el resultado a
+   GitHub (rama 'data'). El dashboard lo lee de GitHub raw → siempre disponible,
+   HTTPS válido, sin depender de la IP dinámica de la oficina. */
+const EMBARQUES_DATA_URL  = 'https://raw.githubusercontent.com/Yadiel-Montoya/Fis-Fiber/data/reprogramados.json';
+/* Respaldo directo a la API (si la IP está estable); EMBARQUES_DATA_URL tiene prioridad */
+const EMBARQUES_PROXY_URL = 'https://vendorapi-fisfiber.duckdns.org';
 
 /* ── ALMACÉN MATERIA PRIMA ──
    Vista curada (42 tipos con mín/máx y alertas, base Excel). El inventario

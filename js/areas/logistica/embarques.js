@@ -6,13 +6,17 @@
 
 async function loadEmbarques() {
   try {
-    const r = await fetch((EMBARQUES_PROXY_URL || "") + "/api/reprogramados?cb=" + Date.now(), { cache: "no-store" });
+    // Prioridad: GitHub raw (siempre disponible). Respaldo: API directa por el dominio.
+    var url = (typeof EMBARQUES_DATA_URL !== "undefined" && EMBARQUES_DATA_URL)
+      ? EMBARQUES_DATA_URL + "?cb=" + Date.now()
+      : (EMBARQUES_PROXY_URL || "") + "/api/reprogramados?cb=" + Date.now();
+    const r = await fetch(url, { cache: "no-store" });
     if (!r.ok) throw new Error("HTTP " + r.status);
     const js = await r.json();
-    if (js.error) throw new Error(js.error);
-    return { data: js.reprogramados || [], timestamp: js.timestamp, cacheAge: js.cache_age, error: null };
+    if (js.error && !(js.reprogramados && js.reprogramados.length)) throw new Error(js.error);
+    return { data: js.reprogramados || [], timestamp: js.timestamp, cacheAge: js.cache_age, cargando: !!js.cargando, error: null };
   } catch (e) {
-    return { data: [], timestamp: null, cacheAge: null, error: e.message };
+    return { data: [], timestamp: null, cacheAge: null, cargando: false, error: e.message };
   }
 }
 
@@ -21,12 +25,25 @@ async function renderEmbarques(container) {
   const res = await loadEmbarques();
   const data = res.data, timestamp = res.timestamp, cacheAge = res.cacheAge, error = res.error;
 
+  // Carga inicial del WMS en curso: el servidor está armando el caché (~1 min)
+  if (!error && res.cargando && !data.length) {
+    container.innerHTML =
+      "<div class=\"empty-state\">" +
+        "<div class=\"empty-icon\"><div class=\"spinner\"></div></div>" +
+        "<div class=\"empty-title\">Consultando el WMS…</div>" +
+        "<div class=\"empty-desc\">El servidor está armando los reprogramados (toma ~1 min la primera vez). Se actualiza solo.</div>" +
+      "</div>";
+    clearTimeout(window._reintentoEmbarques);
+    window._reintentoEmbarques = setTimeout(function(){ renderEmbarques(container); }, 20000);
+    return;
+  }
+
   if (error) {
     container.innerHTML =
       "<div class=\"empty-state\">" +
         "<div class=\"empty-icon\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"var(--red)\" stroke-width=\"1.8\" stroke-linecap=\"round\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><line x1=\"12\" y1=\"8\" x2=\"12\" y2=\"12\"/><line x1=\"12\" y1=\"16\" x2=\"12.01\" y2=\"16\"/></svg></div>" +
         "<div class=\"empty-title\">WMS no disponible</div>" +
-        "<div class=\"empty-desc\">La función serverless no pudo conectar con el WMS.<br><br>" +
+        "<div class=\"empty-desc\">No se pudieron leer los reprogramados (GitHub/WMS).<br><br>" +
         "<span style=\"color:var(--red);font-size:12px\">" + error + "</span></div>" +
       "</div>";
     return;
