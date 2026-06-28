@@ -1,6 +1,6 @@
 ﻿/**
  * embarques.js - Modulo Embarques Reprogramados
- * Fuente: Vercel serverless function /api/reprogramados (fisfiberwms.duckdns.org)
+ * Fuente: GitHub raw (rama data), publicado por la oficina cada 5 min desde el WMS
  * Filtra registros donde NumeroViaje === "Reprogramado"
  */
 
