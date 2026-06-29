@@ -59,8 +59,21 @@ async function renderEmbarques(container) {
     return;
   }
 
+  /* Deduplicar: el MISMO pedido puede venir en varios folios (a veces con
+     estatus distintos). Solo cuentan reprogramados DIFERENTES → uno por Pedido. */
+  (function(){
+    var vistos = {}, unicos = [];
+    for (var i = 0; i < data.length; i++) {
+      var ped = String((data[i] && data[i].Pedido) || "").trim();
+      var key = ped || ("__sin_pedido_" + i);
+      if (vistos[key]) continue;
+      vistos[key] = 1; unicos.push(data[i]);
+    }
+    data = unicos;
+  })();
+
   /* Agrupaciones */
-  const porCliente = {}, porEstatus = {}, porFecha = {};
+  const porCliente = {}, porFecha = {}, piezasPorCliente = {};
 
   function fmtFecha(d) {
     if (!d) return "Sin fecha";
@@ -82,62 +95,46 @@ async function renderEmbarques(container) {
   }
 
   data.forEach(function(p) {
-    const cl  = p.Cliente      || "Desconocido";
-    const est = p.EstatusCarga || p.Estatus || "Sin estatus";
+    const cl  = p.Cliente || "Desconocido";
     const fe  = fmtFecha(p.F_Entrega);
-    porCliente[cl]  = (porCliente[cl]  || 0) + 1;
-    porEstatus[est] = (porEstatus[est] || 0) + 1;
-    porFecha[fe]    = (porFecha[fe]    || 0) + 1;
+    porCliente[cl]       = (porCliente[cl] || 0) + 1;
+    piezasPorCliente[cl] = (piezasPorCliente[cl] || 0) + (parseInt(p.PiezasEntrega) || 0);
+    porFecha[fe]         = (porFecha[fe] || 0) + 1;
   });
 
-  const topClientes  = Object.entries(porCliente).sort(function(a,b){return b[1]-a[1];}).slice(0, 7);
+  const clientesOrden = Object.entries(porCliente).sort(function(a,b){return b[1]-a[1];});
+  const topClientes  = clientesOrden.slice(0, 7);
   const fechasOrden  = Object.entries(porFecha).filter(function(e){return e[0]!=="Sin fecha";}).sort(function(a,b){return a[0].localeCompare(b[0]);}).slice(-14);
   const totalPiezas  = data.reduce(function(s,p){return s+(parseInt(p.PiezasEntrega)||0);}, 0);
-  const conCita      = data.filter(function(p){return p.Cita && String(p.Cita).trim() && String(p.Cita).trim()!=="—";}).length;
   const tsStr        = timestamp ? new Date(timestamp).toLocaleTimeString("es-MX",{hour:"2-digit",minute:"2-digit"}) : "";
   const cacheStr     = cacheAge != null ? " · caché " + cacheAge + "s" : "";
 
-  function estatusPill(est) {
-    if (est === "FACTURADO")   return "pill-green";
-    if (est === "EN TRANSITO") return "pill-blue";
-    if (est === "EN STOCK")    return "pill-teal";
-    return "pill-amber";
-  }
-
-  var rows = data.map(function(p) {
-    var est = p.EstatusCarga || p.Estatus || "";
+  // Tabla = TOP de clientes (ranking), sin estatus ni detalle por pedido
+  var rows = clientesOrden.map(function(e, i) {
+    var cl = e[0], n = e[1], pz = piezasPorCliente[cl] || 0;
     return "<tr>" +
-      "<td><span class=\"pill pill-blue\">" + (p._folio||"—") + "</span></td>" +
-      "<td style=\"font-weight:600\">" + (p.Pedido||"—") + "</td>" +
-      "<td>" + (p.Cliente||"—") + "</td>" +
-      "<td style=\"font-size:12px;color:var(--ink3)\">" + (p.Articulo||"—") + "</td>" +
-      "<td class=\"num\">" + (parseInt(p.PiezasEntrega)||0) + "</td>" +
-      "<td style=\"font-family:'JetBrains Mono',monospace;font-size:12px\">" + fmtDisplay(fmtFecha(p.F_Entrega)) + "</td>" +
-      "<td>" + (p.Unidad||"—") + "</td>" +
-      "<td>" + (p.Operador||"—") + "</td>" +
-      "<td><span class=\"pill " + estatusPill(est) + "\">" + (est||"—") + "</span></td>" +
-      "<td style=\"font-size:12px;color:var(--ink3);max-width:180px;white-space:normal\">" + (p.Comentarios||"—") + "</td>" +
+      "<td style=\"color:var(--ink3)\">" + (i+1) + "</td>" +
+      "<td style=\"font-weight:600\">" + cl + "</td>" +
+      "<td class=\"num\">" + n + "</td>" +
+      "<td class=\"num\">" + pz.toLocaleString("es-MX") + "</td>" +
     "</tr>";
   }).join("");
 
   container.innerHTML =
     "<div class=\"banner ok\">✓ WMS conectado · " + data.length + " embarques reprogramados · " + tsStr + cacheStr + "</div>" +
     "<div class=\"kpi-row\">" +
-      "<div class=\"ckpi\" style=\"--ck-color:var(--red)\"><div class=\"lbl\">Total reprogramados</div><div class=\"val\">" + data.length + "</div><div class=\"sub\">" + Object.keys(porFecha).length + " fechas de entrega</div></div>" +
+      "<div class=\"ckpi\" style=\"--ck-color:var(--red)\"><div class=\"lbl\">Reprogramados</div><div class=\"val\">" + data.length + "</div><div class=\"sub\">pedidos únicos</div></div>" +
       "<div class=\"ckpi\" style=\"--ck-color:var(--amber)\"><div class=\"lbl\">Clientes afectados</div><div class=\"val\">" + Object.keys(porCliente).length + "</div><div class=\"sub\">" + (topClientes[0] ? topClientes[0][0].substring(0,22) : "—") + "</div></div>" +
       "<div class=\"ckpi\" style=\"--ck-color:var(--teal)\"><div class=\"lbl\">Piezas pendientes</div><div class=\"val\">" + totalPiezas.toLocaleString("es-MX") + "</div><div class=\"sub\">suma PiezasEntrega</div></div>" +
-      "<div class=\"ckpi\" style=\"--ck-color:var(--blue)\"><div class=\"lbl\">Con cita asignada</div><div class=\"val\">" + conCita + "</div><div class=\"sub\">" + (data.length-conCita) + " sin cita</div></div>" +
     "</div>" +
     "<div class=\"charts-grid\">" +
-      "<div class=\"chart-box\"><div class=\"chart-title\">Top clientes reprogramados</div><div style=\"position:relative;height:240px\"><canvas id=\"g-emb-clientes\"></canvas></div></div>" +
-      "<div class=\"chart-box\"><div class=\"chart-title\">Por estatus de carga</div><div style=\"position:relative;height:240px\"><canvas id=\"g-emb-estatus\"></canvas></div></div>" +
-      "<div class=\"chart-box full\"><div class=\"chart-title\">Reprogramados por fecha de entrega <span class=\"chart-badge\">por F_Entrega</span></div><div style=\"position:relative;height:200px\"><canvas id=\"g-emb-fechas\"></canvas></div></div>" +
+      "<div class=\"chart-box\"><div class=\"chart-title\">Top clientes con más reprogramados</div><div style=\"position:relative;height:260px\"><canvas id=\"g-emb-clientes\"></canvas></div></div>" +
+      "<div class=\"chart-box\"><div class=\"chart-title\">Reprogramados por fecha de entrega <span class=\"chart-badge\">por F_Entrega</span></div><div style=\"position:relative;height:260px\"><canvas id=\"g-emb-fechas\"></canvas></div></div>" +
     "</div>" +
     "<div class=\"table-wrap\">" +
-      "<div class=\"table-head-bar\"><span class=\"ttl\">Detalle de embarques reprogramados</span><span class=\"meta\">" + data.length + " registros</span></div>" +
+      "<div class=\"table-head-bar\"><span class=\"ttl\">Top de clientes reprogramados</span><span class=\"meta\">" + Object.keys(porCliente).length + " clientes · " + data.length + " pedidos</span></div>" +
       "<table><thead><tr>" +
-        "<th>Folio</th><th>Pedido</th><th>Cliente</th><th>Artículo</th>" +
-        "<th class=\"num\">Piezas</th><th>F. Entrega</th><th>Unidad</th><th>Operador</th><th>Estatus</th><th>Comentarios</th>" +
+        "<th>#</th><th>Cliente</th><th class=\"num\">Reprogramados</th><th class=\"num\">Piezas</th>" +
       "</tr></thead><tbody>" + rows + "</tbody></table>" +
     "</div>";
 
@@ -163,27 +160,6 @@ async function renderEmbarques(container) {
         scales: {
           x: { grid:{color:gc}, ticks:{color:tc,font:{size:10,family:mf}}, border:{color:"transparent"}, beginAtZero:true },
           y: { grid:{display:false}, ticks:{color:"#1A0A0C",font:{size:11,family:"Outfit"}}, border:{color:"transparent"} }
-        }
-      }
-    });
-
-    DC("g-emb-estatus");
-    var estKeys = Object.keys(porEstatus);
-    var estColors = ["rgba(192,21,42,0.82)","rgba(26,95,160,0.82)","rgba(26,158,92,0.82)","rgba(26,158,130,0.82)","rgba(184,122,16,0.82)"];
-    CI["g-emb-estatus"] = new Chart(document.getElementById("g-emb-estatus"), {
-      type: "doughnut",
-      data: {
-        labels: estKeys,
-        datasets: [{ data: estKeys.map(function(k){return porEstatus[k];}), backgroundColor: estColors, borderWidth:1, hoverOffset:6 }]
-      },
-      options: {
-        responsive:true, maintainAspectRatio:false, cutout:"65%",
-        plugins: {
-          legend: { position:"bottom", labels:{color:"#5C3038",font:{size:11,family:"Outfit"},usePointStyle:true,padding:14} },
-          datalabels: {
-            color:"#fff", font:{size:12,family:mf,weight:"700"},
-            formatter: function(v,ctx){ var t=ctx.dataset.data.reduce(function(a,b){return a+b;},0); return t?Math.round(v/t*100)+"%":""; }
-          }
         }
       }
     });
